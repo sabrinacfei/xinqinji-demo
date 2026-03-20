@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>內用菜單 - 薪勤機</title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css?v=2" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div class="kioskStage">
+    <div class="kioskCanvas">
+      <div class="mainContainer posContainer container indooorPage">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <div style="font-size:1.6rem;font-weight:900;">內用菜單</div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary" id="zoomOut">－</button>
+        <button class="btn btn-outline-secondary" id="zoomIn">＋</button>
+        <button class="btn btn-outline-secondary" onclick="location.href='index.html'">返回</button>
+      </div>
+    </div>
+
+    <!-- 菜單圖 -->
+    <!-- 內用菜單 -->
+    <div class="menuPagerBar">
+      <button type="button" class="menuNavBtn" onclick="prevMenuPage()">‹</button>
+      <div class="menuPageText"><span id="menuPageNow">1</span> / 2</div>
+      <button type="button" class="menuNavBtn" onclick="nextMenuPage()">›</button>
+    </div>
+
+    <div class="menuViewport">
+      <div id="zoomWrap" style="transform-origin: top left;">
+        <img
+          id="menuImg"
+          src="images/indooor_menu1.jpg.webp"
+          alt="內用菜單 第1頁"
+          style="display:block;max-width:100%;height:auto;"
+        />
+      </div>
+    </div>
+
+   <!--<div class="bottomBar">
+      <div class="text-end">
+        <button class="indoorHomeBtn" onclick="location.href='index.html'">回首頁</button>
+      </div>
+    </div>-->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let scale = 1;
+    const wrap = document.getElementById("zoomWrap");
+
+    document.getElementById("zoomIn").addEventListener("click", () => {
+      scale = Math.min(2.2, scale + 0.1);
+      wrap.style.transform = `scale(${scale})`;
+    });
+
+    document.getElementById("zoomOut").addEventListener("click", () => {
+      scale = Math.max(0.6, scale - 0.1);
+      wrap.style.transform = `scale(${scale})`;
+    });
+  </script>
+  <script>
+  let menuPage = 1; 
+
+  function renderMenuPage(){
+    const img = document.getElementById("menuImg");
+    const pageNow = document.getElementById("menuPageNow");
+
+    img.src = `images/indooor_menu${menuPage}.jpg.webp`;
+    img.alt = `內用菜單 第${menuPage}頁`;
+    pageNow.textContent = menuPage;
+
+  }
+
+  function nextMenuPage(){
+    menuPage = (menuPage === 2) ? 1 : 2;
+    renderMenuPage();
+  }
+
+  function prevMenuPage(){
+    menuPage = (menuPage === 1) ? 2 : 1;
+    renderMenuPage();
+  }
+</script>
+</body>
+</html>

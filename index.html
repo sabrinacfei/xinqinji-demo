@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>薪勤機</title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh-tw.js"></script>
+</head>
+<body>
+  <div class="kioskStage">
+    <div class="kioskCanvas">
+      <main class="mainContainer mainHeight">
+
+        <!-- 現在叫號 -->
+        <div class="modal fade" id="callModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content callModalBox">
+              <div class="modal-header">
+                <h3 class="modal-title">現在叫號</h3>
+              </div>
+
+              <div class="modal-body">
+                <div class="callRows">
+                  <div class="callRow">
+                    <div class="callTag">等候入場</div>
+                    <div class="callNums soon" id="callSoonList"></div>
+                  </div>
+
+                  <div class="callRow">
+                    <div class="callTag">外帶取餐</div>
+                    <div class="callNums pickup" id="callPickupList"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="waitGhostBtn" data-bs-dismiss="modal">關閉</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mainContent">
+          <aside class="col-md-4">
+            <div class="row throneWrap">
+              <div class="col-md-6 waitBox">
+                <div>候位</div>
+              </div>
+              <div class="col-md-6 reserveBox">
+                <div>預約</div>
+              </div>
+            </div>
+
+            <div class="row callWrap" id="openCallModal" style="cursor:pointer;">
+              <div class="col-md-5 callLeftTitle">現在叫號</div>
+              <div class="col-md-7 callRightNums" id="callMiniNums"></div>
+            </div>
+
+            <div class="pickupUber" id="openDeliveryModal">外送取餐</div>
+            <div class="pickupIndoor" onclick="location.href='indoor.html'">內用菜單</div>
+            <div class="clockingLogoWrap">
+              <button type="button" class="clockingLogoBtn" id="clockingLogoBtn" aria-label="員工打卡">
+                <img src="images/logo-removebg-preview.png" alt="員工打卡" class="clockingLogoImg">
+              </button>
+            </div>
+
+          </aside>
+
+          <article class="col-md-8 articleContainer">
+            <div class="container diningContent">
+              <div class="row">
+                <div class="col-md-4 diningWrap">
+                  <div class="diningBox">
+                    <div class="takeawayTitle">外帶</div>
+                    <div class="timeWait">
+                      <span id="takeawayWaitMin">20</span>分
+                    </div>
+                    <div class="waitTitle">預估等候</div>
+                  </div>
+                </div>
+
+                <div class="col-md-4 diningWrap">
+                  <div class="diningBox">
+                    <div class="diningTitle">內用</div>
+                    <div class="timeWait">
+                      <span id="indoorWaitingCount">0</span>組
+                    </div>
+                    <div class="waitTitle">候位中</div>
+                  </div>
+                </div>
+
+                <div class="col-md-4 orderingBox" onclick="location.href='takeaway.html'">
+                  <div>我要點餐</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <img src="images/banner.jpg" alt="banner">
+            </div>
+          </article>
+        </div>
+
+        <!-- 候位 -->
+        <div class="modal" id="waitModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content waitKiosk">
+              <div class="modal-header waitModalHeaderOriginal">
+                <h3 class="modal-title">候位</h3>
+                <button type="button" class="waitCloseXBlack" id="waitCloseBtn" aria-label="關閉">×</button>
+              </div>
+
+              <div class="modal-body">
+                <div id="waitStepA">
+                  <div class="waitCards">
+                    <div class="waitCard">
+                      <div class="waitCardTitle">1-2 人</div>
+                      <div class="waitCardNum" id="q12">0</div>
+                      <div class="waitCardSub">組候位中</div>
+                      <div class="waitCardHint">預估等待：<em id="m12">0</em> 分鐘</div>
+                    </div>
+
+                    <div class="waitCard">
+                      <div class="waitCardTitle">3-4 人</div>
+                      <div class="waitCardNum" id="q34">0</div>
+                      <div class="waitCardSub">組候位中</div>
+                      <div class="waitCardHint">預估等待：<em id="m34">0</em> 分鐘</div>
+                    </div>
+
+                    <div class="waitCard">
+                      <div class="waitCardTitle">5-6 人</div>
+                      <div class="waitCardNum" id="q56">0</div>
+                      <div class="waitCardSub">組候位中</div>
+                      <div class="waitCardHint">預估等待：<em id="m56">0</em> 分鐘</div>
+                    </div>
+                  </div>
+
+                  <button type="button" class="waitPrimaryBtn" id="openJoinBtn">加入候位</button>
+                </div>
+
+                <div id="waitStepB" class="d-none">
+                  <div class="peopleCards">
+                    <div class="peopleCard" data-type="adult">
+                      <div class="peopleTitle">大人</div>
+                      <div class="peopleCount" id="adultCnt">0</div>
+                      <div class="peopleBtns">
+                        <button type="button" class="miniBtn" data-op="adult+">＋</button>
+                        <button type="button" class="miniBtn" data-op="adult-">－</button>
+                      </div>
+                    </div>
+
+                    <div class="peopleCard" data-type="kid">
+                      <div class="peopleTitle">小孩</div>
+                      <div class="peopleCount" id="kidCnt">0</div>
+                      <div class="peopleBtns">
+                        <button type="button" class="miniBtn" data-op="kid+">＋</button>
+                        <button type="button" class="miniBtn" data-op="kid-">－</button>
+                      </div>
+                    </div>
+
+                    <div class="peopleCard" data-type="chair">
+                      <div class="peopleTitle">兒童座椅</div>
+                      <div class="peopleCount" id="chairCnt">0</div>
+                      <div class="peopleBtns">
+                        <button type="button" class="miniBtn" data-op="chair+">＋</button>
+                        <button type="button" class="miniBtn" data-op="chair-">－</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="waitFormRow">
+                    <div>
+                      <div class="waitTip">請輸入手機號碼，系統將提供您的候位號碼。</div>
+                      <div class="waitInputLabel">手機號碼：</div>
+                      <input id="waitPhone" class="waitPhoneInput" inputmode="numeric" placeholder="09xxxxxxxx">
+                      <div id="waitPhoneHint" class="waitErr d-none">請輸入正確手機號碼（10 碼，09 開頭）</div>
+                    </div>
+
+                    <div class="waitKeypad" id="keypad">
+                      <button type="button" class="keyBtn" data-k="1">1</button>
+                      <button type="button" class="keyBtn" data-k="2">2</button>
+                      <button type="button" class="keyBtn" data-k="3">3</button>
+                      <button type="button" class="keyBtn" data-k="4">4</button>
+                      <button type="button" class="keyBtn" data-k="5">5</button>
+                      <button type="button" class="keyBtn" data-k="6">6</button>
+                      <button type="button" class="keyBtn" data-k="7">7</button>
+                      <button type="button" class="keyBtn" data-k="8">8</button>
+                      <button type="button" class="keyBtn" data-k="9">9</button>
+                      <button type="button" class="keyBtn keyFn" data-k="back">⌫</button>
+                      <button type="button" class="keyBtn" data-k="0">0</button>
+                      <button type="button" class="keyBtn keyOk" data-k="ok">完成</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="waitStepC" class="d-none">
+                  <div class="waitConfirmStage">
+                    <div class="waitConfirmCenter">
+                      <div class="waitConfirmTitle">請確認手機號碼</div>
+                      <div class="waitConfirmPhone" id="waitConfirmPhoneText">0966222144</div>
+                      <div class="waitConfirmHint" id="waitConfirmMetaText">若需修改請按「編輯」</div>
+                    </div>
+
+                    <div class="waitConfirmBottom">
+                      <button type="button" class="waitEditLikeTakeaway" id="waitEditBtn">編輯</button>
+                      <button type="button" class="waitSubmitLikeTakeaway" id="waitFinalBtn">確認送出</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="waitStepD" class="d-none waitFinish">
+                  <div class="finishTitle">您的候位號碼為</div>
+                  <div class="finishNum" id="waitNumberText">0000</div>
+                  <div class="finishMeta" id="waitMetaText"></div>
+                  <div class="finishHint">10 秒後將自動關閉此畫面</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 外送取餐 -->
+        <div class="modal" id="deliveryModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content waitKiosk deliveryKiosk">
+              <div class="modal-header deliveryModalHeader">
+                <h3 class="modal-title">外送取餐</h3>
+                <button type="button" class="deliverySearchBtn" id="openDeliverySearchBtn" aria-label="查詢訂單">
+                  <img src="images/magnifier.png" alt="查詢訂單" class="deliverySearchIcon">
+                </button>
+              </div>
+
+              <div class="modal-body deliveryBody">
+                <div class="deliveryBoard">
+                  <div class="deliveryRow">
+                    <div class="deliveryLogoBox">
+                      <img src="images/foodpanda.png" alt="foodpanda" class="deliveryLogoImg foodpandaImg">
+                    </div>
+
+                    <div class="deliveryStatusPanel">
+                      <div class="deliveryStatusLine">
+                        <div class="deliveryStatusTag">已完成</div>
+                        <div class="deliveryCodeArea" id="foodpandaDoneList"></div>
+                      </div>
+
+                      <div class="deliveryInnerDivider"></div>
+
+                      <div class="deliveryStatusLine">
+                        <div class="deliveryStatusTag">準備中</div>
+                        <div class="deliveryCodeArea" id="foodpandaPreparingList"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="deliveryRow">
+                    <div class="deliveryLogoBox">
+                      <img src="images/ubereats.jpg" alt="Uber Eats" class="deliveryLogoImg uberImg">
+                    </div>
+
+                    <div class="deliveryStatusPanel">
+                      <div class="deliveryStatusLine">
+                        <div class="deliveryStatusTag">已完成</div>
+                        <div class="deliveryCodeArea" id="uberDoneList"></div>
+                      </div>
+
+                      <div class="deliveryInnerDivider"></div>
+
+                      <div class="deliveryStatusLine">
+                        <div class="deliveryStatusTag">準備中</div>
+                        <div class="deliveryCodeArea" id="uberPreparingList"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="waitGhostBtn" data-bs-dismiss="modal">關閉</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 查詢訂單 -->
+        <div class="modal" id="deliverySearchModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content waitKiosk deliverySearchKiosk">
+              <div class="modal-header deliverySearchHeader">
+                <h3 class="modal-title">查詢訂單</h3>
+                <button type="button" class="deliverySearchCloseX" id="deliverySearchCloseBtn" aria-label="關閉">×</button>
+              </div>
+
+              <div class="modal-body deliverySearchBody">
+                <div class="deliverySearchTop">
+                  <div class="deliveryInputLabel">輸入訂單編號</div>
+
+                  <div class="deliveryInputRow">
+                    <input
+                      id="deliveryOrderInput"
+                      class="deliveryOrderInput"
+                      type="text"
+                      inputmode="none"
+                      autocomplete="off"
+                      autocapitalize="characters"
+                      placeholder="例如：A1234"
+                      maxlength="10"
+                      readonly
+                    >
+                    <button type="button" class="deliveryInlineSearchBtn" id="confirmDeliverySearchBtn" aria-label="查詢">
+                      <img src="images/magnifier.png" alt="查詢" class="deliveryInlineSearchIcon">
+                    </button>
+                  </div>
+                </div>
+
+                <div class="deliveryNinePad" id="deliveryNinePad">
+                  <button type="button" class="numBtn nineKey" data-num="1" data-letters="">
+                    <span class="keyNum">1</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="2" data-letters="ABC">
+                    <span class="keyNum">2</span>
+                    <span class="keyLetters">ABC</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="3" data-letters="DEF">
+                    <span class="keyNum">3</span>
+                    <span class="keyLetters">DEF</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="4" data-letters="GHI">
+                    <span class="keyNum">4</span>
+                    <span class="keyLetters">GHI</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="5" data-letters="JKL">
+                    <span class="keyNum">5</span>
+                    <span class="keyLetters">JKL</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="6" data-letters="MNO">
+                    <span class="keyNum">6</span>
+                    <span class="keyLetters">MNO</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="7" data-letters="PQRS">
+                    <span class="keyNum">7</span>
+                    <span class="keyLetters">PQRS</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="8" data-letters="TUV">
+                    <span class="keyNum">8</span>
+                    <span class="keyLetters">TUV</span>
+                  </button>
+
+                  <button type="button" class="numBtn nineKey" data-num="9" data-letters="WXYZ">
+                    <span class="keyNum">9</span>
+                    <span class="keyLetters">WXYZ</span>
+                  </button>
+
+                  <button type="button" class="numBtn fnBtn" id="deliveryClearBtn">清除</button>
+
+                  <button type="button" class="numBtn nineKey" data-num="0" data-letters="">
+                    <span class="keyNum">0</span>
+                  </button>
+
+                  <button type="button" class="numBtn fnBtn" id="deliveryBackBtn">⌫</button>
+                </div>
+
+                <div id="letterPicker" class="letterPicker d-none"></div>
+                <div class="deliverySearchResult d-none" id="deliverySearchResult"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 預約 -->
+
+        <div class="modal" id="reserveModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content waitKiosk reserveKiosk">
+              <div class="modal-header reserveHeader">
+                <h3 class="modal-title">預約</h3>
+                <button type="button" class="reserveCloseXBlack" id="reserveCloseBtn" aria-label="關閉">×</button>
+              </div>
+
+              <div class="modal-body reserveBody">
+
+                <!-- Step A：選模式 -->
+                <div id="reserveStepA">
+                  <div class="reserveEntryWrap">
+                    
+                    <button type="button" class="reserveEntryBtn" id="goReserveToday">
+                      <span class="reserveEntryTop">當日預約</span>
+
+                    </button>
+
+                    <div class="reserveEntryDivider"></div>
+                    
+                    <button type="button" class="reserveEntryBtn" id="goReserveFuture">
+                      <span class="reserveEntryTop">未來預約</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Step B：當日預約先選人數 -->
+                <div id="reserveStepTodayPeople" class="d-none">
+                  <div class="reservePeopleStage">
+                    <div class="reservePeopleOnly">
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">大人</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-r-op="adult-">－</button>
+                          <span id="rAdultCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-r-op="adult+">＋</button>
+                        </div>
+                      </div>
+
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">兒童</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-r-op="kid-">－</button>
+                          <span id="rKidCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-r-op="kid+">＋</button>
+                        </div>
+                      </div>
+
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">兒童椅</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-r-op="chair-">－</button>
+                          <span id="rChairCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-r-op="chair+">＋</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="reserveStageFooter single column">
+                      <div id="reservePeopleHint" class="reserveInlineHint d-none">請先選擇人數</div>
+                      <button type="button" class="reserveMainBtn" id="todayPeopleNextBtn">下一步</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="reserveStepTodayTime" class="d-none">
+                <div class="reserveTimeStageOnly">
+                    <div class="reservePeriodTabs">
+                      <button type="button" class="reservePeriodBtn active" id="periodMorningBtn">上午</button>
+                      <button type="button" class="reservePeriodBtn" id="periodAfternoonBtn">下午</button>
+                    </div>
+
+                    <div class="timeTodayGrid" id="todayTimeGrid"></div>
+                    <div id="reserveTodayTimeHint" class="waitErr d-none">請先選擇時間</div>
+
+                    <div class="reserveTimeFooter">
+                      <button type="button" class="waitGhostBtn" id="todayTimeBackBtn">返回</button>
+                      <button type="button" class="nextBtn" id="todayTimeConfirmBtn">下一步</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 未來預約 -->
+                <div id="reserveStepFuturePeople" class="d-none">
+                  <div class="reservePeopleStage">
+                    <div class="reservePeopleOnly">
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">大人</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-f-op="adult-">－</button>
+                          <span id="fAdultCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-f-op="adult+">＋</button>
+                        </div>
+                      </div>
+
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">兒童</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-f-op="kid-">－</button>
+                          <span id="fKidCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-f-op="kid+">＋</button>
+                        </div>
+                      </div>
+
+                      <div class="reservePeopleOnlyRow">
+                        <div class="reservePeopleLabel">兒童椅</div>
+                        <div class="reservePeopleControl">
+                          <button type="button" class="reserveRoundBtn" data-f-op="chair-">－</button>
+                          <span id="fChairCnt">0</span>
+                          <button type="button" class="reserveRoundBtn" data-f-op="chair+">＋</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="reserveStageFooter single column">
+                      <div id="reserveFuturePeopleHint" class="reserveInlineHint d-none">請先選擇人數</div>
+                      <button type="button" class="reserveMainBtn" id="futurePeopleNextBtn">下一步</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 未來預約選日期＋時段 -->
+                <div id="reserveStepFutureDateTime" class="d-none">
+                  <div class="futureDateTimeStage">
+                    <div class="futureDateCol">
+                      <div id="calendar"></div>
+                    </div>
+
+                    <div class="futureTimeCol">
+                      <div class="reserveFuturePickedInfo" id="reserveFuturePickedInfo"></div>
+
+                      <div class="reservePeriodTabs">
+                        <button type="button" class="reservePeriodBtn active" id="futureMorningBtn">上午</button>
+                        <button type="button" class="reservePeriodBtn" id="futureAfternoonBtn">下午</button>
+                        <button type="button" class="reservePeriodBtn" id="futureNightBtn">晚上</button>
+                      </div>
+
+                      <div class="timeTodayGrid" id="futureTimeGrid"></div>
+                      <div id="reserveFutureDateTimeHint" class="waitErr d-none">請先選擇日期、時間與人數</div>
+
+                      <div class="reserveTimeFooter">
+                        <button type="button" class="waitGhostBtn" id="futureDateBackBtn">返回</button>
+                        <button type="button" class="nextBtn" id="futureNextBtn">下一步</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 輸入電話 -->
+                <div id="reserveStepPhone" class="d-none">
+                  <div class="waitFormRow reservePhoneStage">
+                    <div>
+                      <div class="waitTip">請輸入手機號碼，我們將傳送預約提醒給您。</div>
+                      <div class="waitInputLabel">手機號碼：</div>
+                      <input id="reservePhone" class="waitPhoneInput" inputmode="numeric" placeholder="09xxxxxxxx">
+                      <div id="reservePhoneHint" class="waitErr d-none">請輸入正確手機號碼（10 碼，09 開頭）</div>
+                    </div>
+
+                    <div class="waitKeypad" id="reserveKeypad">
+                      <button type="button" class="keyBtn" data-r-key="1">1</button>
+                      <button type="button" class="keyBtn" data-r-key="2">2</button>
+                      <button type="button" class="keyBtn" data-r-key="3">3</button>
+                      <button type="button" class="keyBtn" data-r-key="4">4</button>
+                      <button type="button" class="keyBtn" data-r-key="5">5</button>
+                      <button type="button" class="keyBtn" data-r-key="6">6</button>
+                      <button type="button" class="keyBtn" data-r-key="7">7</button>
+                      <button type="button" class="keyBtn" data-r-key="8">8</button>
+                      <button type="button" class="keyBtn" data-r-key="9">9</button>
+                      <button type="button" class="keyBtn keyFn" data-r-key="back">⌫</button>
+                      <button type="button" class="keyBtn" data-r-key="0">0</button>
+                      <button type="button" class="keyBtn keyOk" id="reserveToConfirmBtn">完成</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step F：確認 -->
+                <div id="reserveStepConfirm" class="d-none">
+                  <div class="waitConfirmStage">
+                    <div class="waitConfirmCenter">
+                      <div class="waitConfirmTitle">確認預約資訊</div>
+                      <div class="waitConfirmPhone" id="reserveConfirmPhone"></div>
+                      <div class="waitConfirmHint" id="reserveConfirmMeta"></div>
+                    </div>
+
+                    <div class="reserveConfirmBottom">
+                      <button type="button" class="reserveGhostBtn" id="reserveEditBtn">編輯</button>
+                      <button type="button" class="reserveMainBtn" id="reserveFinalBtn">確認送出</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 完成 -->
+                <div id="reserveStepDone" class="d-none waitFinish">
+                  <div class="reserveDoneTitle">預約成功囉！</div>
+                  <div class="reserveDoneSub" id="reserveDoneText">請注意訊息，我們將傳預約提醒給您～</div>
+                  <div class="finishHint">10 秒後將自動關閉此畫面</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 員工打卡 -->
+        <div class="modal" id="clockingModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content waitKiosk clockingKiosk">
+              <div class="modal-header waitModalHeaderOriginal clockingHeader">
+                <h3 class="modal-title">員工打卡</h3>
+                <button type="button" class="clockingCloseX" id="clockingCloseBtn" aria-label="關閉">×</button>
+              </div>              
+
+              <div class="modal-body">
+                <!-- 輸入員工編號 -->
+                <div id="clockStepA">
+                  <div class="waitFormRow clockInputRow">
+                    <div>
+                      <div class="waitTip">請輸入員工編號。</div>
+                      <div class="waitInputLabel">員工編號：</div>
+                      <input id="clockEmpId" class="waitPhoneInput" inputmode="numeric" placeholder="請輸入 4 碼員工編號" readonly>
+                      <div id="clockEmpHint" class="waitErr d-none">查無此員工編號，請重新輸入</div>
+                    </div>
+
+                    <div class="waitKeypad" id="clockKeypad">
+                      <button type="button" class="keyBtn" data-k="1">1</button>
+                      <button type="button" class="keyBtn" data-k="2">2</button>
+                      <button type="button" class="keyBtn" data-k="3">3</button>
+                      <button type="button" class="keyBtn" data-k="4">4</button>
+                      <button type="button" class="keyBtn" data-k="5">5</button>
+                      <button type="button" class="keyBtn" data-k="6">6</button>
+                      <button type="button" class="keyBtn" data-k="7">7</button>
+                      <button type="button" class="keyBtn" data-k="8">8</button>
+                      <button type="button" class="keyBtn" data-k="9">9</button>
+                      <button type="button" class="keyBtn keyFn" data-k="back">⌫</button>
+                      <button type="button" class="keyBtn" data-k="0">0</button>
+                      <button type="button" class="keyBtn keyOk" data-k="ok">完成</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 確認員工編號 -->
+                <div id="clockStepB" class="d-none">
+                  <div class="waitConfirmStage clockConfirmStage">
+                    <div class="waitConfirmCenter">
+                      <div class="waitConfirmTitle">請確認員工資訊</div>
+                      <div class="waitConfirmPhone" id="clockConfirmEmpId">1111</div>
+                      <div class="clockConfirmName" id="clockConfirmName">Sabrina</div>
+                      <div class="waitConfirmHint">確認無誤後，即可進入打卡頁面</div>
+                    </div>
+
+                    <div class="waitConfirmBottom">
+                      <button type="button" class="waitEditLikeTakeaway" id="clockEditBtn">編輯</button>
+                      <button type="button" class="waitSubmitLikeTakeaway" id="clockConfirmBtn">確認</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 選擇上班 / 下班 -->
+                <div id="clockStepC" class="d-none">
+                  <div class="clockActionStage">
+                    <div class="clockActionCenter">
+                      <div class="clockHelloName" id="clockHelloName">Sabrina</div>
+                      <div class="clockActionTitle">請選擇打卡類型</div>
+                    </div>
+                    <div class="clockActionBtns">
+                      <button type="button" class="clockActionBtn clockActionOn" id="clockInBtn">上班</button>
+                      <button type="button" class="clockActionBtn clockActionOff" id="clockOutBtn">下班</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 完成 -->
+                <div id="clockStepD" class="d-none waitFinish">
+                  <div class="finishTitle" id="clockFinishTitle">Sabrina 哈囉！今天一起加油吧！</div>
+                  <div class="clockFinishSub" id="clockFinishSub"></div>
+                  <div class="clockFinishMeta" id="clockFinishMeta"></div>
+                  <div class="finishHint">5 秒後將自動關閉此畫面</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="js/index_page.js"></script>
+</body>
+</html>
