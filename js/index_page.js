@@ -938,23 +938,38 @@ function bindClockingKiosk() {
 
   const trigger = document.getElementById("clockingLogoBtn");
   let pressTimer = null;
+  let clockOpened = false;
 
   const startPress = (e) => {
+  e.preventDefault();
+  clockOpened = false;
+  clearTimeout(pressTimer);
+
+  pressTimer = setTimeout(() => {
+    clockOpened = true;
+    openClockingModal();
+  }, 3000);
+  };
+
+  const endPress = (e) => {
+    if (e) e.preventDefault();
+    clearTimeout(pressTimer);
+  };
+
+  trigger?.addEventListener("pointerdown", startPress, { passive: false });
+  trigger?.addEventListener("pointerup", endPress, { passive: false });
+  trigger?.addEventListener("pointerleave", endPress, { passive: false });
+  trigger?.addEventListener("pointercancel", endPress, { passive: false });
+
+  trigger?.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    clearTimeout(pressTimer);
-    pressTimer = setTimeout(() => {
-      openClockingModal();
-    }, 3000);
-  };
+  });
 
-  const endPress = () => {
-    clearTimeout(pressTimer);
-  };
+  trigger?.addEventListener("touchstart", startPress, { passive: false });
+  trigger?.addEventListener("touchend", endPress, { passive: false });
+  trigger?.addEventListener("touchcancel", endPress, { passive: false });
 
-  trigger?.addEventListener("pointerdown", startPress);
-  trigger?.addEventListener("pointerup", endPress);
-  trigger?.addEventListener("pointerleave", endPress);
-  trigger?.addEventListener("pointercancel", endPress);
+ addEventListener("pointercancel", endPress);
 
   document.getElementById("clockingCloseBtn")?.addEventListener("click", () => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
@@ -1665,6 +1680,7 @@ function bindReserveKiosk() {
     document.getElementById("periodMorningBtn")?.classList.add("active");
     document.getElementById("periodAfternoonBtn")?.classList.remove("active");
     renderTodayReserveSlots("morning");
+
   });
 
   document.getElementById("periodAfternoonBtn")?.addEventListener("click", () => {

@@ -4806,3 +4806,13 @@ button#todayTimeBackBtn{
   margin-top: 10px;
   text-align: left;
 }
+.clockingLogoBtn,
+.clockingLogoImg{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.clockingLogoImg{
+  pointer-events: none;
+}
