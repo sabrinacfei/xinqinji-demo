@@ -295,6 +295,9 @@ function bindSumOverlay(){
 function bindCheckoutAndCart(){
   $("#checkoutBtn")?.addEventListener("click", () => openCheckoutSummary("checkout"));
   $("#cartIconWrap")?.addEventListener("click", () => openCheckoutSummary("cart"));
+  $("#takeawayBackBtn")?.addEventListener("click", () => {
+    location.href = "index.html";
+  });
 }
 
 function bindPickupFlow(){

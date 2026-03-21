@@ -4816,3 +4816,17 @@ button#todayTimeBackBtn{
 .clockingLogoImg{
   pointer-events: none;
 }
+
+#takeawayBackBtn{
+  background: #ddd !important;
+  color: #000 !important;
+}
+#takeawayBackBtn,
+#checkoutBtn{
+  width: 100px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

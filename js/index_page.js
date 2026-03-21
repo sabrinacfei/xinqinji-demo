@@ -207,10 +207,10 @@ function bindWaitingKiosk() {
   });
   function goWaitConfirm() {
     const phone = document.getElementById("waitPhone")?.value.trim() || "";
-    const okPeople = adults + kids > 0;
+    const okPeople = adults > 0;
 
     if (!okPeople) {
-      showPhoneHint("waitPhoneHint", "請先選擇人數（至少 1 位）");
+      showPhoneHint("waitPhoneHint", "要有一位大人以上 才可完成候位喔！");
       showStep("waitStepB");
       return;
     }
@@ -233,6 +233,12 @@ function bindWaitingKiosk() {
   // 正式送出
   function submitWaitQueue() {
   const phone = document.getElementById("waitPhone")?.value.trim() ?? "";
+  
+    if (adults <= 0) {
+    showStep("waitStepB");
+    showPhoneHint("waitPhoneHint", "要有一位大人以上 才可完成訂位喔！");
+    return;
+  }
   const number = createWaitNumber();
   const group = calcGroup();
 
@@ -1547,9 +1553,19 @@ function bindReserveKiosk() {
 
       refreshReservePeopleUI();
 
-      if (getReservePeopleCount() > 0) {
-        document.getElementById("reservePeopleHint")?.classList.add("d-none");
-        document.getElementById("reserveFuturePeopleHint")?.classList.add("d-none");
+      if (reserveAdults > 0) {
+        const todayHint = document.getElementById("reservePeopleHint");
+        const futureHint = document.getElementById("reserveFuturePeopleHint");
+
+        if (todayHint) {
+          todayHint.textContent = "請先選擇人數";
+          todayHint.classList.add("d-none");
+        }
+
+        if (futureHint) {
+          futureHint.textContent = "請先選擇人數";
+          futureHint.classList.add("d-none");
+        }
       }
 
       if (reserveType === "today") renderTodayReserveSlots();
@@ -1564,8 +1580,11 @@ function bindReserveKiosk() {
   document.getElementById("todayPeopleNextBtn")?.addEventListener("click", () => {
     const hint = document.getElementById("reservePeopleHint");
 
-    if (getReservePeopleCount() <= 0) {
-      hint?.classList.remove("d-none");
+    if (reserveAdults <= 0) {
+      if (hint) {
+        hint.textContent = "要有一位大人以上 才可完成訂位喔！";
+        hint.classList.remove("d-none");
+      }
       return;
     }
 
@@ -1690,12 +1709,14 @@ function bindReserveKiosk() {
     document.getElementById("periodMorningBtn")?.classList.remove("active");
     renderTodayReserveSlots("afternoon");
   });
-
   document.getElementById("futurePeopleNextBtn")?.addEventListener("click", () => {
     const hint = document.getElementById("reserveFuturePeopleHint");
 
-    if (getReservePeopleCount() <= 0) {
-      hint?.classList.remove("d-none");
+    if (reserveAdults <= 0) {
+      if (hint) {
+        hint.textContent = "要有一位大人以上 才可完成訂位喔！";
+        hint.classList.remove("d-none");
+      }
       return;
     }
 
