@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <!-- 餐點彈窗（Bootstrap） -->
+    <!-- 餐點彈窗 -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content" style="border-radius:16px; overflow:hidden;">
@@ -121,6 +121,10 @@
     </div>
 
     <div class="bottomBar">
+      <div id="takeawayEmptyHint" class="takeawayEmptyHint d-none">
+        目前沒有點餐內容，請先加入購物車。
+      </div>
+
       <div class="text-end d-flex justify-content-end gap-2">
         <button
           type="button"
@@ -137,7 +141,7 @@
         </button>
       </div>
     </div>
-    <!-- 外帶取餐：三段式（輸入 A → 確認 C → 取號 B） -->
+    <!-- 外帶取餐 -->
     <div class="modal" id="pickupModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content waitKiosk">
@@ -215,7 +219,7 @@
       </div>
     </div>
 
-    <!-- ✅ 頁面內：訂單明細（右下紅鍵由 JS 依來源改字） -->
+    <!-- 頁面內：訂單明細 -->
     <div id="sumOverlay" class="sumOverlay d-none">
       <div class="sumCard">
         <div class="sumHead">

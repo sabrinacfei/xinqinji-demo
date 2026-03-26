@@ -3602,11 +3602,6 @@ body.modal-open .kioskCanvas .cartIconWrap{
   flex: 0 0 560px;
 }
 
-#todayTimeConfirmBtn{
-  width: 180px !important;
-  min-width: 180px !important;
-  font-size: 1.7rem !important;
-}
 
 #reserveStepPhone .waitKeypad{
   display: grid !important;
@@ -3635,31 +3630,6 @@ body.modal-open .kioskCanvas .cartIconWrap{
 #reserveStepPhone .keyBtn.keyFn{
   color: #666 !important;
 }
-
-button#todayTimeBackBtn{
-  width: 140px !important;
-  min-width: 140px !important;
-  max-width: 140px !important;
-
-  height: 45px !important;
-  min-height: 45px !important;
-  max-height: 45px !important;
-
-  padding: 0 !important;
-  line-height: 45px !important;
-
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  border-radius: 14px !important;
-  font-size: 1.2rem !important;
-  font-weight: 900 !important;
-
-  align-self: center !important;
-  box-sizing: border-box !important;
-}
-
 
 .reserveTimeFooter > *{
   align-self: center !important;
@@ -3801,14 +3771,6 @@ button#todayTimeBackBtn{
   margin-bottom: 8px;
 }
 
-#futureDateBackBtn,
-#todayTimeBackBtn {
-  min-width: 150px;
-  height: 58px;
-  border-radius: 16px;
-  font-size: 1.1rem;
-  font-weight: 900;
-}
 
 /* ===== 員工打卡 logo 按鈕 ===== */
 .clockingLogoWrap{
@@ -4521,25 +4483,7 @@ button#todayTimeBackBtn{
   color: #fff !important;
 }
 
-#todayTimeBackBtn,
-#futureDateBackBtn{
-  min-width: 150px;
-  height: 58px;
-  border-radius: 16px;
-  font-size: 1.1rem;
-  font-weight: 900;
-}
 
-#futureNextBtn,
-#todayTimeConfirmBtn{
-  min-width: 180px;
-  height: 58px;
-  border-radius: 16px;
-  font-size: 1.15rem;
-  font-weight: 900;
-  width: auto !important;
-  margin-top: 0 !important;
-}
 
 #reserveStepConfirm .waitConfirmCenter,
 #reserveStepConfirm .reserveConfirmCenter{
@@ -4830,7 +4774,7 @@ button#todayTimeBackBtn{
     font-size: 1.15rem;
   }
 }
-/* ===== 預約：當日/未來時間頁最終修正 ===== */
+/* ===== 預約：當日/未來時間頁 ===== */
 
 /* 整個預約彈窗固定高度 */
 #reserveModal .modal-content{
@@ -4855,7 +4799,6 @@ button#todayTimeBackBtn{
   min-height: 0 !important;
 }
 
-/* 當日預約：上面內容、下面 footer */
 #reserveStepTodayTime .reserveTimeStageOnly{
   height: 100% !important;
   min-height: 0 !important;
@@ -4878,7 +4821,6 @@ button#todayTimeBackBtn{
   margin-bottom: 0 !important;
 }
 
-/* 提示字不要把 footer 擠走 */
 #reserveTodayTimeHint{
   flex: 0 0 auto !important;
   min-height: 24px !important;
@@ -4886,7 +4828,7 @@ button#todayTimeBackBtn{
   margin-bottom: 0 !important;
 }
 
-/* 當日預約 footer 固定在最下方 */
+
 #reserveStepTodayTime .reserveTimeFooter{
   flex: 0 0 auto !important;
   margin-top: auto !important;
@@ -4936,25 +4878,6 @@ button#todayTimeBackBtn{
   gap: 14px !important;
 }
 
-/* 按鈕大小統一 */
-#todayTimeBackBtn,
-#futureDateBackBtn{
-  min-width: 140px !important;
-  height: 56px !important;
-  border-radius: 16px !important;
-  font-size: 1.1rem !important;
-  font-weight: 900 !important;
-}
-
-#todayTimeConfirmBtn,
-#futureNextBtn{
-  min-width: 170px !important;
-  height: 56px !important;
-  border-radius: 16px !important;
-  font-size: 1.15rem !important;
-  font-weight: 900 !important;
-  margin-top: 0 !important;
-}
 /* ===== 預約時間頁修正（最底部覆蓋） ===== */
 
 #reserveModal .modal-content{
@@ -5253,3 +5176,80 @@ button#todayTimeBackBtn{
   margin: 18px 0 !important;
 }
 
+.bottomBar{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+.takeawayEmptyHint{
+  margin: 0 !important;
+  color: #d93025;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.4;
+  flex: 1 1 auto;
+  text-align: right;
+  position: relative;
+  top: 2px;
+}
+
+.takeawayEmptyHint.d-none{
+  display: none !important;
+}
+
+/* ===== 預約頁：返回 / 下一步 最終統一版 ===== */
+#reserveStepTodayTime .reserveTimeFooter,
+#reserveStepFutureDateTime .reserveTimeFooter,
+#reserveStepFutureTime .reserveTimeFooter{
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+#reserveStepTodayTime #todayTimeBackBtn,
+#reserveStepTodayTime #todayTimeConfirmBtn,
+#reserveStepFutureDateTime #futureDateBackBtn,
+#reserveStepFutureDateTime #futureNextBtn,
+#reserveStepFutureTime #futureTimeBackBtn,
+#reserveStepFutureTime #futureTimeConfirmBtn{
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+
+  height: 50px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 50px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 136px !important;
+  box-sizing: border-box !important;
+
+  border-radius: 12px !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+}
+
+#reserveStepTodayTime #todayTimeBackBtn,
+#reserveStepFutureDateTime #futureDateBackBtn,
+#reserveStepFutureTime #futureTimeBackBtn{
+  background: #fff !important;
+  color: #222 !important;
+  border: 2px solid #c8c8c8 !important;
+}
+
+#reserveStepTodayTime #todayTimeConfirmBtn,
+#reserveStepFutureDateTime #futureNextBtn,
+#reserveStepFutureTime #futureTimeConfirmBtn{
+  background: #9fd3cf !important;
+  color: #111 !important;
+  border: 0 !important;
+}

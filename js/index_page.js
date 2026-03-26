@@ -1637,18 +1637,28 @@ function bindReserveKiosk() {
     }
 
     if (reserveType === "today") {
-      const duplicated = await apiHasActiveBookingByPhone(phone, "todayReserve", reserveDate);
+      const duplicated = await apiHasActiveBookingByPhone(
+        phone,
+        "todayReserve",
+        reserveDate,
+        reserveTime
+      );
       if (duplicated) {
-        showPhoneHint("reservePhoneHint", "請勿重複訂位");
+        showPhoneHint("reservePhoneHint", "此手機同一時段已有當日預約");
         showReserveStep("reserveStepPhone");
         return;
       }
     }
 
     if (reserveType === "future") {
-      const duplicated = await apiHasActiveBookingByPhone(phone, "futureReserve", reserveDate);
+      const duplicated = await apiHasActiveBookingByPhone(
+        phone,
+        "futureReserve",
+        reserveDate,
+        reserveTime
+      );
       if (duplicated) {
-        showPhoneHint("reservePhoneHint", "請勿重複訂位");
+        showPhoneHint("reservePhoneHint", "此手機同一時段已有未來預約");
         showReserveStep("reserveStepPhone");
         return;
       }
@@ -1854,21 +1864,32 @@ function bindQueryStatusKiosk() {
       const key = btn.dataset.k;
       if (!key) return;
 
-      if (key === "back") {
-        queryStatusValue = queryStatusValue.slice(0, -1);
-      } else {
-        queryStatusValue += key;
+    if (key === "back") {
+      queryStatusValue = queryStatusValue.slice(0, -1);
+    } else {
+      const nextValue = queryStatusValue + key;
+
+      if (/^09\d+$/.test(nextValue) && nextValue.length > 10) {
+        return;
       }
+
+      queryStatusValue = nextValue;
+    }
 
       renderQueryStatusInput();
     });
   });
 
   document.getElementById("confirmQueryStatusBtn")?.addEventListener("click", async () => {
-    const value = (queryStatusValue || "").trim();
+    const value = (queryStatusValue || "").trim().toUpperCase();
 
     if (!value) {
       showQueryStatusHint("請輸入查詢號碼");
+      return;
+    }
+
+    if (/^09\d+$/.test(value) && value.length > 4 && value.length !== 10) {
+      showQueryStatusHint("若輸入手機號碼，必須為 10 碼（09 開頭）");
       return;
     }
 
@@ -1890,16 +1911,6 @@ function bindQueryStatusKiosk() {
     } catch (err) {
       console.error("query status failed:", err);
       showQueryStatusResult(`<div class="queryResultStatus">狀態：查詢失敗，請稍後再試</div>`);
-
-      bootstrap.Modal.getOrCreateInstance(
-        document.getElementById("queryStatusInputModal")
-      ).hide();
-
-      setTimeout(() => {
-        bootstrap.Modal.getOrCreateInstance(
-          document.getElementById("queryStatusResultModal")
-        ).show();
-      }, 180);
     }
   });
 

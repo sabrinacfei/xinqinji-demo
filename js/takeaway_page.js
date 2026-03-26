@@ -1,5 +1,15 @@
 function $(sel) { return document.querySelector(sel); }
 function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
+function showTakeawayEmptyHint(msg = "目前沒有點餐內容，請先加入購物車。"){
+  const el = $("#takeawayEmptyHint");
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.remove("d-none");
+}
+
+function hideTakeawayEmptyHint(){
+  $("#takeawayEmptyHint")?.classList.add("d-none");
+}
 
 let state = {
   cat: "",
@@ -105,6 +115,7 @@ function bindOrderModal(){
   $("#confirmAddBtn")?.addEventListener("click", () => {
     if(!modalState.item) return;
     addToCart(modalState.item, modalState.qty);
+    hideTakeawayEmptyHint();
     window.bootstrap.Modal.getOrCreateInstance(document.getElementById("orderModal")).hide();
   });
 }
@@ -179,9 +190,11 @@ function renderSumRows(editable){
 function openCheckoutSummary(source){
   const cart = loadCart();
   if(!cart.length){
-    alert("目前沒有點餐內容，請先加入購物車。");
+    showTakeawayEmptyHint("目前沒有點餐內容，請先加入購物車。");
     return;
   }
+
+  hideTakeawayEmptyHint();
 
   sumState.source = source;      
   sumState.editing = false;

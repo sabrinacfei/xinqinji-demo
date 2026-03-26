@@ -392,8 +392,10 @@ async function apiSaveClockLogs(data) {
    shared lookup
    ========================= */
 
-async function apiHasActiveBookingByPhone(phone, mode, date = "") {
+async function apiHasActiveBookingByPhone(phone, mode, date = "", time = "") {
   const normalizedPhone = String(phone || "").trim();
+  const normalizedDate = String(date || "").trim();
+  const normalizedTime = String(time || "").trim();
 
   if (mode === "wait") {
     const waitlist = await apiGetWaitlist();
@@ -407,8 +409,9 @@ async function apiHasActiveBookingByPhone(phone, mode, date = "") {
     const list = await apiGetReservations();
     return list.some((x) => {
       if (String(x.phone || "").trim() !== normalizedPhone) return false;
-      if (date && String(x.date || "") !== String(date)) return false;
-      if (String(x.status || "") !== "booked") return false;
+      if (normalizedDate && String(x.date || "").trim() !== normalizedDate) return false;
+      if (normalizedTime && String(x.time || "").trim() !== normalizedTime) return false;
+      if (String(x.status || "").trim() !== "booked") return false;
 
       if (mode === "todayReserve") return x.type === "today";
       if (mode === "futureReserve") return x.type === "future";
@@ -422,7 +425,17 @@ async function apiHasActiveBookingByPhone(phone, mode, date = "") {
 async function apiLookupStatus(input) {
   const keyword = normalizeLookupInput(input);
 
-  const isFullPhone = /^09\d{8}$/.test(keyword);
+  const isPhoneLike = /^09\d+$/.test(keyword);
+  const isStrictFullPhone = /^09\d{8}$/.test(keyword);
+
+  if (isPhoneLike && keyword.length > 4 && keyword.length !== 10) {
+    return {
+      found: false,
+      message: "若輸入手機號碼，必須為 10 碼（09 開頭）"
+    };
+  }
+
+  const isFullPhone = isStrictFullPhone;
   const isPickupNo = /^P\d+$/.test(keyword);
   const isWaitNo = /^\d{4,}$/.test(keyword);
   const isPhoneLast3 = /^\d{3}$/.test(keyword);
@@ -464,6 +477,44 @@ async function apiLookupStatus(input) {
     };
   }
 
+  // 先查完整手機 / 手機末三碼
+  if (isFullPhone || isPhoneLast3) {
+    const waitMatches = waitQueue.filter((x) => {
+      const phone = String(x.phone || "").trim();
+      return isFullPhone ? phone === keyword : getPhoneLast3(phone) === keyword;
+    });
+
+    const pickupMatches = pickupOrders.filter((x) => {
+      const phone = String(x.phone || "").trim();
+      return isFullPhone ? phone === keyword : getPhoneLast3(phone) === keyword;
+    });
+
+    const totalMatches = waitMatches.length + pickupMatches.length;
+
+    if (totalMatches === 0) {
+      return { found: false, message: "查無資料" };
+    }
+
+    if (!isFullPhone && totalMatches > 1) {
+      return {
+        found: false,
+        needFullPhone: true,
+        message: "查到多筆相同手機末三碼，請輸入完整電話號碼查詢。"
+      };
+    }
+
+    if (waitMatches.length) {
+      const target = waitMatches[waitMatches.length - 1];
+      return apiLookupStatus(String(target.number));
+    }
+
+    if (pickupMatches.length) {
+      const target = pickupMatches[pickupMatches.length - 1];
+      return apiLookupStatus(String(target.pickupNo));
+    }
+  }
+
+  // 最後才查候位號碼
   if (isWaitNo) {
     const found = waitQueue.find((x) => String(x.number) === keyword);
     if (!found) return { found: false, message: "查無資料" };
@@ -501,32 +552,6 @@ async function apiLookupStatus(input) {
       aheadCount,
       waitMin: aheadCount * 5
     };
-  }
-
-  if (isFullPhone || isPhoneLast3) {
-    const waitMatches = waitQueue.filter((x) =>
-      isFullPhone ? String(x.phone) === keyword : getPhoneLast3(x.phone) === keyword
-    );
-    const pickupMatches = pickupOrders.filter((x) =>
-      isFullPhone ? String(x.phone) === keyword : getPhoneLast3(x.phone) === keyword
-    );
-
-    const totalMatches = waitMatches.length + pickupMatches.length;
-
-    if (totalMatches === 0) {
-      return { found: false, message: "查無資料" };
-    }
-
-    if (!isFullPhone && totalMatches > 1) {
-      return {
-        found: false,
-        needFullPhone: true,
-        message: "查到多筆相同手機末三碼，請輸入完整電話號碼查詢。"
-      };
-    }
-
-    if (waitMatches.length) return apiLookupStatus(waitMatches[0].number);
-    if (pickupMatches.length) return apiLookupStatus(pickupMatches[0].pickupNo);
   }
 
   return { found: false, message: "請輸入手機末三碼、完整電話、候位號碼或外帶號碼" };
