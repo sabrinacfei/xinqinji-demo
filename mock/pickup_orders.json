@@ -1,16 +1,3 @@
 {
-  "orders": [
-    {
-      "pickupNo": "P001",
-      "phone": "0912345678",
-      "status": "ready",
-      "createdAt": "2026-03-24T19:30:00+08:00"
-    },
-    {
-      "pickupNo": "P002",
-      "phone": "0922333444",
-      "status": "preparing",
-      "createdAt": "2026-03-24T19:35:00+08:00"
-    }
-  ]
+  "orders": [ ]
 }

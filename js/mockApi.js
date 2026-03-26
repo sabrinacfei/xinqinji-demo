@@ -102,14 +102,22 @@ async function apiCreateWaiting(item) {
   const callReady = Array.isArray(data.callReady) ? [...data.callReady] : [];
 
   const number = makeWaitNumber(queue);
+
+  // 前面真正還在排隊的人
   const waitingAhead = queue.filter((x) => x.status === "waiting").length;
+
+  // 前面是否已有「正在叫號 / 可直接入場」的人
+  const readyAhead = queue.filter((x) => x.status === "ready").length;
 
   let status = "waiting";
 
-  if (waitingAhead === 0 && callReady.length === 0) {
+  // 第一組：直接進現在叫號
+  if (waitingAhead === 0 && readyAhead === 0 && callReady.length === 0) {
     status = "ready";
     callReady.push(number);
   } else {
+    // 後面的人進等候入場
+    status = "waiting";
     callSoon.push(number);
   }
 
@@ -174,7 +182,7 @@ async function apiCallNextWaiting() {
    ========================= */
 
 async function apiGetPickupOrders() {
-  if (mockCache.pickup) return mockCache.pickup;
+ if (mockCache.pickup) return mockCache.pickup;
 
   const saved = localStorage.getItem(MOCK_PICKUP_KEY);
   if (saved) {
@@ -183,7 +191,7 @@ async function apiGetPickupOrders() {
   }
 
   try {
-    mockCache.pickup = await readJson("./mock/pickup_orders.json");
+    mockCache.pickup = await readJson("./mock/pickup_orders.json?");
   } catch (err) {
     console.error("apiGetPickupOrders failed:", err);
     mockCache.pickup = { orders: [] };
@@ -543,6 +551,10 @@ async function apiLookupStatus(input) {
     const aheadIndex = waitingOnly.findIndex((x) => x.number === found.number);
     const aheadCount = aheadIndex < 0 ? 0 : aheadIndex;
 
+    // 預估等待分鐘要把前面 ready 的也算進去
+    const readyAheadCount = waitQueue.filter((x) => x.status === "ready").length;
+    const waitMin = (aheadCount + readyAheadCount) * 5;
+
     return {
       type: "wait",
       found: true,
@@ -550,7 +562,7 @@ async function apiLookupStatus(input) {
       phoneLast3: getPhoneLast3(found.phone),
       statusText: "等候入場",
       aheadCount,
-      waitMin: aheadCount * 5
+      waitMin
     };
   }
 

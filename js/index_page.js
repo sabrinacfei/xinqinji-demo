@@ -154,19 +154,28 @@ async function updateOverviewFromQueue() {
 
   try {
     const data = await apiGetWaitlist();
-    const q = (data.queue || []).filter((x) => x.status === "waiting");
+    const queue = data.queue || [];
 
-    const c12 = q.filter((x) => x.group === "1-2").length;
-    const c34 = q.filter((x) => x.group === "3-4").length;
-    const c56 = q.filter((x) => x.group === "5-6").length;
+    const waitingOnly = queue.filter((x) => x.status === "waiting");
+
+    const activeForMinutes = queue.filter((x) => x.status === "waiting" || x.status === "ready");
+
+    const c12 = waitingOnly.filter((x) => x.group === "1-2").length;
+    const c34 = waitingOnly.filter((x) => x.group === "3-4").length;
+    const c56 = waitingOnly.filter((x) => x.group === "5-6").length;
+
+    const m12Count = activeForMinutes.filter((x) => x.group === "1-2").length;
+    const m34Count = activeForMinutes.filter((x) => x.group === "3-4").length;
+    const m56Count = activeForMinutes.filter((x) => x.group === "5-6").length;
 
     box12.textContent = c12;
     box34.textContent = c34;
     box56.textContent = c56;
 
-    wait12.textContent = c12 * 5;
-    wait34.textContent = c34 * 5;
-    wait56.textContent = c56 * 5;
+    wait12.textContent = m12Count * 5;
+    wait34.textContent = m34Count * 5;
+    wait56.textContent = m56Count * 5;
+
   } catch (err) {
     console.error("updateOverviewFromQueue failed:", err);
     box12.textContent = "0";
@@ -1895,25 +1904,33 @@ function bindQueryStatusKiosk() {
 
     clearQueryStatusHint();
 
+    const inputModal = bootstrap.Modal.getOrCreateInstance(
+      document.getElementById("queryStatusInputModal")
+    );
+    const resultModal = bootstrap.Modal.getOrCreateInstance(
+      document.getElementById("queryStatusResultModal")
+    );
+
     try {
       const result = await apiLookupStatus(value);
       showQueryStatusResult(buildQueryStatusHtml(result));
 
-      bootstrap.Modal.getOrCreateInstance(
-        document.getElementById("queryStatusInputModal")
-      ).hide();
+      inputModal.hide();
 
       setTimeout(() => {
-        bootstrap.Modal.getOrCreateInstance(
-          document.getElementById("queryStatusResultModal")
-        ).show();
+        resultModal.show();
       }, 180);
     } catch (err) {
       console.error("query status failed:", err);
-      showQueryStatusResult(`<div class="queryResultStatus">狀態：查詢失敗，請稍後再試</div>`);
+      showQueryStatusResult(`<div class="queryResultStatus">查詢失敗，請稍後再試</div>`);
+
+      inputModal.hide();
+
+      setTimeout(() => {
+        resultModal.show();
+      }, 180);
     }
   });
-
   document.getElementById("queryStatusResultModal")?.addEventListener("hidden.bs.modal", () => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("queryStatusInputModal")).hide();
     bootstrap.Modal.getOrCreateInstance(document.getElementById("callModal")).show();

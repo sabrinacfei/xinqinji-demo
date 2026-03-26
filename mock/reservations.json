@@ -1,24 +1,3 @@
 [
-  {
-    "id": "R001",
-    "type": "today",
-    "phone": "0988877777",
-    "date": "2026-03-25",
-    "time": "21:00",
-    "adults": 1,
-    "kids": 0,
-    "chairs": 0,
-    "status": "booked"
-  },
-  {
-    "id": "R002",
-    "type": "future",
-    "phone": "0966666666",
-    "date": "2026-03-26",
-    "time": "18:30",
-    "adults": 2,
-    "kids": 1,
-    "chairs": 0,
-    "status": "booked"
-  }
+  { }
 ]
