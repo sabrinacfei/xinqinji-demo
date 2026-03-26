@@ -10,7 +10,7 @@
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <script src="js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="css/font-awesome.min.css">
-  <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <link href="css/style.css?V=20260326_1436" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh-tw.js"></script>
@@ -19,13 +19,78 @@
   <div class="kioskStage">
     <div class="kioskCanvas">
       <main class="mainContainer mainHeight">
+        <div class="modal fade" id="queryStatusInputModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content queryInputModalBox">
+              <div class="modal-header">
+                <h5 class="modal-title">查詢狀態</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div class="modal-body queryInputBody">
+                <div class="queryGuideText">
+                  請輸入手機末三碼、完整電話、候位號碼或外帶號碼
+                </div>
+
+                <div class="queryInputLayout">
+                  <div class="queryInputLeft">
+                    <div class="queryInputLabel">查詢號碼：</div>
+
+                    <div class="queryInputRow">
+                      <div id="queryStatusInput" class="queryStatusInputBox"></div>
+                      <button id="confirmQueryStatusBtn">查詢</button>
+                    </div>
+                    <div id="queryStatusHint" class="queryStatusHint"></div>
+                  </div>
+
+                  <div class="queryInputRight">
+                    <div class="queryKeypad">
+                      <button data-k="1">1</button>
+                      <button data-k="2">2</button>
+                      <button data-k="3">3</button>
+
+                      <button data-k="4">4</button>
+                      <button data-k="5">5</button>
+                      <button data-k="6">6</button>
+
+                      <button data-k="7">7</button>
+                      <button data-k="8">8</button>
+                      <button data-k="9">9</button>
+
+                      <button data-k="back">⌫</button>
+                      <button data-k="0">0</button>
+                      <button data-k="P">P</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="queryStatusResultModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content queryResultModalBox">
+              <div class="modal-header">
+                <h5 class="modal-title">查詢結果</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div class="modal-body">
+                <div id="queryStatusResult" class="queryStatusResultBox"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- 現在叫號 -->
         <div class="modal fade" id="callModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-dialog modal-dialog-centered callModalDialog">
             <div class="modal-content callModalBox">
-              <div class="modal-header">
-                <h3 class="modal-title">現在叫號</h3>
+              <div class="modal-header callHeaderWithSearch">
+                <h5 class="modal-title">現在叫號</h5>
+                <button type="button" class="callSearchBtn" id="openQueryStatusBtn" aria-label="查詢狀態">
+                  <img src="images/magnifier.png" alt="查詢">
+                </button>
               </div>
 
               <div class="modal-body">
@@ -50,35 +115,36 @@
         </div>
 
         <div class="row mainContent">
-          <aside class="col-md-4">
-            <div class="row throneWrap">
-              <div class="col-md-6 waitBox">
-                <div>候位</div>
-              </div>
-              <div class="col-md-6 reserveBox">
-                <div>預約</div>
-              </div>
+        <aside class="col-md-4">
+          <div class="row throneWrap">
+            <div class="col-md-6 waitBox" onclick="openWaitModal()">
+              <div>候位</div>
             </div>
-
-            <div class="row callWrap" id="openCallModal" style="cursor:pointer;">
-              <div class="col-md-5 callLeftTitle">現在叫號</div>
-              <div class="col-md-7 callRightNums" id="callMiniNums"></div>
+            <div class="col-md-6 reserveBox">
+              <div>預約</div>
             </div>
+          </div>
 
-            <div class="pickupUber" id="openDeliveryModal">外送取餐</div>
-            <div class="pickupIndoor" onclick="location.href='indoor.html'">內用菜單</div>
-            <div class="clockingLogoWrap">
-              <button type="button" class="clockingLogoBtn" id="clockingLogoBtn" aria-label="員工打卡">
-                <img 
-                  src="images/logo-removebg-preview.png" 
-                  alt="員工打卡" 
-                  class="clockingLogoImg"
-                  draggable="false"
-                  >
-              </button>
-            </div>
+          <div class="row callWrap" id="openCallModal"
+              onclick="renderCallModal(); bootstrap.Modal.getOrCreateInstance(document.getElementById('callModal')).show();"
+              style="cursor:pointer;">
+            <div class="col-md-5 callLeftTitle">現在叫號</div>
+            <div class="col-md-7 callRightNums" id="callMiniNums"></div>
+          </div>
 
-          </aside>
+          <div class="pickupUber" id="openDeliveryModal">外送取餐</div>
+          <div class="pickupIndoor" onclick="location.href='indoor.html'">內用菜單</div>
+
+          <div class="clockingLogoWrap">
+            <button type="button" class="clockingLogoBtn" id="clockingLogoBtn" aria-label="員工打卡">
+              <img
+                src="images/logo-removebg-preview.png"
+                alt="員工打卡"
+                class="clockingLogoImg"
+                draggable="false">
+            </button>
+          </div>
+        </aside>
 
           <article class="col-md-8 articleContainer">
             <div class="container diningContent">
@@ -213,6 +279,7 @@
                       <div class="waitConfirmTitle">請確認手機號碼</div>
                       <div class="waitConfirmPhone" id="waitConfirmPhoneText">0966222144</div>
                       <div class="waitConfirmHint" id="waitConfirmMetaText">若需修改請按「編輯」</div>
+                      <div id="waitConfirmHint" class="waitErr d-none"></div>
                     </div>
 
                     <div class="waitConfirmBottom">
@@ -673,7 +740,7 @@
       </main>
     </div>
   </div>
-
-  <script type="module" src="js/index_page.js"></script>
+  <script src="js/mockApi.js?v=20260326_1205"></script>
+  <script src="js/index_page.js?v=20260326_1205"></script>
 </body>
 </html>

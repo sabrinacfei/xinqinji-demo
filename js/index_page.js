@@ -44,46 +44,63 @@ function bindNav() {
 }
 
 // ===== 首頁：現在叫號 =====
-function renderNowCallingMini() {
+async function renderNowCallingMini() {
   const box = document.getElementById("callMiniNums");
   if (!box) return;
 
-  const ready = JSON.parse(localStorage.getItem("sq_call_ready") || "[]");
+  try {
+    const data = await apiGetWaitlist();
+    const ready = data.callReady || [];
 
-  box.innerHTML = ready
-    .slice(0, 4)
-    .map((n) => `<div class="callMiniNo">${n}</div>`)
-    .join("");
+    box.innerHTML = ready.length
+      ? ready.slice(0, 4).map((n) => `<div class="callMiniNo">${n}</div>`).join("")
+      : `<div class="callMiniNo">—</div>`;
+  } catch (err) {
+    console.error("renderNowCallingMini failed:", err);
+    box.innerHTML = `<div class="callMiniNo">—</div>`;
+  }
 }
 
-function renderCallModal() {
+async function renderCallModal() {
   const soonBox = document.getElementById("callSoonList");
   const pickupBox = document.getElementById("callPickupList");
   if (!soonBox || !pickupBox) return;
 
-  const soon = JSON.parse(localStorage.getItem("sq_call_soon") || "[]");
-  const pickup = JSON.parse(localStorage.getItem("sq_pickup_now") || "[]");
+  try {
+    const waitData = await apiGetWaitlist();
+    const pickupData = await apiGetPickupOrders();
 
-  soonBox.innerHTML = soon
-    .slice(0, 6)
-    .map((n) => `<span>${n}</span>`)
-    .join("");
+    const soon = waitData.callSoon || [];
+    const pickupOrders = pickupData.orders || [];
 
-  pickupBox.innerHTML = pickup
-    .slice(0, 6)
-    .map((n, i) => `<span class="${i === 0 ? "isNowPickup" : ""}">${n}</span>`)
-    .join("");
+    soonBox.innerHTML = soon.length
+      ? soon.slice(0, 6).map((n) => `<span>${n}</span>`).join("")
+      : `<span>—</span>`;
+
+    pickupBox.innerHTML = pickupOrders.length
+      ? pickupOrders.slice(0, 6).map((item, i) => {
+          const cls = i === 0 ? "isNowPickup" : "";
+          return `<span class="${cls}">${item.pickupNo}</span>`;
+        }).join("")
+      : `<span>—</span>`;
+  } catch (err) {
+    console.error("renderCallModal failed:", err);
+    soonBox.innerHTML = `<span>—</span>`;
+    pickupBox.innerHTML = `<span>—</span>`;
+  }
 }
 
-function renderTakeawayWait() {
+async function renderTakeawayWait() {
   const el = document.getElementById("takeawayWaitMin");
   if (!el) return;
 
-  const pickup = JSON.parse(localStorage.getItem("sq_pickup_now") || "[]");
-  const count = pickup.length;
-  const mins = count * 5;
-
-  el.textContent = mins;
+  try {
+    const mins = await apiGetTakeawayWaitMin();
+    el.textContent = mins;
+  } catch (err) {
+    console.error("renderTakeawayWait failed:", err);
+    el.textContent = "0";
+  }
 }
 
 // ===== 候位 =====
@@ -102,11 +119,6 @@ const LIMITS = {
 
 function pad4(n) {
   return String(n).padStart(4, "0");
-}
-
-function createWaitNumber() {
-  const s = String(Date.now());
-  return pad4(Number(s.slice(-4)));
 }
 
 function showStep(idToShow) {
@@ -130,40 +142,64 @@ function refreshPeopleUI() {
   document.getElementById("chairCnt").textContent = chairs;
 }
 
-function updateOverviewFromQueue() {
-  const q = JSON.parse(localStorage.getItem("sq_queue") || "[]");
-  const count = (g) => q.filter((x) => x.group === g && x.status === "waiting").length;
+async function updateOverviewFromQueue() {
+  const box12 = document.getElementById("q12");
+  const box34 = document.getElementById("q34");
+  const box56 = document.getElementById("q56");
+  const wait12 = document.getElementById("m12");
+  const wait34 = document.getElementById("m34");
+  const wait56 = document.getElementById("m56");
 
-  const q12 = count("1-2");
-  const q34 = count("3-4");
-  const q56 = count("5-6");
+  if (!box12 || !box34 || !box56 || !wait12 || !wait34 || !wait56) return;
 
-  document.getElementById("q12").textContent = q12;
-  document.getElementById("q34").textContent = q34;
-  document.getElementById("q56").textContent = q56;
+  try {
+    const data = await apiGetWaitlist();
+    const q = (data.queue || []).filter((x) => x.status === "waiting");
 
-  document.getElementById("m12").textContent = q12 * 5;
-  document.getElementById("m34").textContent = q34 * 5;
-  document.getElementById("m56").textContent = q56 * 5;
+    const c12 = q.filter((x) => x.group === "1-2").length;
+    const c34 = q.filter((x) => x.group === "3-4").length;
+    const c56 = q.filter((x) => x.group === "5-6").length;
+
+    box12.textContent = c12;
+    box34.textContent = c34;
+    box56.textContent = c56;
+
+    wait12.textContent = c12 * 5;
+    wait34.textContent = c34 * 5;
+    wait56.textContent = c56 * 5;
+  } catch (err) {
+    console.error("updateOverviewFromQueue failed:", err);
+    box12.textContent = "0";
+    box34.textContent = "0";
+    box56.textContent = "0";
+    wait12.textContent = "0";
+    wait34.textContent = "0";
+    wait56.textContent = "0";
+  }
 }
 
-function openWaitModal() {
-  adults = 0;
-  kids = 0;
-  chairs = 0;
-  refreshPeopleUI();
+async function openWaitModal() {
+  try {
+    adults = 0;
+    kids = 0;
+    chairs = 0;
+    refreshPeopleUI();
 
-  const phoneInput = document.getElementById("waitPhone");
-  if (phoneInput) phoneInput.value = "";
+    const phoneInput = document.getElementById("waitPhone");
+    if (phoneInput) phoneInput.value = "";
 
-  hidePhoneHint("waitPhoneHint");
+    hidePhoneHint("waitPhoneHint");
+    clearTimeout(autoCloseTimer);
 
-  clearTimeout(autoCloseTimer);
-  updateOverviewFromQueue();
-  renderIndoorWaitingCount();
-  showStep("waitStepA");
+    await updateOverviewFromQueue();
+    await renderIndoorWaitingCount();
 
-  bootstrap.Modal.getOrCreateInstance(document.getElementById("waitModal")).show();
+    showStep("waitStepA");
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("waitModal")).show();
+  } catch (err) {
+    console.error("openWaitModal failed:", err);
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("waitModal")).show();
+  }
 }
 
 function bindWaitingKiosk() {
@@ -231,75 +267,85 @@ function bindWaitingKiosk() {
   }
 
   // 正式送出
-  function submitWaitQueue() {
-  const phone = document.getElementById("waitPhone")?.value.trim() ?? "";
-  
+  async function submitWaitQueue() {
+    const phone = (document.getElementById("waitPhone")?.value || "").trim();
+    const people = adults + kids;
+    const confirmHint = document.getElementById("waitConfirmHint");
+    if (confirmHint) {
+      confirmHint.textContent = "";
+      confirmHint.classList.add("d-none");
+      confirmHint.style.display = "none";
+    }
+
     if (adults <= 0) {
-    showStep("waitStepB");
-    showPhoneHint("waitPhoneHint", "要有一位大人以上 才可完成訂位喔！");
-    return;
-  }
-  const number = createWaitNumber();
-  const group = calcGroup();
+      showPhoneHint("waitPhoneHint", "要有一位大人以上 才可完成候位喔！");
+      showStep("waitStepB");
+      return;
+    }
 
-  const readyKey = "sq_call_ready";
-  const soonKey = "sq_call_soon";
-  const queueKey = "sq_queue";
+    if (!isValidTaiwanMobile(phone)) {
+      showPhoneHint("waitPhoneHint", "請輸入正確手機號碼（10 碼，09 開頭）");
+      showStep("waitStepB");
+      return;
+    }
 
-  const ready = JSON.parse(localStorage.getItem(readyKey) || "[]");
-  const soon = JSON.parse(localStorage.getItem(soonKey) || "[]");
-  const queue = JSON.parse(localStorage.getItem(queueKey) || "[]");
+    try {
+      const duplicated = await apiHasActiveBookingByPhone(phone, "wait");
+      if (duplicated) {
+        if (confirmHint) {
+          confirmHint.textContent = "請勿重複候位";
+          confirmHint.classList.remove("d-none");
+          confirmHint.style.display = "block";
+        }
+        return;
+      }
 
-  const waitingAhead = queue.filter((x) => x.status === "waiting").length;
+      hidePhoneHint("waitPhoneHint");
 
-  if (waitingAhead === 0 && ready.length === 0) {
-    ready.push(number);
+      const group = people <= 2 ? "1-2" : people <= 4 ? "3-4" : "5-6";
 
-    queue.push({
-      number,
-      group,
-      adults,
-      kids,
-      chairs,
-      phone,
-      createdAt: new Date().toISOString(),
-      status: "ready"
-    });
+      const saved = await apiCreateWaiting({
+        group,
+        adults,
+        kids,
+        chairs,
+        phone
+      });
 
-    localStorage.setItem(readyKey, JSON.stringify(ready));
-  } else {
-    soon.push(number);
+      showStep("waitStepD");
 
-    queue.push({
-      number,
-      group,
-      adults,
-      kids,
-      chairs,
-      phone,
-      createdAt: new Date().toISOString(),
-      status: "waiting"
-    });
+      const noEl = document.getElementById("waitNumberText");
+      const metaEl = document.getElementById("waitMetaText");
 
-    localStorage.setItem(soonKey, JSON.stringify(soon));
-  }
+      if (noEl) noEl.textContent = saved?.number || "0000";
+      if (metaEl) {
+        metaEl.textContent =
+          `手機末三碼：${phone.slice(-3)}｜大人 ${adults} 位｜小孩 ${kids} 位｜兒童座椅 ${chairs} 張`;
+      }
 
-  localStorage.setItem(queueKey, JSON.stringify(queue));
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(() => {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("waitModal")).hide();
+      }, 10000);
 
-  document.getElementById("waitNumberText").textContent = number;
-  document.getElementById("waitMetaText").textContent =
-    `人數：${group}｜手機末三碼：${phone.slice(-3)}`;
+      setTimeout(async () => {
+        try {
+          await renderNowCallingMini();
+          await renderCallModal();
+          await updateOverviewFromQueue();
+        } catch (err) {
+          console.error("wait post-render failed:", err);
+        }
+      }, 0);
 
-  updateOverviewFromQueue();
-  renderIndoorWaitingCount();
-  renderNowCallingMini();
-  renderCallModal();
-
-  showStep("waitStepD");
-
-  autoCloseTimer = setTimeout(() => {
-    bootstrap.Modal.getOrCreateInstance(document.getElementById("waitModal")).hide();
-  }, 10000);
+    } catch (err) {
+      console.error("submitWaitQueue failed:", err);
+      if (confirmHint) {
+        confirmHint.textContent = "候位送出失敗，請稍後再試一次";
+        confirmHint.classList.remove("d-none");
+        confirmHint.style.display = "block";
+      }
+    }
   }
 
   document.getElementById("waitPhone")?.addEventListener("keydown", (e) => {
@@ -353,54 +399,106 @@ function bindWaitingKiosk() {
 }
 
 // ===== 外送取餐 =====
-const DELIVERY_KEY = "sq_delivery_orders_demo";
 let deliveryBound = false;
 let deliveryT9Bound = false;
 
-const DELIVERY_SEED = [
-  { platform: "foodpanda", code: "A1234", status: "已完成" },
-  { platform: "foodpanda", code: "FP9012", status: "已完成" },
-  { platform: "foodpanda", code: "B2468", status: "已完成" },
-  { platform: "foodpanda", code: "P7788", status: "已完成" },
-  { platform: "foodpanda", code: "F3321", status: "已完成" },
-  { platform: "foodpanda", code: "K1200", status: "已完成" },
-  { platform: "foodpanda", code: "T4456", status: "已完成" },
-  { platform: "foodpanda", code: "Z9001", status: "已完成" },
+async function renderDeliveryPickupModal() {
+  try {
+    const data = await apiGetDeliveryOrders();
+    const orders = data.orders || [];
 
-  { platform: "foodpanda", code: "M5678", status: "準備中" },
-  { platform: "foodpanda", code: "Q2201", status: "準備中" },
-  { platform: "foodpanda", code: "L4512", status: "準備中" },
-  { platform: "foodpanda", code: "D8733", status: "準備中" },
-  { platform: "foodpanda", code: "X1122", status: "準備中" },
-  { platform: "foodpanda", code: "R6670", status: "準備中" },
-  { platform: "foodpanda", code: "H4908", status: "準備中" },
-  { platform: "foodpanda", code: "N6003", status: "準備中" },
+    renderDeliveryCodes(
+      orders.filter((x) => x.platform === "foodpanda" && x.status === "已完成"),
+      "foodpandaDoneList"
+    );
+    renderDeliveryCodes(
+      orders.filter((x) => x.platform === "foodpanda" && x.status === "準備中"),
+      "foodpandaPreparingList"
+    );
+    renderDeliveryCodes(
+      orders.filter((x) => x.platform === "uber" && x.status === "已完成"),
+      "uberDoneList"
+    );
+    renderDeliveryCodes(
+      orders.filter((x) => x.platform === "uber" && x.status === "準備中"),
+      "uberPreparingList"
+    );
+  } catch (err) {
+    console.error("renderDeliveryPickupModal failed:", err);
+  }
+}
+async function renderIndoorWaitingCount() {
+  const el = document.getElementById("indoorWaitingCount");
+  if (!el) return;
 
-  { platform: "uber", code: "U4455", status: "已完成" },
-  { platform: "uber", code: "C3141", status: "已完成" },
-  { platform: "uber", code: "D8080", status: "已完成" },
-  { platform: "uber", code: "UE2211", status: "已完成" },
-  { platform: "uber", code: "E1020", status: "已完成" },
-  { platform: "uber", code: "Y7700", status: "已完成" },
-  { platform: "uber", code: "G6612", status: "已完成" },
-  { platform: "uber", code: "W9018", status: "已完成" },
-
-  { platform: "uber", code: "UE7788", status: "準備中" },
-  { platform: "uber", code: "U5501", status: "準備中" },
-  { platform: "uber", code: "M4002", status: "準備中" },
-  { platform: "uber", code: "J7310", status: "準備中" },
-  { platform: "uber", code: "V8882", status: "準備中" },
-  { platform: "uber", code: "S2109", status: "準備中" },
-  { platform: "uber", code: "B5550", status: "準備中" },
-  { platform: "uber", code: "K3008", status: "準備中" }
-];
-
-function ensureDeliveryDemoData() {
-  localStorage.setItem(DELIVERY_KEY, JSON.stringify(DELIVERY_SEED));
+  try {
+    const data = await apiGetWaitlist();
+    const q = data.queue || [];
+    const totalWaiting = q.filter((x) => x.status === "waiting").length;
+    el.textContent = totalWaiting;
+  } catch (err) {
+    console.error("renderIndoorWaitingCount failed:", err);
+    el.textContent = "0";
+  }
 }
 
-function getDeliveryOrders() {
-  return JSON.parse(localStorage.getItem(DELIVERY_KEY) || "[]");
+function showDeliverySearchResult(text) {
+  const result = document.getElementById("deliverySearchResult");
+  if (!result) return;
+  result.textContent = text;
+  result.classList.remove("d-none");
+}
+
+function bindDeliveryKiosk() {
+  if (deliveryBound) return;
+  deliveryBound = true;
+  document.getElementById("openDeliverySearchBtn")?.addEventListener("click", () => {
+    const deliveryModalEl = document.getElementById("deliveryModal");
+    const searchModalEl = document.getElementById("deliverySearchModal");
+
+    bootstrap.Modal.getOrCreateInstance(deliveryModalEl).hide();
+    bootstrap.Modal.getOrCreateInstance(searchModalEl).show();
+  });
+  document.getElementById("deliverySearchCloseBtn")?.addEventListener("click", () => {
+    const deliveryModalEl = document.getElementById("deliveryModal");
+    const searchModalEl = document.getElementById("deliverySearchModal");
+
+    bootstrap.Modal.getOrCreateInstance(searchModalEl).hide();
+    bootstrap.Modal.getOrCreateInstance(deliveryModalEl).show();
+  });
+  document.getElementById("deliverySearchModal")?.addEventListener("hidden.bs.modal", () => {
+    const deliveryModalEl = document.getElementById("deliveryModal");
+    const stillOpen = document.body.classList.contains("modal-open");
+    if (!stillOpen) {
+      bootstrap.Modal.getOrCreateInstance(deliveryModalEl).show();
+    }
+  });
+
+  document.getElementById("confirmDeliverySearchBtn")?.addEventListener("click", async () => {
+    const code = (document.getElementById("deliveryOrderInput")?.value || "").trim().toUpperCase();
+
+    if (!code) {
+      showDeliverySearchResult("請輸入訂單編號");
+      return;
+    }
+
+    try {
+      const found = await apiFindDeliveryOrder(code);
+      if (!found) {
+        showDeliverySearchResult(`${code}－查無此訂單`);
+        return;
+      }
+      showDeliverySearchResult(`${found.code}－${found.status}`);
+    } catch (err) {
+      console.error("delivery search failed:", err);
+      showDeliverySearchResult("查詢失敗，請稍後再試");
+    }
+  });
+}
+
+async function openDeliveryModal() {
+  await renderDeliveryPickupModal();
+  bootstrap.Modal.getOrCreateInstance(document.getElementById("deliveryModal")).show();
 }
 
 function normalizeOrderCode(code) {
@@ -422,45 +520,6 @@ function renderDeliveryCodes(list, containerId) {
     .join("");
 }
 
-function renderDeliveryPickupModal() {
-  const orders = getDeliveryOrders();
-
-  renderDeliveryCodes(
-    orders.filter((x) => x.platform === "foodpanda" && x.status === "已完成"),
-    "foodpandaDoneList"
-  );
-  renderDeliveryCodes(
-    orders.filter((x) => x.platform === "foodpanda" && x.status === "準備中"),
-    "foodpandaPreparingList"
-  );
-  renderDeliveryCodes(
-    orders.filter((x) => x.platform === "uber" && x.status === "已完成"),
-    "uberDoneList"
-  );
-  renderDeliveryCodes(
-    orders.filter((x) => x.platform === "uber" && x.status === "準備中"),
-    "uberPreparingList"
-  );
-}
-
-function openDeliveryModal() {
-  renderDeliveryPickupModal();
-  bootstrap.Modal.getOrCreateInstance(document.getElementById("deliveryModal")).show();
-}
-
-function searchDeliveryOrder(code) {
-  const keyword = normalizeOrderCode(code);
-  const orders = getDeliveryOrders();
-  return orders.find((item) => normalizeOrderCode(item.code) === keyword) || null;
-}
-
-function showDeliverySearchResult(text) {
-  const result = document.getElementById("deliverySearchResult");
-  if (!result) return;
-  result.textContent = text;
-  result.classList.remove("d-none");
-}
-
 function hideDeliverySearchResult() {
   const result = document.getElementById("deliverySearchResult");
   if (!result) return;
@@ -468,90 +527,7 @@ function hideDeliverySearchResult() {
   result.textContent = "";
 }
 
-function openDeliverySearchModal() {
-  const input = document.getElementById("deliveryOrderInput");
-  if (input) input.value = "";
-  hideDeliverySearchResult();
 
-  const deliveryEl = document.getElementById("deliveryModal");
-  const searchEl = document.getElementById("deliverySearchModal");
-  const deliveryModal = bootstrap.Modal.getOrCreateInstance(deliveryEl);
-  const searchModal = bootstrap.Modal.getOrCreateInstance(searchEl);
-
-  deliveryEl.addEventListener(
-    "hidden.bs.modal",
-    function handleHidden() {
-      searchModal.show();
-      setTimeout(() => input?.blur(), 100);
-    },
-    { once: true }
-  );
-
-  deliveryModal.hide();
-}
-
-function closeDeliverySearchModalAndBack() {
-  const deliveryEl = document.getElementById("deliveryModal");
-  const searchEl = document.getElementById("deliverySearchModal");
-  const deliveryModal = bootstrap.Modal.getOrCreateInstance(deliveryEl);
-  const searchModal = bootstrap.Modal.getOrCreateInstance(searchEl);
-
-  searchEl.addEventListener(
-    "hidden.bs.modal",
-    function handleHidden() {
-      deliveryModal.show();
-    },
-    { once: true }
-  );
-
-  searchModal.hide();
-}
-
-function bindDeliveryKiosk() {
-  if (deliveryBound) return;
-  deliveryBound = true;
-
-  document.getElementById("openDeliverySearchBtn")?.addEventListener("click", () => {
-    openDeliverySearchModal();
-  });
-
-  document.getElementById("deliverySearchCloseBtn")?.addEventListener("click", () => {
-    closeDeliverySearchModalAndBack();
-  });
-
-  document.getElementById("confirmDeliverySearchBtn")?.addEventListener("click", () => {
-    const input = document.getElementById("deliveryOrderInput");
-    const code = normalizeOrderCode(input?.value || "");
-
-    if (!code) {
-      showDeliverySearchResult("請輸入訂單編號");
-      return;
-    }
-
-    const found = searchDeliveryOrder(code);
-
-    if (!found) {
-      showDeliverySearchResult(`${code}－查無此訂單`);
-      return;
-    }
-
-    showDeliverySearchResult(`${found.code}－${found.status}`);
-  });
-}
-function renderIndoorWaitingCount() {
-  const el = document.getElementById("indoorWaitingCount");
-  if (!el) return;
-
-  const q = JSON.parse(localStorage.getItem("sq_queue") || "[]");
-  const totalWaiting = q.filter((x) => x.status === "waiting").length;
-
-  el.textContent = totalWaiting;
-}
-
-function getWaitingQueue() {
-  return JSON.parse(localStorage.getItem("sq_queue") || "[]")
-    .filter((x) => x.status === "waiting");
-}
 
 // ===== 外送查詢 =====
 function bindDeliveryT9Keyboard() {
@@ -731,17 +707,7 @@ function bindDeliveryT9Keyboard() {
     }
   });
 }
-const EMPLOYEE_MAP = {
-  "1111": "Sabrina",
-  "2222": "Rich",
-  "3333": "麻吉",
-  "4444": "小花",
-  "5555": "小胡",
-  "6666": "阿張",
-  "7777": "阿鬚"
-};
 
-const CLOCK_LOG_KEY = "sq_clock_logs";
 let clockingBound = false;
 let clockAutoCloseTimer = null;
 let clockingState = { empId: "", name: "" };
@@ -770,12 +736,12 @@ function formatDuration(fromISO, toISO) {
   return `${h} 小時 ${m} 分`;
 }
 
-function loadClockLogs() {
-  return JSON.parse(localStorage.getItem(CLOCK_LOG_KEY) || "{}");
+async function loadClockLogs() {
+  return await apiGetClockLogs();
 }
 
-function saveClockLogs(data) {
-  localStorage.setItem(CLOCK_LOG_KEY, JSON.stringify(data));
+async function saveClockLogs(data) {
+  return await apiSaveClockLogs(data);
 }
 
 function showClockStep(idToShow) {
@@ -792,6 +758,8 @@ function resetClockingModal() {
   const input = document.getElementById("clockEmpId");
   if (input) input.value = "";
 
+  document.getElementById("clockConfirmEmpId").textContent = "";
+  document.getElementById("clockHelloName").textContent = "";
   document.getElementById("clockEmpHint")?.classList.add("d-none");
   document.getElementById("clockFinishSub").textContent = "";
   document.getElementById("clockFinishMeta").textContent = "";
@@ -805,37 +773,57 @@ function openClockingModal() {
   bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).show();
 }
 
-function goClockConfirm() {
-  const empId = document.getElementById("clockEmpId")?.value.trim() || "";
-  const name = EMPLOYEE_MAP[empId];
+async function goClockConfirm() {
+  const empId = document.getElementById("clockEmpId")?.value.trim() ?? "";
+  const hintEl = document.getElementById("clockEmpHint");
 
-  if (!name) {
-    document.getElementById("clockEmpHint")?.classList.remove("d-none");
-    return;
+  if (hintEl) {
+    hintEl.textContent = "";
+    hintEl.classList.add("d-none");
   }
 
-  clockingState = { empId, name };
+  try {
+    const data = await apiGetEmployees();
+    const emp = (data.employees || []).find((x) => x.id === empId);
 
-  document.getElementById("clockConfirmEmpId").textContent = empId;
-  document.getElementById("clockConfirmName").textContent = name;
-  document.getElementById("clockHelloName").textContent = name;
-  document.getElementById("clockEmpHint")?.classList.add("d-none");
+    if (!emp) {
+      if (hintEl) {
+        hintEl.textContent = "查無此員工編號";
+        hintEl.classList.remove("d-none");
+      }
+      return;
+    }
 
-  showClockStep("clockStepB");
+    clockingState = { empId: emp.id, name: emp.name };
+
+    document.getElementById("clockConfirmEmpId").textContent = emp.id;
+    document.getElementById("clockConfirmName").textContent = emp.name;
+    document.getElementById("clockHelloName").textContent = emp.name;
+
+    showClockStep("clockStepB");
+  } catch (err) {
+    console.error("goClockConfirm failed:", err);
+    if (hintEl) {
+      hintEl.textContent = "讀取員工資料失敗";
+      hintEl.classList.remove("d-none");
+    }
+  }
 }
 
-function getTodayEmployeeLogs(empId) {
+async function getTodayEmployeeLogs(empId) {
+  const data = await apiGetClockLogs();
   const todayKey = getTodayKey();
-  const logs = loadClockLogs();
-  const dayLogs = logs[todayKey] || {};
+  const logsByDate = data.logsByDate || {};
+  const dayLogs = logsByDate[todayKey] || {};
   return dayLogs[empId] || [];
 }
-
-function submitClockIn() {
+async function submitClockIn() {
   const now = new Date();
   const todayKey = getTodayKey();
-  const logs = loadClockLogs();
-  const dayLogs = logs[todayKey] || {};
+  const data = await loadClockLogs();
+
+  data.logsByDate = data.logsByDate || {};
+  const dayLogs = data.logsByDate[todayKey] || {};
   const empLogs = dayLogs[clockingState.empId] || [];
 
   const hasClockIn = empLogs.some(row => row.type === "in");
@@ -846,7 +834,6 @@ function submitClockIn() {
     document.getElementById("clockFinishMeta").textContent = "同一天不能重複上班打卡";
 
     showClockStep("clockStepD");
-
     clockAutoCloseTimer = setTimeout(() => {
       bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
     }, 5000);
@@ -861,26 +848,27 @@ function submitClockIn() {
   });
 
   dayLogs[clockingState.empId] = empLogs;
-  logs[todayKey] = dayLogs;
-  saveClockLogs(logs);
+  data.logsByDate[todayKey] = dayLogs;
+
+  await saveClockLogs(data);
 
   document.getElementById("clockFinishTitle").textContent = clockingState.name;
   document.getElementById("clockFinishSub").textContent = "哈囉！今天一起加油吧！💪";
   document.getElementById("clockFinishMeta").textContent = `今天 ${formatClockTime(now)} 打卡`;
 
   showClockStep("clockStepD");
-
   clockAutoCloseTimer = setTimeout(() => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
   }, 5000);
-  if (hasClockIn) return;
 }
 
-function submitClockOut() {
+async function submitClockOut() {
   const now = new Date();
   const todayKey = getTodayKey();
-  const logs = loadClockLogs();
-  const dayLogs = logs[todayKey] || {};
+  const data = await loadClockLogs();
+
+  data.logsByDate = data.logsByDate || {};
+  const dayLogs = data.logsByDate[todayKey] || {};
   const empLogs = dayLogs[clockingState.empId] || [];
 
   const lastIn = empLogs.find(row => row.type === "in");
@@ -892,7 +880,6 @@ function submitClockOut() {
     document.getElementById("clockFinishMeta").textContent = "請先完成上班打卡，再進行下班打卡";
 
     showClockStep("clockStepD");
-
     clockAutoCloseTimer = setTimeout(() => {
       bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
     }, 5000);
@@ -905,37 +892,33 @@ function submitClockOut() {
     document.getElementById("clockFinishMeta").textContent = "同一天不能重複下班打卡";
 
     showClockStep("clockStepD");
-
     clockAutoCloseTimer = setTimeout(() => {
       bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
     }, 5000);
     return;
   }
 
-  const outRow = {
+  empLogs.push({
     type: "out",
     at: now.toISOString(),
     name: clockingState.name,
     empId: clockingState.empId
-  };
+  });
 
-  empLogs.push(outRow);
   dayLogs[clockingState.empId] = empLogs;
-  logs[todayKey] = dayLogs;
-  saveClockLogs(logs);
+  data.logsByDate[todayKey] = dayLogs;
+
+  await saveClockLogs(data);
 
   document.getElementById("clockFinishTitle").textContent = clockingState.name;
   document.getElementById("clockFinishSub").textContent = "辛苦了～好好休息！";
   document.getElementById("clockFinishMeta").textContent =
-    `今天 ${formatClockTime(new Date(lastIn.at))} 打卡～${formatClockTime(now)} 離開
-共 ${formatDuration(lastIn.at, now)}`;
+    `今天 ${formatClockTime(new Date(lastIn.at))} 打卡～${formatClockTime(now)} 離開\n共 ${formatDuration(lastIn.at, now)}`;
 
   showClockStep("clockStepD");
-
   clockAutoCloseTimer = setTimeout(() => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
   }, 5000);
-  if (lastOut) return;
 }
 
 function bindClockingKiosk() {
@@ -975,7 +958,7 @@ function bindClockingKiosk() {
   trigger?.addEventListener("touchend", endPress, { passive: false });
   trigger?.addEventListener("touchcancel", endPress, { passive: false });
 
- addEventListener("pointercancel", endPress);
+  window.addEventListener("pointercancel", endPress);
 
   document.getElementById("clockingCloseBtn")?.addEventListener("click", () => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
@@ -1020,9 +1003,10 @@ function bindClockingKiosk() {
 
 // ===== 啟動 =====
 document.addEventListener("DOMContentLoaded", () => {
-  ensureDeliveryDemoData();
+  updateOverviewFromQueue();
 
   bindNav();
+  bindQueryStatusKiosk();
   bindClockingKiosk();
   bindWaitingKiosk();
   bindDeliveryKiosk();
@@ -1030,65 +1014,41 @@ document.addEventListener("DOMContentLoaded", () => {
   bindDeliveryT9Keyboard();
 
   renderNowCallingMini();
+  renderCallModal();
   renderTakeawayWait();
   renderDeliveryPickupModal();
   renderIndoorWaitingCount();
 
   setInterval(() => {
     renderNowCallingMini();
+    renderCallModal();
     renderTakeawayWait();
     renderDeliveryPickupModal();
     renderIndoorWaitingCount();
-  }, 1000);
+  }, 5000);
 
-  document.getElementById("openCallModal")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    renderCallModal();
-    bootstrap.Modal.getOrCreateInstance(document.getElementById("callModal")).show();
-  });
 });
 
 
 
   // 叫下一號
-function callNextNumber() {
-  const readyKey = "sq_call_ready";
-  const soonKey = "sq_call_soon";
-  const queueKey = "sq_queue";
+async function callNextNumber() {
+  try {
+    const result = await apiCallNextWaiting();
 
-  const ready = JSON.parse(localStorage.getItem(readyKey) || "[]");
-  const soon = JSON.parse(localStorage.getItem(soonKey) || "[]");
-  const queue = JSON.parse(localStorage.getItem(queueKey) || "[]");
+    renderNowCallingMini();
+    renderCallModal();
+    renderIndoorWaitingCount();
+    updateOverviewFromQueue();
 
-  const current = ready.shift();
-
-  if (current) {
-    const currentItem = queue.find((x) => x.number === current && x.status === "ready");
-    if (currentItem) currentItem.status = "seated";
+    return result;
+  } catch (err) {
+    console.error("callNextNumber failed:", err);
+    return null;
   }
-
-  const next = soon.shift();
-  if (next) {
-    ready.push(next);
-
-    const nextItem = queue.find((x) => x.number === next && x.status === "waiting");
-    if (nextItem) nextItem.status = "ready";
-  }
-
-  localStorage.setItem(readyKey, JSON.stringify(ready));
-  localStorage.setItem(soonKey, JSON.stringify(soon));
-  localStorage.setItem(queueKey, JSON.stringify(queue));
-
-  renderNowCallingMini();
-  renderCallModal();
-  updateOverviewFromQueue();
-  renderIndoorWaitingCount();
 }
 
 // ===== 預約 =====
-const RESERVE_TODAY_KEY = "sq_reservations_today";
-const RESERVE_FUTURE_KEY = "sq_reservations_future";
-
 let reserveType = "";
 let reserveAdults = 0;
 let reserveKids = 0;
@@ -1101,16 +1061,20 @@ let reserveFp = null;
 let reserveTodayPeriod = "morning";
 let reserveFuturePeriod = "morning";
 
-function loadJson(key, fallback = []) {
-  try {
-    return JSON.parse(localStorage.getItem(key)) || fallback;
-  } catch {
-    return fallback;
-  }
+async function getTodayReservations() {
+  const list = await apiGetReservations();
+  const today = getTodayStr();
+  return list.filter((x) => x.type === "today" && x.date === today);
 }
 
-function saveJson(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+async function getFutureReservations() {
+  const list = await apiGetReservations();
+  return list.filter((x) => x.type === "future");
+}
+
+async function getTodayWaitingQueue() {
+  const data = await apiGetWaitlist();
+  return (data.queue || []).filter((x) => x.status === "waiting");
 }
 
 function getTodayStr() {
@@ -1226,41 +1190,36 @@ function getReservePeopleCount() {
   return reserveAdults + reserveKids;
 }
 
-function getTodayWaitingPeopleCount() {
-  const q = loadJson("sq_queue", []);
-  return q
-    .filter((x) => x.status === "waiting")
-    .reduce((sum, x) => sum + (Number(x.adults) || 0) + (Number(x.kids) || 0), 0);
+async function getTodayWaitingPeopleCount() {
+  const q = await getTodayWaitingQueue();
+  return q.reduce((sum, x) => sum + (Number(x.adults) || 0) + (Number(x.kids) || 0), 0);
 }
 
-function getTodayReservedByTime(time) {
-  return loadJson(RESERVE_TODAY_KEY, [])
+async function getTodayReservedByTime(time) {
+  const list = await getTodayReservations();
+  return list
     .filter((x) => x.date === getTodayStr() && x.time === time)
     .reduce((sum, x) => sum + (Number(x.adults) || 0) + (Number(x.kids) || 0), 0);
 }
 
-function getFutureReservedByDateTime(date, time) {
-  return loadJson(RESERVE_FUTURE_KEY, [])
+async function getFutureReservedByDateTime(date, time) {
+  const list = await getFutureReservations();
+  return list
     .filter((x) => x.date === date && x.time === time)
     .reduce((sum, x) => sum + (Number(x.adults) || 0) + (Number(x.kids) || 0), 0);
 }
 
-function getTodayWaitingPeopleCountByTime(targetTime) {
-  const q = loadJson("sq_queue", []).filter((x) => x.status === "waiting");
+async function getTodayWaitingPeopleCountByTime(targetTime) {
+  const q = await getTodayWaitingQueue();
 
   const sorted = q.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   const timeSlots = getReserveSlotsByPeriod("morning").concat(getReserveSlotsByPeriod("afternoon"));
 
   const slotMap = {};
-  timeSlots.forEach(t => slotMap[t] = 0);
+  timeSlots.forEach((t) => (slotMap[t] = 0));
 
   sorted.forEach((item, idx) => {
     const people = (Number(item.adults) || 0) + (Number(item.kids) || 0);
-
-    const base = new Date();
-    const [hh, mm] = targetTime.split(":").map(Number);
-    base.setHours(hh, mm, 0, 0);
-
     const slotIndex = Math.min(Math.floor(idx / 3), timeSlots.length - 1);
     const slot = timeSlots[slotIndex];
     slotMap[slot] = (slotMap[slot] || 0) + people;
@@ -1269,9 +1228,10 @@ function getTodayWaitingPeopleCountByTime(targetTime) {
   return slotMap[targetTime] || 0;
 }
 
-function canBookToday(time, count) {
-  const used = getTodayReservedByTime(time) + getTodayWaitingPeopleCountByTime(time);
-  return used + count <= 20;
+async function canBookToday(time, count) {
+  const used = await getTodayReservedByTime(time);
+  const waiting = await getTodayWaitingPeopleCountByTime(time);
+  return used + waiting + count <= 20;
 }
 
 function getFutureAllSlots() {
@@ -1290,8 +1250,12 @@ function getTomorrowStr() {
   return `${y}-${m}-${day}`;
 }
 
-function hasFutureCapacityOnDate(date, count = 1) {
-  return getFutureAllSlots().some((time) => canBookFuture(date, time, count));
+async function hasFutureCapacityOnDate(date, count = 1) {
+  const slots = getFutureAllSlots();
+  for (const time of slots) {
+    if (await canBookFuture(date, time, count)) return true;
+  }
+  return false;
 }
 
 function renderFuturePickedInfo() {
@@ -1303,13 +1267,13 @@ function renderFuturePickedInfo() {
   el.textContent = `${dateText}｜大人 ${reserveAdults}｜兒童 ${reserveKids}${chairText}`;
 }
 
-function canBookFuture(date, time, count) {
-  const used = getFutureReservedByDateTime(date, time);
+async function canBookFuture(date, time, count) {
+  const used = await getFutureReservedByDateTime(date, time);
   return used + count <= 10;
 }
 
 
-function renderTodayReserveSlots(period = reserveTodayPeriod) {
+async function renderTodayReserveSlots(period = reserveTodayPeriod) {
   const box = document.getElementById("todayTimeGrid");
   if (!box) return;
 
@@ -1321,20 +1285,27 @@ function renderTodayReserveSlots(period = reserveTodayPeriod) {
     return;
   }
 
-  const slots = getReserveSlotsByPeriod(period, "today")
-    .filter((time) => !isPastTodaySlot(time))
-    .filter((time) => canBookToday(time, people));
+  const allSlots = getReserveSlotsByPeriod(period, "today").filter((time) => !isPastTodaySlot(time));
+  const result = [];
 
-  box.innerHTML = slots.map((time) => `
+  for (const time of allSlots) {
+    if (await canBookToday(time, people)) result.push(time);
+  }
+
+  if (!result.length) {
+    box.innerHTML = `<div class="reserveEmptyText">今日已無可預約時段</div>`;
+    return;
+  }
+
+  box.innerHTML = result.map((time) => `
     <button type="button"
       class="timeItem ${reserveTime === time ? "active" : ""}"
       data-r-time="${time}">
       ${time}
     </button>
   `).join("");
-}
-
-function renderFutureReserveSlots(period = reserveFuturePeriod) {
+}   
+async function renderFutureReserveSlots(period = reserveFuturePeriod) {
   const box = document.getElementById("futureTimeGrid");
   if (!box) return;
 
@@ -1346,10 +1317,21 @@ function renderFutureReserveSlots(period = reserveFuturePeriod) {
     return;
   }
 
-  const slots = getReserveSlotsByPeriod(period, "future")
-    .filter((time) => canBookFuture(reserveDate, time, people));
+  const allSlots = getReserveSlotsByPeriod(period, "future");
+  const result = [];
 
-  box.innerHTML = slots.map((time) => `
+  for (const time of allSlots) {
+    if (await canBookFuture(reserveDate, time, people)) {
+      result.push(time);
+    }
+  }
+
+  if (!result.length) {
+    box.innerHTML = `<div class="reserveEmptyText">此日期此時段已無可預約時段</div>`;
+    return;
+  }
+
+  box.innerHTML = result.map((time) => `
     <button type="button"
       class="timeItem ${reserveTime === time ? "active" : ""}"
       data-r-time="${time}">
@@ -1357,8 +1339,7 @@ function renderFutureReserveSlots(period = reserveFuturePeriod) {
     </button>
   `).join("");
 }
-
-function initReserveCalendar() {
+async function initReserveCalendar() {
   const cal = document.getElementById("calendar");
   if (!cal || typeof flatpickr === "undefined") return;
 
@@ -1376,35 +1357,11 @@ function initReserveCalendar() {
     prevArrow: "",
     nextArrow: "",
     showMonths: 1,
-    disable: [
-      function(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        const dateStr = `${y}-${m}-${d}`;
-        return !hasFutureCapacityOnDate(dateStr, getReservePeopleCount() || 1);
-      }
-    ],
-    onDayCreate: function(_, __, ___, dayElem) {
-      const dateObj = dayElem.dateObj;
-      if (!dateObj) return;
-
-      const y = dateObj.getFullYear();
-      const m = String(dateObj.getMonth() + 1).padStart(2, "0");
-      const d = String(dateObj.getDate()).padStart(2, "0");
-      const dateStr = `${y}-${m}-${d}`;
-
-      if (!hasFutureCapacityOnDate(dateStr, getReservePeopleCount() || 1)) {
-        dayElem.classList.add("future-day-full");
-      } else {
-        dayElem.classList.add("future-day-open");
-      }
-    },
-    onChange: function(_, dateStr) {
+    onChange: async function(_, dateStr) {
       reserveDate = dateStr;
       reserveTime = "";
       renderFuturePickedInfo();
-      renderFutureReserveSlots(reserveFuturePeriod);
+      await renderFutureReserveSlots(reserveFuturePeriod);
     }
   });
 }
@@ -1445,7 +1402,7 @@ function buildReserveConfirmText() {
   return `時間：${reserveDate} ${reserveTime}｜人數：${reserveAdults}大${reserveKids}小${chairText}`;
 }
 
-function saveReservationRecord(phone) {
+async function saveReservationRecord(phone) {
   const item = {
     id: "R" + Date.now(),
     type: reserveType,
@@ -1458,13 +1415,10 @@ function saveReservationRecord(phone) {
     createdAt: new Date().toISOString()
   };
 
-  const key = reserveType === "today" ? RESERVE_TODAY_KEY : RESERVE_FUTURE_KEY;
-  const list = loadJson(key, []);
-  list.push(item);
-  saveJson(key, list);
-
+  await apiCreateReservation(item);
   return item;
 }
+
 function buildReserveSmsMessage(item) {
   return `您好～感謝您預約鬍鬚張-XX店！
 時間：${item.date} ${item.time}
@@ -1476,7 +1430,12 @@ function buildReserveSmsMessage(item) {
 function showReserveDonePage() {
   const done = document.getElementById("reserveDoneText");
   if (done) {
-    done.textContent = "請注意訊息，我們將傳預約提醒給您～";
+    done.innerHTML = `
+      請注意訊息，我們將傳預約提醒給您～<br>
+      <span style="font-size: 0.8em; line-height: 1.5;">
+      提醒您：請於預約時間前到店，並向店員告知手機末三碼；座位將保留 10 分鐘，逾時視同取消。
+      </span>
+    `;
   }
   showReserveStep("reserveStepDone");
 }
@@ -1577,7 +1536,7 @@ function bindReserveKiosk() {
     }
   });
 
-  document.getElementById("todayPeopleNextBtn")?.addEventListener("click", () => {
+  document.getElementById("todayPeopleNextBtn")?.addEventListener("click", async () => {
     const hint = document.getElementById("reservePeopleHint");
 
     if (reserveAdults <= 0) {
@@ -1597,7 +1556,7 @@ function bindReserveKiosk() {
     document.getElementById("periodAfternoonBtn")?.classList.remove("active");
 
     renderTodayPickedInfo();
-    renderTodayReserveSlots("morning");
+    await renderTodayReserveSlots("morning");
     showReserveStep("reserveStepTodayTime");
   });
 
@@ -1654,13 +1613,13 @@ function bindReserveKiosk() {
     }
   });
 
-  document.getElementById("reserveFinalBtn")?.addEventListener("click", () => {
+  document.getElementById("reserveFinalBtn")?.addEventListener("click", async () => {
     const phone = document.getElementById("reservePhone")?.value.trim() || "";
     const people = getReservePeopleCount();
-    const hint = document.getElementById("reservePhoneHint");
 
     if (!isValidTaiwanMobile(phone)) {
       showPhoneHint("reservePhoneHint");
+      showReserveStep("reserveStepPhone");
       return;
     }
 
@@ -1677,46 +1636,71 @@ function bindReserveKiosk() {
       return;
     }
 
-    if (reserveType === "today" && !canBookToday(reserveTime, people)) {
-      showInlineHint("reserveTodayTimeHint", "此時段已滿，請重新選擇");
-      showReserveStep("reserveStepTodayTime");
-      renderTodayReserveSlots();
-      return;
+    if (reserveType === "today") {
+      const duplicated = await apiHasActiveBookingByPhone(phone, "todayReserve", reserveDate);
+      if (duplicated) {
+        showPhoneHint("reservePhoneHint", "請勿重複訂位");
+        showReserveStep("reserveStepPhone");
+        return;
+      }
     }
 
-    const item = saveReservationRecord(phone);
+    if (reserveType === "future") {
+      const duplicated = await apiHasActiveBookingByPhone(phone, "futureReserve", reserveDate);
+      if (duplicated) {
+        showPhoneHint("reservePhoneHint", "請勿重複訂位");
+        showReserveStep("reserveStepPhone");
+        return;
+      }
+    }
 
-    console.log("SMS DEMO:", buildReserveSmsMessage(item));
-    showReserveDonePage();
+    const payload = {
+      type: reserveType === "today" ? "today" : "future",
+      phone,
+      date: reserveDate,
+      time: reserveTime,
+      adults: reserveAdults,
+      kids: reserveKids,
+      chairs: reserveChairs
+    };
 
-    reserveAutoClose = setTimeout(() => {
-      bootstrap.Modal.getOrCreateInstance(document.getElementById("reserveModal")).hide();
-    }, 10000);
+    try {
+      const saved = await apiCreateReservation(payload);
+
+      console.log("reserve saved:", saved);
+
+      showReserveDonePage();
+
+      reserveAutoClose = setTimeout(() => {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("reserveModal")).hide();
+      }, 10000);
+    } catch (err) {
+      console.error("reserveFinalBtn failed:", err);
+      showPhoneHint("reservePhoneHint", "預約送出失敗，請稍後再試一次");
+      showReserveStep("reserveStepPhone");
+    }
   });
-  document.getElementById("periodMorningBtn")?.addEventListener("click", () => {
+  document.getElementById("periodMorningBtn")?.addEventListener("click",async () => {
     reserveTime = "";
     hideInlineHint("reserveTodayTimeHint");
     document.getElementById("periodMorningBtn")?.classList.add("active");
     document.getElementById("periodAfternoonBtn")?.classList.remove("active");
-    renderTodayReserveSlots("morning");
+    await renderTodayReserveSlots("morning");
 
   });
 
-  document.getElementById("periodAfternoonBtn")?.addEventListener("click", () => {
+  document.getElementById("periodAfternoonBtn")?.addEventListener("click",async () => {
     reserveTime = "";
     hideInlineHint("reserveTodayTimeHint");
     document.getElementById("periodAfternoonBtn")?.classList.add("active");
     document.getElementById("periodMorningBtn")?.classList.remove("active");
-    renderTodayReserveSlots("afternoon");
+    await renderTodayReserveSlots("afternoon");
   });
-  document.getElementById("futurePeopleNextBtn")?.addEventListener("click", () => {
+  document.getElementById("futurePeopleNextBtn")?.addEventListener("click", async () => {
     const hint = document.getElementById("reserveFuturePeopleHint");
 
-    if (reserveAdults <= 0) {
-      if (hint) {
-        hint.textContent = "要有一位大人以上 才可完成訂位喔！";
-        hint.classList.remove("d-none");
-      }
+    if (getReservePeopleCount() <= 0) {
+      hint?.classList.remove("d-none");
       return;
     }
 
@@ -1726,9 +1710,9 @@ function bindReserveKiosk() {
     reserveFuturePeriod = "morning";
     hideInlineHint("reserveFutureDateTimeHint");
 
-    initReserveCalendar();
+    await initReserveCalendar();
     renderFuturePickedInfo();
-    renderFutureReserveSlots("morning");
+    await renderFutureReserveSlots("morning");
 
     document.getElementById("futureMorningBtn")?.classList.add("active");
     document.getElementById("futureAfternoonBtn")?.classList.remove("active");
@@ -1742,33 +1726,34 @@ function bindReserveKiosk() {
     reserveTime = "";
     showReserveStep("reserveStepFuturePeople");
   });
-  document.getElementById("futureMorningBtn")?.addEventListener("click", () => {
+  document.getElementById("futureMorningBtn")?.addEventListener("click", async () => {
     reserveFuturePeriod = "morning";
     reserveTime = "";
     document.getElementById("futureMorningBtn")?.classList.add("active");
     document.getElementById("futureAfternoonBtn")?.classList.remove("active");
     document.getElementById("futureNightBtn")?.classList.remove("active");
-    renderFutureReserveSlots("morning");
+    await renderFutureReserveSlots("morning");
   });
 
-  document.getElementById("futureAfternoonBtn")?.addEventListener("click", () => {
+  document.getElementById("futureAfternoonBtn")?.addEventListener("click", async () => {
     reserveFuturePeriod = "afternoon";
     reserveTime = "";
     document.getElementById("futureMorningBtn")?.classList.remove("active");
     document.getElementById("futureAfternoonBtn")?.classList.add("active");
     document.getElementById("futureNightBtn")?.classList.remove("active");
-    renderFutureReserveSlots("afternoon");
+    await renderFutureReserveSlots("afternoon");
   });
 
-  document.getElementById("futureNightBtn")?.addEventListener("click", () => {
+  document.getElementById("futureNightBtn")?.addEventListener("click", async () => {
     reserveFuturePeriod = "night";
     reserveTime = "";
     document.getElementById("futureMorningBtn")?.classList.remove("active");
     document.getElementById("futureAfternoonBtn")?.classList.remove("active");
     document.getElementById("futureNightBtn")?.classList.add("active");
-    renderFutureReserveSlots("night");
+    await renderFutureReserveSlots("night");
   });
-  document.addEventListener("click", (e) => {
+
+  document.addEventListener("click", async(e) => {
     const btn = e.target.closest("#todayTimeGrid .timeItem, #futureTimeGrid .timeItem");
     if (!btn) return;
 
@@ -1779,13 +1764,159 @@ function bindReserveKiosk() {
 
     if (reserveType === "today") {
       hideInlineHint("reserveTodayTimeHint");
-      renderTodayReserveSlots(reserveTodayPeriod);
+      await renderTodayReserveSlots(reserveTodayPeriod);
     } else if (reserveType === "future") {
       hideInlineHint("reserveFutureDateTimeHint");
-      renderFutureReserveSlots(reserveFuturePeriod);
+      await renderFutureReserveSlots(reserveFuturePeriod);
     }
   });
   document.getElementById("reserveModal")?.addEventListener("hidden.bs.modal", () => {
     clearTimeout(reserveAutoClose);
   });
+}
+let queryStatusBound = false;
+let queryStatusValue = "";
+
+function renderQueryStatusInput() {
+  const box = document.getElementById("queryStatusInput");
+  if (!box) return;
+  box.textContent = queryStatusValue || "請輸入查詢號碼";
+}
+
+function showQueryStatusResult(html) {
+  const box = document.getElementById("queryStatusResult");
+  if (!box) return;
+  box.innerHTML = html;
+  box.classList.remove("d-none");
+}
+
+function hideQueryStatusResult() {
+  const box = document.getElementById("queryStatusResult");
+  if (!box) return;
+  box.classList.add("d-none");
+  box.innerHTML = "";
+}
+
+function getLast3(phone) {
+  return String(phone || "").slice(-3);
+}
+
+function buildQueryStatusHtml(result) {
+  if (!result || !result.found) {
+    return `<div class="queryResultStatus">${result?.message || "查無資料"}</div>`;
+  }
+
+  if (result.type === "wait") {
+    return `
+      <div class="queryResultBigNo">${result.waitNo}</div>
+      <div class="queryResultStatus">${result.statusText}</div>
+      <div class="queryResultMeta">手機末三碼：${result.phoneLast3 || "—"}</div>
+      <div class="queryResultMeta">前面尚有：${result.aheadCount ?? 0}組</div>
+      <div class="queryResultMeta">預估等待：${result.waitMin ?? 0}分鐘</div>
+    `;
+  }
+
+  if (result.type === "pickup") {
+    return `
+      <div class="queryResultBigNo">${result.pickupNo}</div>
+      <div class="queryResultStatus">${result.statusText}</div>
+      <div class="queryResultMeta">手機末三碼：${result.phoneLast3 || "—"}</div>
+      <div class="queryResultMeta">前面尚有：${result.aheadCount ?? 0}單</div>
+      <div class="queryResultMeta">預估等待：${result.waitMin ?? 0}分鐘</div>
+    `;
+  }
+
+  return `<div class="queryResultStatus">查無資料</div>`;
+}
+
+function bindQueryStatusKiosk() {
+  if (queryStatusBound) return;
+  queryStatusBound = true;
+
+  document.getElementById("openQueryStatusBtn")?.addEventListener("click", () => {
+    queryStatusValue = "";
+    renderQueryStatusInput();
+    hideQueryStatusResult();
+    clearQueryStatusHint();
+
+    const callModalEl = document.getElementById("callModal");
+    const inputModalEl = document.getElementById("queryStatusInputModal");
+
+    bootstrap.Modal.getOrCreateInstance(callModalEl).hide();
+
+    setTimeout(() => {
+      bootstrap.Modal.getOrCreateInstance(inputModalEl).show();
+    }, 200);
+  });
+
+  document.querySelectorAll(".queryKeypad button[data-k]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.k;
+      if (!key) return;
+
+      if (key === "back") {
+        queryStatusValue = queryStatusValue.slice(0, -1);
+      } else {
+        queryStatusValue += key;
+      }
+
+      renderQueryStatusInput();
+    });
+  });
+
+  document.getElementById("confirmQueryStatusBtn")?.addEventListener("click", async () => {
+    const value = (queryStatusValue || "").trim();
+
+    if (!value) {
+      showQueryStatusHint("請輸入查詢號碼");
+      return;
+    }
+
+    clearQueryStatusHint();
+
+    try {
+      const result = await apiLookupStatus(value);
+      showQueryStatusResult(buildQueryStatusHtml(result));
+
+      bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("queryStatusInputModal")
+      ).hide();
+
+      setTimeout(() => {
+        bootstrap.Modal.getOrCreateInstance(
+          document.getElementById("queryStatusResultModal")
+        ).show();
+      }, 180);
+    } catch (err) {
+      console.error("query status failed:", err);
+      showQueryStatusResult(`<div class="queryResultStatus">狀態：查詢失敗，請稍後再試</div>`);
+
+      bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("queryStatusInputModal")
+      ).hide();
+
+      setTimeout(() => {
+        bootstrap.Modal.getOrCreateInstance(
+          document.getElementById("queryStatusResultModal")
+        ).show();
+      }, 180);
+    }
+  });
+
+  document.getElementById("queryStatusResultModal")?.addEventListener("hidden.bs.modal", () => {
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("queryStatusInputModal")).hide();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("callModal")).show();
+  });
+}
+
+function showQueryStatusHint(text) {
+  const el = document.getElementById("queryStatusHint");
+  if (!el) return;
+  el.textContent = text || "";
+}
+
+function clearQueryStatusHint() {
+  const el = document.getElementById("queryStatusHint");
+  if (!el) return;
+  el.textContent = "";
 }
