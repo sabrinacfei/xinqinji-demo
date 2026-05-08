@@ -272,7 +272,7 @@ async function finalizeCheckout(phone) {
       }))
     };
 
-    const res = await fetch("http://127.0.0.1:5000/api/create-payment-link", {
+    const res = await fetch("https://xinqinji-payment.onrender.com/api/create-payment-link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

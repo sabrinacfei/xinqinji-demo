@@ -14,8 +14,13 @@ LOGIN_URL = BASE_URL + "/auth"
 PAYMENT_URL = BASE_URL + "/payment/bill/immediate"
 
 PLATFORM = "DemoClock"
+
 FRONTEND_BASE_URL = "https://sabrinacfei.github.io/xinqinji-demo"
 
+BACKEND_BASE_URL = os.getenv(
+    "BACKEND_BASE_URL",
+    'https://xinqinji-payment.onrender.com'
+)
 
 
 def make_id():
@@ -123,7 +128,7 @@ def create_payment_link():
                 "uid": str(uid),
                 "platform": PLATFORM,
                 "price": int(amount),
-                "return_url": f"{FRONTEND_BASE_URL}/payment-return?pickupNo={order_no}"
+                "return_url": f"{BACKEND_BASE_URL}/payment-return?pickupNo={order_no}"
             }
         }
     }
