@@ -398,7 +398,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 300);
   }
 
-  // 付款成功回來後，顯示取餐號碼
   if (params.get("payment") === "success") {
     const pickupNo = params.get("pickupNo") || "P000";
 
@@ -414,6 +413,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 清掉網址參數，避免重新整理一直跳彈窗
       history.replaceState(null, "", "takeaway.html");
+
+      // 10 秒後自動回首頁
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 10000);
+
     }, 400);
   }
 });
