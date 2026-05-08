@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 import requests
 import time
@@ -14,10 +14,7 @@ LOGIN_URL = BASE_URL + "/auth"
 PAYMENT_URL = BASE_URL + "/payment/bill/immediate"
 
 PLATFORM = "DemoClock"
-FRONTEND_BASE_URL = os.getenv(
-    "FRONTEND_BASE_URL",
-    "https://sabrinacfei.github.io/xinqinji-demo"
-)
+FRONTEND_BASE_URL = "https://sabrinacfei.github.io/xinqinji-demo"
 
 
 
@@ -67,8 +64,6 @@ def create_payment_link():
     print("REGISTER status:", register_res.status_code)
     print("REGISTER text:", register_res.text)
 
-    # 如果已註冊，有可能會回錯，但我們仍然繼續登入
-    # 所以這裡不直接 return
 
     # 2. 登入取得 uid
     login_payload = {
@@ -128,7 +123,7 @@ def create_payment_link():
                 "uid": str(uid),
                 "platform": PLATFORM,
                 "price": int(amount),
-                "return_url": f"{FRONTEND_BASE_URL}/takeaway.html?payment=success&pickupNo={order_no}&bill=##order_sn##"
+                "return_url": f"{FRONTEND_BASE_URL}/payment-return?pickupNo={order_no}"
             }
         }
     }
@@ -181,6 +176,19 @@ def create_payment_link():
         "raw": payment_json
     })
 
+
+@app.route("/payment-return", methods=["GET", "POST"])
+def payment_return():
+    pickup_no = request.args.get("pickupNo", "P000")
+
+    print("PAYMENT RETURN method:", request.method)
+    print("PAYMENT RETURN args:", dict(request.args))
+    print("PAYMENT RETURN form:", dict(request.form))
+    print("PAYMENT RETURN json:", request.get_json(silent=True))
+
+    return redirect(
+        f"{FRONTEND_BASE_URL}/takeaway.html?payment=success&pickupNo={pickup_no}"
+    )
 
 @app.route("/health", methods=["GET"])
 def health():
