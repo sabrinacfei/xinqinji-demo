@@ -90,7 +90,7 @@
               <div class="modal-header callHeaderWithSearch">
                 <h5 class="modal-title">現在叫號</h5>
                 <button type="button" class="callSearchBtn" id="openQueryStatusBtn" aria-label="查詢狀態">
-                  <img src="images/magnifier.png" alt="查詢">
+                  <img src="images/magnifier1.png" alt="查詢">
                 </button>
               </div>
 
@@ -170,14 +170,28 @@
                   </div>
                 </div>
 
-                <div class="col-md-4 orderingBox" onclick="location.href='takeaway.html'">
+                <div class="col-md-4 orderingBox" onclick="location.href='takeaway.html?=999'">
                   <div>我要點餐</div>
                 </div>
               </div>
             </div>
 
-            <div>
-              <img src="images/banner.jpg" alt="banner">
+            <div class="homeBannerArea">
+              <!-- banner1：純廣告條，不可點 -->
+              <div class="homeAdBanner">
+                <img src="images/banner.jpg" alt="banner1">
+              </div>
+
+              <!-- banner2：可點選套餐輪播 -->
+              <div class="promoCarousel" id="promoCarousel">
+                <button type="button" class="promoArrow promoPrev" id="promoPrevBtn">‹</button>
+
+                <div class="promoTrack" id="promoTrack"></div>
+
+                <button type="button" class="promoArrow promoNext" id="promoNextBtn">›</button>
+
+                <div class="promoDots" id="promoDots"></div>
+              </div>
             </div>
           </article>
         </div>
@@ -311,7 +325,7 @@
               <div class="modal-header deliveryModalHeader">
                 <h3 class="modal-title">外送取餐</h3>
                 <button type="button" class="deliverySearchBtn" id="openDeliverySearchBtn" aria-label="查詢訂單">
-                  <img src="images/magnifier.png" alt="查詢訂單" class="deliverySearchIcon">
+                  <img src="images/magnifier1.png" alt="查詢訂單" class="deliverySearchIcon">
                 </button>
               </div>
 
@@ -371,7 +385,7 @@
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content waitKiosk deliverySearchKiosk">
               <div class="modal-header deliverySearchHeader">
-                <h3 class="modal-title">查詢訂單</h3>
+                <h3 class="modal-title">外送訂單報到</h3>
                 <button type="button" class="deliverySearchCloseX" id="deliverySearchCloseBtn" aria-label="關閉">×</button>
               </div>
 
@@ -391,8 +405,8 @@
                       maxlength="10"
                       readonly
                     >
-                    <button type="button" class="deliveryInlineSearchBtn" id="confirmDeliverySearchBtn" aria-label="查詢">
-                      <img src="images/magnifier.png" alt="查詢" class="deliveryInlineSearchIcon">
+                    <button type="button" class="deliveryInlineDoneBtn" id="confirmDeliverySearchBtn" aria-label="完成">
+                      完成
                     </button>
                   </div>
                 </div>
@@ -453,6 +467,56 @@
 
                 <div id="letterPicker" class="letterPicker d-none"></div>
                 <div class="deliverySearchResult d-none" id="deliverySearchResult"></div>
+                <!-- 外送員拍照用：不顯示在畫面上 -->
+                <video id="deliveryCameraVideo" class="deliveryHiddenCamera" autoplay playsinline muted></video>
+                <canvas id="deliveryCameraCanvas" class="deliveryHiddenCamera"></canvas>
+
+                <!-- 查詢中遮罩 -->
+                <div id="deliveryLoadingMask" class="deliveryLoadingMask d-none">
+                  <div class="deliveryLoadingCard">
+                    <img src="images/delivery-face-loading1.png" alt="loading" class="deliveryLoadingFace">
+                    <div class="deliveryLoadingText">正在為您查詢訂單編號</div>
+                    <div class="deliveryLoadingSub">請稍後...</div>
+                  </div>
+                </div>
+
+                <!-- 照片存取同意彈窗 -->
+                <div id="deliveryConsentMask" class="deliveryConsentMask d-none">
+                  <div class="deliveryConsentCard">
+                    <div class="deliveryConsentTitle">取餐影像紀錄說明</div>
+                    <div class="deliveryConsentText">
+                      為維護外送員與店家雙方權益，系統已於報到查詢期間完成取餐影像紀錄。
+                      照片僅作為訂單交付、取餐爭議確認與內部稽核使用，不會用於其他目的。
+                      請選擇是否同意將照片提供給櫃檯人員於必要時調取。
+                    </div>
+
+                    <div class="deliveryConsentBtns">
+                      <button type="button" class="deliveryConsentNoBtn" id="deliveryConsentNoBtn">不同意</button>
+                      <button type="button" class="deliveryConsentYesBtn" id="deliveryConsentYesBtn">同意</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="deliveryThanksMask" class="deliveryThanksMask d-none">
+                  <div class="deliveryThanksCard">
+                    <div class="deliveryCheckAnim">
+                      <div class="deliveryCheckCircle"></div>
+                      <div class="deliveryCheckMark"></div>
+                    </div>
+
+                    <div class="deliveryThanksTitle">已收到您的回覆，謝謝！</div>
+                    <div class="deliveryThanksSub">正在為您確認訂單狀態...</div>
+                  </div>
+                </div>
+
+                <!-- 訂單狀態彈窗 -->
+                <div id="deliveryStatusMask" class="deliveryStatusMask d-none">
+                  <div class="deliveryStatusCard">
+                    <div class="deliveryStatusOrderNo" id="deliveryStatusOrderNo">A1234</div>
+                    <div class="deliveryStatusText" id="deliveryStatusText">訂單狀態</div>
+                    <button type="button" class="deliveryStatusOkBtn" id="deliveryStatusOkBtn">完成</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -728,6 +792,28 @@
                     </div>
                   </div>
                 </div>
+                <!-- 員工臉部拍照 -->
+                <div id="clockStepPhoto" class="d-none">
+                  <div class="clockPhotoStage">
+                    <div class="clockPhotoTitle">
+                      <span id="clockPhotoName">Sabrina</span>，請拍攝員工臉部照片
+                    </div>
+
+                    <div class="clockPhotoHint" id="clockPhotoHint">正在開啟鏡頭，請看向鏡頭...</div>
+
+                    <div class="clockCameraBox">
+                      <video id="clockCameraVideo" class="clockCameraVideo" autoplay playsinline muted></video>
+                      <img id="clockPhotoPreview" class="clockPhotoPreview d-none" alt="員工臉部照片預覽">
+                      <canvas id="clockCameraCanvas" class="d-none"></canvas>
+                    </div>
+
+                    <div class="clockPhotoBtns d-none">
+                      <button type="button" class="clockPhotoBtn clockRetakeBtn" id="clockRetakeBtn">重拍</button>
+                      <button type="button" class="clockPhotoBtn clockCaptureBtn" id="clockCaptureBtn">拍照</button>
+                      <button type="button" class="clockPhotoBtn clockPhotoConfirmBtn" id="clockPhotoConfirmBtn" disabled>確認照片</button>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- 完成 -->
                 <div id="clockStepD" class="d-none waitFinish">
@@ -735,6 +821,31 @@
                   <div class="clockFinishSub" id="clockFinishSub"></div>
                   <div class="clockFinishMeta" id="clockFinishMeta"></div>
                   <div class="finishHint">5 秒後將自動關閉此畫面</div>
+                </div>
+                <!-- 下班評分 -->
+                <div id="clockStepRating" class="d-none">
+                  <div class="clockRatingStage">
+                    <div class="clockRatingTitle">
+                      <span id="clockRatingName">Sabrina</span> 辛苦了，今天都還好嗎？
+                    </div>
+
+                    <div class="clockRatingBtns">
+                      <button type="button" class="clockRatingBtn" data-rating="good" aria-label="今天很好">
+                        <span class="clockRatingEmoji">🙂</span>
+                        <span class="clockRatingText">很好</span>
+                      </button>
+
+                      <button type="button" class="clockRatingBtn" data-rating="normal" aria-label="今天普通">
+                        <span class="clockRatingEmoji">😐</span>
+                        <span class="clockRatingText">普通</span>
+                      </button>
+
+                      <button type="button" class="clockRatingBtn" data-rating="bad" aria-label="今天不太好">
+                        <span class="clockRatingEmoji">☹️</span>
+                        <span class="clockRatingText">不太好</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -744,7 +855,7 @@
       </main>
     </div>
   </div>
-  <script src="js/mockApi.js"></script>
-  <script src="js/index_page.js"></script>
+  <script src="js/mockApi.js?v=999"></script>
+  <script src="js/index_page.js?v=999"></script>
 </body>
 </html>

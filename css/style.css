@@ -20,7 +20,7 @@ h2{
 Layout 主容器
 *******************************************************************/
 .mainContainer{
-	max-width: 1024px;
+	max-width: 1070px;
 	width: 100%;
 	height: 100dvh;
 	margin: 0 auto;
@@ -1045,7 +1045,7 @@ body{
 
   .mainContainer{
     width: 100% !important;
-    max-width: 1024px;          
+    max-width: 1070px;          
     height: 100dvh !important; 
     margin: 0 auto !important;
   }
@@ -1645,7 +1645,7 @@ body{
 }
 
 .indooorPage{
-  height: 600px;           
+  height: 675px;           
   display: flex;
   flex-direction: column;
 }
@@ -2092,16 +2092,16 @@ body{
   justify-content:center;
   overflow:hidden;
 
-  --sx: calc(100vw / 1024);
-  --sy: calc(100vh / 600);
+  --sx: calc(100vw / 1070);
+  --sy: calc(100vh / 675);
   --s: min(var(--sx), var(--sy));
 }
 
 
 .kioskCanvas{
-  width: 1024px !important;
+  width: 1070px !important;
   max-width: none !important;  
-  height: 600px !important;
+  height: 675px !important;
 
   transform-origin: center center;
   transform: scale(var(--s));
@@ -2124,29 +2124,29 @@ body{
   --vw: 100vw;
   --vh: 100vh;
 
-  --sx: calc(var(--vw) / 1024);
-  --sy: calc(var(--vh) / 600);
+  --sx: calc(var(--vw) / 1070);
+  --sy: calc(var(--vh) / 675);
   --s: min(var(--sx), var(--sy));
 }
-.kioskCanvas{
-  transform: scale(var(--s));
-  transform-origin: center center;
-}
+
 
 
 .kioskCanvas .mainContainer{
-  width: 1024px !important;
+  width: 1070px !important;
   max-width: none !important;
-  height: 600px !important;
+  height: 675px !important;
   margin: 0 !important;
   overflow: hidden !important;
 }
 
 .kioskCanvas{
-  width: 1024px !important;
-  height: 600px !important;
+  width: 1070px !important;
+  height: 675px !important;
   overflow: hidden !important;
   position: relative !important;
+
+  transform: scale(var(--s)) !important;
+  transform-origin: center center !important;
 }
 
 .kioskCanvas .bottomBar{
@@ -2173,7 +2173,7 @@ body{
 
 .kioskCanvas .posContainer,
 .kioskCanvas .mainContainer{
-  height: 600px !important;
+  height: 675px !important;
   overflow: hidden !important;
 }
 
@@ -2209,14 +2209,14 @@ body.modal-open .kioskCanvas .cartIconWrap{
 .kioskCanvas,
 .kioskCanvas .mainContainer,
 .kioskCanvas .mainHeight{
-  height: 600px !important;
-  min-height: 600px !important;
-  max-height: 600px !important;
+  height: 675px !important;
+  min-height: 675px !important;
+  max-height: 675px !important;
   overflow: hidden !important;
 }
 
 .kioskCanvas .mainContent{
-  height: 600px !important;
+  height: 675px !important;
   display: flex !important;
   align-items: stretch !important;
 }
@@ -2239,7 +2239,7 @@ body.modal-open .kioskCanvas .cartIconWrap{
 }
 
 .kioskCanvas .menuList{
-  height: calc(600px - 110px) !important;  
+  height: calc(675px - 110px) !important;  
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
 }
@@ -4271,7 +4271,7 @@ body.modal-open .kioskCanvas .cartIconWrap{
 
 #reserveModal .modal-dialog{
   width: 100%;
-  max-width: 1024px;
+  max-width: 1070px;
   margin: 0 auto;
   padding: 0 8px;
 }
@@ -5253,3 +5253,4110 @@ body.modal-open .kioskCanvas .cartIconWrap{
   color: #111 !important;
   border: 0 !important;
 }
+
+/* ===== 首頁微放大修正版：只放大內容，不讓右側被切掉 ===== */
+.kioskCanvas .mainContent{
+  transform: scale(1.1) !important;
+  transform-origin: top center !important;
+  width: calc(100% / 1.1) !important;
+  height: calc(100% / 1.1) !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+/* ===== 外帶頁：內容等比例放大，底部按鈕不動 ===== */
+.page-takeaway .kioskCanvas .takeawayScaleArea{
+  transform: scale(1.2) !important;
+  transform-origin: top left !important;
+  width: calc(100% / 1.2) !important;
+  height: calc(100% / 1.2) !important;
+}
+
+/* ===== 外帶頁：購物車放大 ===== */
+.kioskCanvas .cartIconWrap{
+  width: 100px !important;
+  height: 100px !important;
+  left: 28px !important;
+  bottom: 26px !important;
+  border-radius: 28px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kioskCanvas .cartIconImg{
+  width: 62px !important;
+  height: 62px !important;
+  object-fit: contain !important;
+}
+
+.kioskCanvas .cartBadge{
+  top: -10px !important;
+  right: -10px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  padding: 0 10px !important;
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+}
+/* ===== 外帶頁：返回 / 結帳 放大 ===== */
+.kioskCanvas #takeawayBackBtn,
+.kioskCanvas #checkoutBtn{
+  width: 125px !important;
+  min-width: 125px !important;
+  height: 45px !important;
+  min-height: 45px !important;
+
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  border-radius: 14px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+}
+
+.kioskCanvas .bottomBar{
+  gap: 18px !important;
+  padding-bottom: 4px !important;
+}
+
+
+
+/* ===== 下班評分頁 ===== */
+#clockStepRating{
+  min-height: 420px;
+}
+
+.clockRatingStage{
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 42px;
+  padding: 30px 24px;
+  text-align: center;
+}
+
+.clockRatingTitle{
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #20242a;
+  line-height: 1.4;
+}
+
+#clockRatingName{
+  color: #ec5b3c;
+}
+
+.clockRatingBtns{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+  width: min(760px, 100%);
+}
+
+.clockRatingBtn{
+  height: 150px;
+  border: 0 !important;
+  border-radius: 26px !important;
+  background: #fff7f3 !important;
+  color: #222 !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,.12) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.clockRatingBtn:active{
+  transform: scale(.96);
+  box-shadow: 0 8px 18px rgba(0,0,0,.12) !important;
+}
+
+.clockRatingEmoji{
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.clockRatingText{
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+/* ===== 首頁 banner 區 ===== */
+.homeBannerArea{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* banner1：純廣告 */
+.homeAdBanner{
+  width: 100%;
+  height: 120px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.homeAdBanner img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* banner2：功能輪播 */
+.promoCarousel{
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #39a2dc;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  cursor: pointer;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.promoTrack{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.promoSlide{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  align-items: center;
+  padding: 22px 70px;
+  color: #fff;
+}
+
+.promoSlide.active{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.promoText{
+  text-align: left;
+}
+
+.promoTag{
+  display: inline-block;
+  background: rgba(255,255,255,.22);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 1rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.promoName{
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.promoDesc{
+  margin-top: 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  opacity: .95;
+}
+
+.promoPrice{
+  margin-top: 8px;
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.promoHint{
+  margin-top: 4px;
+  font-size: .95rem;
+  font-weight: 800;
+  opacity: .9;
+}
+
+.promoImgBox{
+  width: 100%;
+  height: 130px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.promoImgBox img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 左右箭頭 */
+.promoArrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 42px;
+  height: 70px;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.22) !important;
+  color: #fff !important;
+  font-size: 2.8rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+.promoPrev{
+  left: 14px;
+}
+
+.promoNext{
+  right: 14px;
+}
+
+.promoArrow:active{
+  transform: translateY(-50%) scale(.94);
+}
+
+/* 點點 */
+.promoDots{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 6;
+}
+
+.promoDot{
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.4) !important;
+  padding: 0 !important;
+}
+
+.promoDot.active{
+  background: #111827 !important;
+}
+
+/* ===== 首頁右側恢復正常 + banner 修正版 ===== */
+
+/* 右側不要被舊的放大或縮小影響 */
+.kioskCanvas .mainContent{
+  transform: none !important;
+  width: 100% !important;
+  height: 675px !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+/* 左右欄比例固定 */
+.kioskCanvas .mainContent > aside{
+  width: 33.333333% !important;
+  height: 675px !important;
+  flex: 0 0 33.333333% !important;
+}
+
+.kioskCanvas .mainContent > article.articleContainer{
+  width: 66.666667% !important;
+  height: 675px !important;
+  flex: 0 0 66.666667% !important;
+  display: block !important;
+  overflow: hidden !important;
+  padding: 22px !important;
+  background: #fff !important;
+}
+
+/* 上方三個卡片恢復顯示 */
+.kioskCanvas .articleContainer .diningContent{
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 18px !important;
+  padding: 0 !important;
+}
+
+.kioskCanvas .articleContainer .diningContent .row{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 18px !important;
+  margin: 0 !important;
+}
+
+.kioskCanvas .articleContainer .diningWrap,
+.kioskCanvas .articleContainer .orderingBox{
+  flex: 1 1 0 !important;
+  width: auto !important;
+  padding: 0 !important;
+}
+
+.kioskCanvas .articleContainer .diningBox,
+.kioskCanvas .articleContainer .orderingBox > div{
+  height: 145px !important;
+  min-height: 145px !important;
+  max-height: 145px !important;
+}
+
+/* 我要點餐不要因為舊 padding 被推爆 */
+.kioskCanvas .articleContainer .orderingBox > div{
+  padding-top: 88px !important;
+  background-size: 70px !important;
+  background-position: center 20px !important;
+}
+
+/* banner 區 */
+.kioskCanvas .homeBannerArea{
+  width: 627px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  margin: 0 auto !important;
+}
+
+/* banner1：完整廣告條 */
+.kioskCanvas .homeAdBanner{
+  width: 627px !important;
+  height: 110px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  background: #f3f4f6 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kioskCanvas .homeAdBanner img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* banner2 */
+.kioskCanvas .promoCarousel{
+  width: 627px !important;
+  height: 220px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #39a2dc !important;
+  display: block !important;
+}
+
+.kioskCanvas .promoTrack{
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* banner2 內容 */
+.kioskCanvas .promoSlide{
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  align-items: center !important;
+  padding: 20px 56px !important;
+  color: #fff !important;
+}
+
+.kioskCanvas .promoSlide.active{
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.kioskCanvas .promoImgBox{
+  width: 100% !important;
+  height: 170px !important;
+  background: transparent !important;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kioskCanvas .promoImgBox img{
+  position: static !important;
+  width: auto !important;
+  height: 165px !important;
+  max-width: 100% !important;
+  max-height: 165px !important;
+  object-fit: contain !important;
+  transform: none !important;
+  display: block !important;
+}
+/* ===== 修正首頁右側跑版：整體往下、卡片恢復正常間距 ===== */
+
+/* 右側整體往下，不要貼最上面 */
+.kioskCanvas .mainContent > article.articleContainer{
+  padding: 44px 26px 24px !important;
+  overflow: hidden !important;
+}
+
+/* 上方三張卡片不要貼 banner */
+.kioskCanvas .articleContainer .diningContent{
+  margin-bottom: 28px !important;
+}
+
+/* 上方卡片高度恢復，不要被壓太扁 */
+.kioskCanvas .articleContainer .diningBox,
+.kioskCanvas .articleContainer .orderingBox > div{
+  height: 160px !important;
+  min-height: 160px !important;
+  max-height: 160px !important;
+}
+
+/* 外帶 / 內用標題高度 */
+.kioskCanvas .articleContainer .takeawayTitle,
+.kioskCanvas .articleContainer .diningTitle{
+  height: 54px !important;
+  line-height: 54px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* 數字區不要壓到下面文字 */
+.kioskCanvas .articleContainer .timeWait{
+  height: 74px !important;
+  padding-top: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kioskCanvas .articleContainer .waitTitle{
+  margin-top: 0 !important;
+}
+
+/* 我要點餐圖示與文字位置 */
+.kioskCanvas .articleContainer .orderingBox > div{
+  padding-top: 96px !important;
+  background-size: 72px !important;
+  background-position: center 22px !important;
+}
+
+/* banner 區往下正常排 */
+.kioskCanvas .homeBannerArea{
+  margin-top: 0 !important;
+  gap: 16px !important;
+}
+
+/* banner1 維持廣告條 */
+.kioskCanvas .homeAdBanner{
+  width: 627px !important;
+  height: 110px !important;
+}
+
+/* banner2 保持高度 */
+.kioskCanvas .promoCarousel{
+  width: 627px !important;
+  height: 220px !important;
+}
+
+/* banner2 內容不要貼邊 */
+.kioskCanvas .promoSlide{
+  padding: 18px 58px 24px !important;
+  grid-template-columns: 1.05fr .95fr !important;
+}
+
+/* 藍色欄位圖片區：留上下空間 */
+.kioskCanvas .promoImgBox{
+  height: 150px !important;
+  padding-bottom: 14px !important;
+  box-sizing: border-box !important;
+  align-items: center !important;
+}
+
+/* 圖片縮小一點，底下才有空隙 */
+.kioskCanvas .promoImgBox img{
+  height: 130px !important;
+  max-height: 130px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  transform: none !important;
+}
+
+/* ===== 調整 banner1 高度 + banner2 圖片右側置中 ===== */
+
+/* banner1 加高 */
+.kioskCanvas .homeAdBanner{
+  width: 627px !important;
+  height: 180px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #f3f4f6 !important;
+}
+
+.kioskCanvas .homeAdBanner img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* 因為 banner1 變高，banner 間距稍微縮小 */
+.kioskCanvas .homeBannerArea{
+  gap: 12px !important;
+}
+
+/* banner2 內容：左文字、右圖片 */
+.kioskCanvas .promoSlide{
+  display: grid !important;
+  grid-template-columns: 1fr 260px !important;
+  align-items: center !important;
+  padding: 18px 58px 22px !important;
+}
+
+/* 右側圖片框固定在右邊中間 */
+.kioskCanvas .promoImgBox{
+  width: 240px !important;
+  height: 160px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  background: transparent !important;
+  overflow: visible !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  justify-self: center !important;
+}
+
+/* 圖片本身置中，並縮到不貼底 */
+.kioskCanvas .promoImgBox img{
+  position: static !important;
+  width: auto !important;
+  height: 150px !important;
+  max-width: 230px !important;
+  max-height: 135px !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  display: block !important;
+}
+
+/* ===== banner1 / banner2 完全分開控制，不互相影響 ===== */
+
+/* 右側整體 */
+.kioskCanvas .mainContent > article.articleContainer{
+  padding: 30px 26px 24px !important;
+  overflow: hidden !important;
+}
+
+/* 上方三個卡片 */
+.kioskCanvas .articleContainer .diningContent{
+  margin-bottom: 24px !important;
+}
+
+/* banner 區 */
+.kioskCanvas .homeBannerArea{
+  width: 627px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+/* =========================
+   banner1：只控制廣告圖
+========================= */
+.kioskCanvas .homeBannerArea .homeAdBanner{
+  width: 627px !important;
+  height: 150px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #f3f4f6 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kioskCanvas .homeBannerArea .homeAdBanner > img{
+  width: 100% !important;
+  height: 100% !important;
+
+  object-fit: cover !important;
+  object-position: center center !important;
+
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  position: static !important;
+}
+
+/* =========================
+   banner2：只控制藍色輪播
+========================= */
+.kioskCanvas .homeBannerArea .promoCarousel{
+  width: 627px !important;
+  height: 220px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #39a2dc !important;
+  display: block !important;
+  position: relative !important;
+}
+
+.kioskCanvas .homeBannerArea .promoTrack{
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* banner2 每一頁 */
+.kioskCanvas .homeBannerArea .promoSlide{
+  position: absolute !important;
+  inset: 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 250px !important;
+  align-items: center !important;
+
+  padding: 18px 58px 24px !important;
+  color: #fff !important;
+}
+
+/* 左邊文字 */
+.kioskCanvas .homeBannerArea .promoText{
+  text-align: left !important;
+  align-self: center !important;
+}
+
+.kioskCanvas .homeBannerArea .promoName{
+  font-size: 1.9rem !important;
+  line-height: 1.15 !important;
+}
+
+.kioskCanvas .homeBannerArea .promoDesc{
+  font-size: 1rem !important;
+}
+
+.kioskCanvas .homeBannerArea .promoPrice{
+  font-size: 1.55rem !important;
+}
+
+/* =========================
+   banner2 圖片：只控制套餐圖
+========================= */
+.kioskCanvas .homeBannerArea .promoImgBox{
+  width: 250px !important;
+  height: 160px !important;
+
+  background: transparent !important;
+  overflow: visible !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  align-self: center !important;
+  justify-self: center !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.kioskCanvas .homeBannerArea .promoImgBox > img{
+  position: static !important;
+  display: block !important;
+
+  width: auto !important;
+  height: 155px !important;
+  max-width: 260px !important;
+  max-height: 155px !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 箭頭不要壓到圖片 */
+.kioskCanvas .homeBannerArea .promoPrev{
+  left: 12px !important;
+}
+
+.kioskCanvas .homeBannerArea .promoNext{
+  right: 12px !important;
+}
+
+/* 點點固定在下方中間 */
+.kioskCanvas .homeBannerArea .promoDots{
+  bottom: 10px !important;
+}
+
+/* ===== 只把首頁右上三個欄位變長，其他不動 ===== */
+
+/* 讓三個卡片之間的間距變小，卡片自然變長 */
+.kioskCanvas .articleContainer .diningContent .row{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 12px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* 取消 Bootstrap 左右 padding，讓每格寬一點 */
+.kioskCanvas .articleContainer .diningWrap,
+.kioskCanvas .articleContainer .orderingBox{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.kioskCanvas .articleContainer .diningBox,
+.kioskCanvas .articleContainer .orderingBox > div{
+  height: 190px !important;
+  min-height: 190px !important;
+  max-height: 190px !important;
+}
+
+/* ===== 修正首頁左側：現在叫號數字不要太大 ===== */
+
+.kioskCanvas #openCallModal .callLeftTitle{
+  font-size: 34px !important;
+  line-height: 1.25 !important;
+}
+
+.kioskCanvas #callMiniNums .callMiniNo{
+  font-size: 30px !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+  min-width: auto !important;
+}
+
+.kioskCanvas #callMiniNums{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+/* =========================================================
+   全站統一色系：活潑淺色版
+   原則：淺色為底、橘色為主、藍綠輔助、深色少量
+========================================================= */
+
+:root{
+  --brand-orange: #F47B20;
+  --brand-orange-light: #FF9A3D;
+  --brand-caramel: #F6C29D;
+  --brand-plum: #701B15;
+
+  --brand-blue: #87C9CC;
+  --brand-blue-soft: #CFEDEF;
+  --brand-midnight: #0A4152;
+
+  --brand-bg: #FFF8F2;
+  --brand-card: #FFFFFF;
+  --brand-text: #2E241F;
+  --brand-muted: #74665D;
+  --brand-line: #F0D5C0;
+}
+
+/* ===== 全頁背景 ===== */
+body,
+.kioskStage{
+  background: #c9c0b8 !important;
+}
+
+.kioskCanvas,
+.kioskCanvas .mainContainer,
+.kioskCanvas .posContainer,
+.kioskCanvas .articleContainer,
+.kioskCanvas .indooorPage{
+  background: var(--brand-bg) !important;
+  color: var(--brand-text) !important;
+}
+
+/* ===== 首頁左側：橘色主視覺，稍微亮一點 ===== */
+.kioskCanvas .mainContent > aside{
+  background: linear-gradient(180deg, #F47B20 0%, #FF8C2F 100%) !important;
+}
+
+/* 左側按鈕 */
+.kioskCanvas .waitBox div{
+  background: #D96518 !important;
+  color: #fff !important;
+}
+
+.kioskCanvas .reserveBox div{
+  background: var(--brand-blue) !important;
+  color: var(--brand-midnight) !important;
+}
+
+.kioskCanvas .pickupUber{
+  background: var(--brand-caramel) !important;
+  color: var(--brand-text) !important;
+}
+
+.kioskCanvas .pickupIndoor{
+  background: #F8D8B8 !important;
+  color: var(--brand-text) !important;
+}
+
+/* 現在叫號卡片 */
+.kioskCanvas .callWrap,
+.kioskCanvas #openCallModal{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+}
+
+/* ===== 首頁右上三格 ===== */
+.kioskCanvas .takeawayTitle,
+.kioskCanvas .diningTitle,
+.kioskCanvas .orderingBox > div{
+  background-color: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+.kioskCanvas .diningBox{
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 24px rgba(46,36,31,.08) !important;
+}
+
+/* ===== banner2：淺色但更活潑 ===== */
+.kioskCanvas .homeBannerArea .promoCarousel,
+.kioskCanvas .promoCarousel{
+  background: linear-gradient(135deg, #87C9CC 0%, #A9DEE0 100%) !important;
+  background-color: #87C9CC !important;
+  background-image: linear-gradient(135deg, #87C9CC 0%, #A9DEE0 100%) !important;
+  box-shadow: 0 18px 38px rgba(46,36,31,.14) !important;
+}
+
+/* banner2 文字 */
+.kioskCanvas .homeBannerArea .promoName,
+.kioskCanvas .homeBannerArea .promoDesc,
+.kioskCanvas .homeBannerArea .promoPrice,
+.kioskCanvas .homeBannerArea .promoHint,
+.kioskCanvas .promoName,
+.kioskCanvas .promoDesc,
+.kioskCanvas .promoPrice,
+.kioskCanvas .promoHint{
+  color: var(--brand-text) !important;
+}
+
+/* banner2 標籤：更亮一點 */
+.kioskCanvas .homeBannerArea .promoTag,
+.kioskCanvas .promoTag{
+  background: rgba(246,194,157,.78) !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+}
+
+/* banner2 左右箭頭 */
+.kioskCanvas .homeBannerArea .promoArrow,
+.kioskCanvas .promoArrow{
+  background: rgba(246,194,157,.65) !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* banner2 圓點 */
+.kioskCanvas .homeBannerArea .promoDot,
+.kioskCanvas .promoDot{
+  background: rgba(10,65,82,.22) !important;
+}
+
+.kioskCanvas .homeBannerArea .promoDot.active,
+.kioskCanvas .promoDot.active{
+  background: var(--brand-orange) !important;
+}
+
+/* ===== 彈窗標題與底色 ===== */
+.kioskCanvas .modal-content,
+.kioskCanvas .waitKiosk,
+.kioskCanvas .reserveKiosk,
+.kioskCanvas .deliveryKiosk,
+.kioskCanvas .deliverySearchKiosk,
+.kioskCanvas .queryInputModalBox,
+.kioskCanvas .queryResultModalBox,
+.kioskCanvas .callModalBox,
+.kioskCanvas .sumCard{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  box-shadow: 0 24px 55px rgba(46,36,31,.20) !important;
+  overflow: hidden !important;
+}
+
+.kioskCanvas .modal-header,
+.kioskCanvas .modal-footer,
+.kioskCanvas .sumHead,
+.kioskCanvas .sumFoot,
+.kioskCanvas .reserveHeader,
+.kioskCanvas .clockingHeader{
+  background: var(--brand-bg) !important;
+  border-color: var(--brand-line) !important;
+  color: var(--brand-text) !important;
+}
+
+/* ===== 主要按鈕：亮橘 ===== */
+.kioskCanvas .waitPrimaryBtn,
+.kioskCanvas .nextBtn,
+.kioskCanvas .reserveMainBtn,
+.kioskCanvas .waitSubmitLikeTakeaway,
+.kioskCanvas .reserveSubmitLikeTakeaway,
+.kioskCanvas #confirmAddBtn,
+.kioskCanvas #sumPrimaryBtn,
+.kioskCanvas #pickupConfirmBtn,
+.kioskCanvas #pickupFinalBtn,
+.kioskCanvas .checkoutBtn,
+.kioskCanvas #confirmQueryStatusBtn,
+.kioskCanvas .btn-danger,
+.kioskCanvas .clockActionOff{
+  background: var(--brand-orange) !important;
+  border: 0 !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 8px 18px rgba(244,123,32,.22) !important;
+}
+
+/* 次要按鈕 */
+.kioskCanvas .waitGhostBtn,
+.kioskCanvas .reserveGhostBtn,
+.kioskCanvas .waitEditLikeTakeaway,
+.kioskCanvas .reserveEditLikeTakeaway,
+.kioskCanvas #sumBackBtn,
+.kioskCanvas #pickupEditBtn,
+.kioskCanvas #pickupCancelBtn,
+.kioskCanvas .btn-outline-secondary{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 2px solid var(--brand-blue) !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+/* ===== 候位 / 預約卡片：活潑淺藍綠 ===== */
+#waitModal .waitCard,
+#waitModal .peopleCard,
+.kioskCanvas #waitModal .waitCard,
+.kioskCanvas #waitModal .peopleCard,
+.kioskCanvas .reservePeopleOnly,
+.kioskCanvas .reservePeopleOnlyRow{
+  background: rgba(207,237,239,.75) !important;
+  border: 0 !important;
+  color: var(--brand-text) !important;
+  box-shadow: 0 10px 24px rgba(46,36,31,.08) !important;
+}
+
+#waitModal .waitCardNum,
+#waitModal .finishNum,
+.kioskCanvas #waitModal .waitCardNum,
+.kioskCanvas #waitModal .finishNum{
+  color: var(--brand-orange) !important;
+}
+
+#waitModal .waitCardHint em,
+.kioskCanvas #waitModal .waitCardHint em{
+  color: var(--brand-orange) !important;
+}
+
+/* ===== 鍵盤 / 時間按鈕 ===== */
+.kioskCanvas .keyBtn,
+.kioskCanvas .miniBtn,
+.kioskCanvas .reserveRoundBtn,
+.kioskCanvas .nineKey,
+.kioskCanvas .deliveryNinePad .numBtn,
+.kioskCanvas .queryKeypad button,
+.kioskCanvas #sumRows .sumBtn,
+.kioskCanvas #qtyMinus,
+.kioskCanvas #qtyPlus,
+.kioskCanvas .menuNavBtn,
+.kioskCanvas #zoomOut,
+.kioskCanvas #zoomIn{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 10px rgba(46,36,31,.10) !important;
+}
+
+.kioskCanvas .keyBtn.keyFn,
+.kioskCanvas .deliveryNinePad .fnBtn{
+  background: var(--brand-blue-soft) !important;
+  color: var(--brand-text) !important;
+}
+
+.kioskCanvas .keyBtn.keyOk,
+.kioskCanvas #reserveStepPhone .keyBtn.keyOk,
+.kioskCanvas #pickupKeypad .keyBtn.keyOk{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* ===== 預約入口 ===== */
+#reserveModal #goReserveToday{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+#reserveModal #goReserveFuture{
+  background: var(--brand-blue) !important;
+  color: var(--brand-midnight) !important;
+  border: 0 !important;
+}
+
+/* ===== 時段 active ===== */
+.kioskCanvas .timeItem.active,
+.kioskCanvas .timeTodayGrid .timeItem.active,
+.kioskCanvas .reservePeriodBtn.active{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* ===== 外帶頁分類 ===== */
+html body .kioskCanvas #categoryTree > div,
+html body .kioskCanvas .categoryItem,
+html body .kioskCanvas .catMain,
+html body .kioskCanvas .catList .catBtn{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 14px rgba(46,36,31,.08) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+html body .kioskCanvas #categoryTree > div.active,
+html body .kioskCanvas .categoryItem.active,
+html body .kioskCanvas .catMain.active,
+html body .kioskCanvas .catList .catBtn.active{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* ===== 錯誤 / 徽章：深色只小面積 ===== */
+.kioskCanvas .waitErr,
+.kioskCanvas .reserveInlineHint,
+.kioskCanvas .deliverySearchResult,
+.kioskCanvas .queryStatusHint,
+.kioskCanvas .takeawayEmptyHint{
+  color: var(--brand-plum) !important;
+}
+
+.kioskCanvas .cartBadge{
+  background: var(--brand-plum) !important;
+  color: #fff !important;
+}
+
+/* ===== 候位 / 人數卡片：霧藍淡底、不要邊框感 ===== */
+#waitModal .waitCard,
+#waitModal .peopleCard,
+.kioskCanvas #waitModal .waitCard,
+.kioskCanvas #waitModal .peopleCard,
+.kioskCanvas .reservePeopleOnly,
+.kioskCanvas .reservePeopleOnlyRow{
+  background: rgba(164,192,193,.24) !important;
+  border: 0 !important;
+  color: var(--brand-text) !important;
+  box-shadow: 0 10px 24px rgba(46,36,31,.08) !important;
+}
+
+#waitModal .waitCardNum,
+#waitModal .finishNum,
+.kioskCanvas #waitModal .waitCardNum,
+.kioskCanvas #waitModal .finishNum{
+  color: var(--brand-orange) !important;
+}
+
+#waitModal .waitCardHint em,
+.kioskCanvas #waitModal .waitCardHint em{
+  color: var(--brand-orange) !important;
+}
+
+#waitModal .waitCardSub,
+#waitModal .waitCardHint,
+.kioskCanvas #waitModal .waitCardSub,
+.kioskCanvas #waitModal .waitCardHint{
+  color: var(--brand-muted) !important;
+}
+
+/* ===== 鍵盤 / 加減 / 時間按鈕 ===== */
+.kioskCanvas .keyBtn,
+.kioskCanvas .miniBtn,
+.kioskCanvas .reserveRoundBtn,
+.kioskCanvas .nineKey,
+.kioskCanvas .deliveryNinePad .numBtn,
+.kioskCanvas .queryKeypad button,
+.kioskCanvas #sumRows .sumBtn,
+.kioskCanvas #qtyMinus,
+.kioskCanvas #qtyPlus,
+.kioskCanvas .menuNavBtn,
+.kioskCanvas #zoomOut,
+.kioskCanvas #zoomIn{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 10px rgba(46,36,31,.10) !important;
+}
+
+.kioskCanvas .keyBtn.keyFn,
+.kioskCanvas .deliveryNinePad .fnBtn{
+  background: rgba(164,192,193,.24) !important;
+  color: var(--brand-text) !important;
+}
+
+.kioskCanvas .keyBtn.keyOk,
+.kioskCanvas #reserveStepPhone .keyBtn.keyOk,
+.kioskCanvas #pickupKeypad .keyBtn.keyOk{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* ===== 預約入口：當日 / 未來 ===== */
+#reserveModal #goReserveToday{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+#reserveModal #goReserveFuture{
+  background: var(--brand-blue) !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+}
+
+#reserveModal .reserveEntryBtn{
+  border-radius: 24px !important;
+  box-shadow: 0 18px 36px rgba(46,36,31,.12) !important;
+}
+
+#reserveModal .reserveEntryTop{
+  color: inherit !important;
+  font-weight: 900 !important;
+}
+
+#reserveModal .reserveEntryDivider{
+  background: var(--brand-line) !important;
+  border-color: var(--brand-line) !important;
+}
+
+/* ===== 時段按鈕 ===== */
+.kioskCanvas .timeItem,
+.kioskCanvas .timeTodayGrid .timeItem,
+.kioskCanvas .reservePeriodBtn{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  box-shadow: 0 4px 10px rgba(46,36,31,.08) !important;
+}
+
+.kioskCanvas .timeItem.active,
+.kioskCanvas .timeTodayGrid .timeItem.active,
+.kioskCanvas .reservePeriodBtn.active{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* ===== 叫號 / 外送 ===== */
+.kioskCanvas #callModal .callTag{
+  background: rgba(164,192,193,.28) !important;
+  color: var(--brand-text) !important;
+}
+
+.kioskCanvas #callModal #callPickupList span.isNowPickup{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+/* 深色只用於小重點 */
+.kioskCanvas .queryResultStatus,
+.kioskCanvas .queryResultMeta,
+.kioskCanvas .deliveryStatusTag,
+.kioskCanvas .deliveryCode{
+  color: var(--brand-midnight) !important;
+}
+
+/* ===== 外帶頁分類 ===== */
+html body .kioskCanvas #categoryTree > div,
+html body .kioskCanvas .categoryItem,
+html body .kioskCanvas .catMain,
+html body .kioskCanvas .catList .catBtn{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 14px rgba(46,36,31,.08) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+html body .kioskCanvas #categoryTree > div.active,
+html body .kioskCanvas .categoryItem.active,
+html body .kioskCanvas .catMain.active,
+html body .kioskCanvas .catList .catBtn.active{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+.kioskCanvas .categoryTitle{
+  color: var(--brand-orange) !important;
+}
+
+.kioskCanvas .menuCard{
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 8px 18px rgba(46,36,31,.08) !important;
+}
+
+.kioskCanvas .mealName,
+.kioskCanvas .mealPrice{
+  color: var(--brand-text) !important;
+}
+
+.kioskCanvas .cartIconWrap{
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 8px 18px rgba(46,36,31,.12) !important;
+}
+
+.kioskCanvas .cartBadge{
+  background: var(--brand-plum) !important;
+  color: #fff !important;
+}
+
+/* ===== 訂單明細 ===== */
+.kioskCanvas .sumHeader{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+}
+
+.kioskCanvas #sumRows .sumRow:nth-child(odd){
+  background: var(--brand-bg) !important;
+}
+
+.kioskCanvas #sumRows .sumRow:nth-child(even){
+  background: rgba(237,186,151,.28) !important;
+}
+
+.kioskCanvas .sumTable{
+  border: 0 !important;
+}
+
+.kioskCanvas .sumTotalBar{
+  color: var(--brand-text) !important;
+}
+
+/* ===== 輸入框 ===== */
+.kioskCanvas input,
+.kioskCanvas .form-control,
+.kioskCanvas .waitPhoneInput,
+.kioskCanvas .deliveryOrderInput,
+.kioskCanvas .queryStatusInputBox{
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  box-shadow: inset 0 0 0 1px rgba(46,36,31,.13) !important;
+}
+
+.kioskCanvas input:focus,
+.kioskCanvas .waitPhoneInput:focus,
+.kioskCanvas .deliveryOrderInput:focus{
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(164,192,193,.35) !important;
+}
+
+/* ===== 錯誤文字：酒紅小面積 ===== */
+.kioskCanvas .waitErr,
+.kioskCanvas .reserveInlineHint,
+.kioskCanvas .deliverySearchResult,
+.kioskCanvas .queryStatusHint,
+.kioskCanvas .takeawayEmptyHint{
+  color: var(--brand-plum) !important;
+}
+
+/* ===== 員工評分 ===== */
+.kioskCanvas .clockRatingBtn{
+  background: rgba(237,186,151,.32) !important;
+  color: var(--brand-text) !important;
+  border: 0 !important;
+  box-shadow: 0 10px 24px rgba(46,36,31,.08) !important;
+}
+
+.kioskCanvas .clockRatingBtn:hover{
+  background: rgba(164,192,193,.32) !important;
+}
+
+/* ===== 外帶頁：購物車去除懸浮感 ===== */
+
+.kioskCanvas .cartIconWrap,
+.mainContainer .cartIconWrap{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+
+  width: 82px !important;
+  height: 82px !important;
+  border-radius: 0 !important;
+
+  left: 30px !important;
+  bottom: 28px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 購物車圖示本身保留清楚，但不要有卡片底 */
+.kioskCanvas .cartIconImg,
+.mainContainer .cartIconImg{
+  width: 62px !important;
+  height: 62px !important;
+  object-fit: contain !important;
+  filter: none !important;
+}
+
+/* 數量徽章保留，但縮小、不要陰影 */
+.kioskCanvas .cartBadge,
+.mainContainer .cartBadge{
+  top: 0px !important;
+  right: 0px !important;
+
+  min-width: 30px !important;
+  height: 30px !important;
+  padding: 0 8px !important;
+
+  background: #701B15 !important;
+  color: #fff !important;
+
+  border-radius: 999px !important;
+  box-shadow: none !important;
+
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+}
+
+/* ===== 首頁右上三個欄位：圓角統一 ===== */
+
+:root{
+  --card-radius: 18px;
+}
+
+/* 外帶、內用整張卡片 */
+.kioskCanvas .articleContainer .diningBox{
+  border-radius: var(--card-radius) !important;
+  overflow: hidden !important;
+}
+
+/* 外帶、內用上方橘色標題列：只圓上面 */
+.kioskCanvas .articleContainer .takeawayTitle,
+.kioskCanvas .articleContainer .diningTitle{
+  border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+}
+
+/* 我要點餐整張卡片 */
+.kioskCanvas .articleContainer .orderingBox > div{
+  border-radius: var(--card-radius) !important;
+  overflow: hidden !important;
+}
+
+/* 如果 diningBox 邊框被取消，這段讓外帶/內用更像同一張卡 */
+.kioskCanvas .articleContainer .diningBox,
+.kioskCanvas .articleContainer .orderingBox > div{
+  box-shadow: 0 10px 24px rgba(46,36,31,.08) !important;
+}
+
+/* ===== 統一所有彈窗右上角放大鏡大小 ===== */
+
+:root{
+  --search-icon-size: 44px;
+}
+
+/* 現在叫號右上角查詢按鈕 */
+.kioskCanvas .callSearchBtn,
+.kioskCanvas #openQueryStatusBtn,
+.kioskCanvas .deliverySearchBtn,
+.kioskCanvas #openDeliverySearchBtn{
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 兩個放大鏡圖片統一大小 */
+.kioskCanvas .callSearchBtn img,
+.kioskCanvas .callSearchBtn .callSearchIcon,
+.kioskCanvas .deliverySearchBtn img,
+.kioskCanvas .deliverySearchIcon{
+  width: var(--search-icon-size) !important;
+  height: var(--search-icon-size) !important;
+  min-width: var(--search-icon-size) !important;
+  min-height: var(--search-icon-size) !important;
+
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* 防止 hover/active 出現底色 */
+.kioskCanvas .callSearchBtn:hover,
+.kioskCanvas .callSearchBtn:focus,
+.kioskCanvas .callSearchBtn:active,
+.kioskCanvas .deliverySearchBtn:hover,
+.kioskCanvas .deliverySearchBtn:focus,
+.kioskCanvas .deliverySearchBtn:active{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* ===== 候位彈窗：顏色再明顯一點、活潑一點 ===== */
+
+/* 候位三張卡片 */
+#waitModal .waitCard,
+.kioskCanvas #waitModal .waitCard{
+  background: #BFE9EC !important;   /* 比現在更明顯的淺藍綠 */
+  border: 0 !important;
+  color: #2E241F !important;
+  box-shadow: 0 12px 26px rgba(10,65,82,.12) !important;
+}
+
+/* 卡片標題 */
+#waitModal .waitCardTitle,
+.kioskCanvas #waitModal .waitCardTitle{
+  color: #0A4152 !important;
+}
+
+/* 中間大數字 */
+#waitModal .waitCardNum,
+.kioskCanvas #waitModal .waitCardNum{
+  color: #FF7A1A !important;
+}
+
+/* 組候位中 */
+#waitModal .waitCardSub,
+.kioskCanvas #waitModal .waitCardSub{
+  color: #0A4152 !important;
+  opacity: .85 !important;
+}
+
+/* 預估等待文字 */
+#waitModal .waitCardHint,
+.kioskCanvas #waitModal .waitCardHint{
+  color: #5E5148 !important;
+}
+
+/* 分鐘數字 */
+#waitModal .waitCardHint em,
+.kioskCanvas #waitModal .waitCardHint em{
+  color: #FF7A1A !important;
+}
+
+/* 加入候位按鈕：更亮一點 */
+#waitModal #openJoinBtn,
+.kioskCanvas #waitModal #openJoinBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.25) !important;
+}
+
+/* 彈窗標題底線稍微有一點橘色 */
+#waitModal .modal-header,
+#waitModal .waitModalHeaderOriginal{
+  background: #FFF8F2 !important;
+  border-bottom: 2px solid #F6C29D !important;
+}
+/* ===== banner2：左右箭頭不要底色，只留箭頭 ===== */
+
+.kioskCanvas .homeBannerArea .promoArrow,
+.kioskCanvas .promoArrow{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  color: #0A4152 !important;
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+}
+
+/* hover / active 也不要出現底色 */
+.kioskCanvas .homeBannerArea .promoArrow:hover,
+.kioskCanvas .homeBannerArea .promoArrow:focus,
+.kioskCanvas .homeBannerArea .promoArrow:active,
+.kioskCanvas .promoArrow:hover,
+.kioskCanvas .promoArrow:focus,
+.kioskCanvas .promoArrow:active{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 左右箭頭按鈕範圍保留，但不要看得到 */
+.kioskCanvas .promoPrev,
+.kioskCanvas .promoNext{
+  width: 70px !important;
+  height: 90px !important;
+}
+/* ===== banner2：顏色統一版 ===== */
+
+/* banner2 背景：清爽藍綠 */
+.kioskCanvas .homeBannerArea .promoCarousel,
+.kioskCanvas .promoCarousel{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  background-image: none !important;
+  box-shadow: 0 18px 38px rgba(10,65,82,.14) !important;
+}
+
+/* banner2 文字：統一深綠藍 */
+.kioskCanvas .homeBannerArea .promoName,
+.kioskCanvas .homeBannerArea .promoDesc,
+.kioskCanvas .homeBannerArea .promoPrice,
+.kioskCanvas .homeBannerArea .promoHint,
+.kioskCanvas .promoName,
+.kioskCanvas .promoDesc,
+.kioskCanvas .promoPrice,
+.kioskCanvas .promoHint{
+  color: #0A4152 !important;
+}
+
+/* 標籤：改成橘色，跟主色一致 */
+.kioskCanvas .homeBannerArea .promoTag,
+.kioskCanvas .promoTag{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 左右箭頭：橘色半透明 */
+.kioskCanvas .homeBannerArea .promoArrow,
+.kioskCanvas .promoArrow{
+  background: rgba(255,122,26,.28) !important;
+  color: #0A4152 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 左右箭頭按下時更明顯 */
+.kioskCanvas .homeBannerArea .promoArrow:hover,
+.kioskCanvas .homeBannerArea .promoArrow:active,
+.kioskCanvas .promoArrow:hover,
+.kioskCanvas .promoArrow:active{
+  background: rgba(255,122,26,.42) !important;
+}
+
+/* 圓點：統一深綠藍淡色 */
+.kioskCanvas .homeBannerArea .promoDot,
+.kioskCanvas .promoDot{
+  background: rgba(10,65,82,.22) !important;
+}
+
+/* 目前頁圓點：橘色 */
+.kioskCanvas .homeBannerArea .promoDot.active,
+.kioskCanvas .promoDot.active{
+  background: #FF7A1A !important;
+}
+/* ===== banner2：左右箭頭不要底色，只留箭頭 ===== */
+
+.kioskCanvas .homeBannerArea .promoArrow,
+.kioskCanvas .promoArrow{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  color: #0A4152 !important;
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+}
+
+/* hover / active 也不要出現底色 */
+.kioskCanvas .homeBannerArea .promoArrow:hover,
+.kioskCanvas .homeBannerArea .promoArrow:focus,
+.kioskCanvas .homeBannerArea .promoArrow:active,
+.kioskCanvas .promoArrow:hover,
+.kioskCanvas .promoArrow:focus,
+.kioskCanvas .promoArrow:active{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 左右箭頭按鈕範圍保留，但不要看得到 */
+.kioskCanvas .promoPrev,
+.kioskCanvas .promoNext{
+  width: 70px !important;
+  height: 90px !important;
+}
+/* ===== banner2：左右箭頭改橘色，沒有底色 ===== */
+
+.kioskCanvas .homeBannerArea .promoArrow,
+.kioskCanvas .promoArrow{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  color: #FF7A1A !important;
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+}
+
+/* hover / active 維持無底色，只讓橘色稍微深一點 */
+.kioskCanvas .homeBannerArea .promoArrow:hover,
+.kioskCanvas .homeBannerArea .promoArrow:focus,
+.kioskCanvas .homeBannerArea .promoArrow:active,
+.kioskCanvas .promoArrow:hover,
+.kioskCanvas .promoArrow:focus,
+.kioskCanvas .promoArrow:active{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+
+  color: #E17426 !important;
+}
+/* ===== 預約人數選擇：不要底色，改乾淨白底 ===== */
+
+/* 整個人數卡片不要底色、不要陰影 */
+#reserveModal .reservePeopleOnly,
+.kioskCanvas #reserveModal .reservePeopleOnly{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 每一列：大人 / 兒童 / 兒童椅 */
+#reserveModal .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  padding: 18px 0 !important;
+  color: #2E241F !important;
+}
+
+/* 如果你想要列跟列之間有一點分隔線，可以保留這個 */
+#reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow{
+  border-top: 1px solid rgba(46,36,31,.08) !important;
+}
+
+/* 大人 / 兒童 / 兒童椅文字 */
+#reserveModal .reservePeopleLabel,
+.kioskCanvas #reserveModal .reservePeopleLabel{
+  color: #2E241F !important;
+  font-weight: 900 !important;
+}
+
+/* 中間數字 */
+#reserveModal .reservePeopleControl span,
+.kioskCanvas #reserveModal .reservePeopleControl span{
+  color: #2E241F !important;
+  font-weight: 900 !important;
+}
+
+/* 加減按鈕：白底、橘色符號 */
+#reserveModal .reserveRoundBtn,
+.kioskCanvas #reserveModal .reserveRoundBtn{
+  background: #fff !important;
+  color: #E17426 !important;
+  border: 0 !important;
+  box-shadow: 0 6px 14px rgba(46,36,31,.10) !important;
+}
+
+/* 下一步按鈕維持橘色 */
+#reserveModal .reserveMainBtn,
+.kioskCanvas #reserveModal .reserveMainBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.22) !important;
+}
+/* ===== 預約人數頁：排版收緊，不要太鬆散 ===== */
+
+/* 整個人數區塊縮窄一點 */
+#reserveModal .reservePeopleOnly,
+.kioskCanvas #reserveModal .reservePeopleOnly{
+  max-width: 620px !important;
+  width: 620px !important;
+  margin: 0 auto !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 三列高度縮小 */
+#reserveModal .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow{
+  min-height: 78px !important;
+  height: 78px !important;
+  padding: 10px 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 220px !important;
+  align-items: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 列與列之間保留細線，但不要太空 */
+#reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow{
+  border-top: 1px solid rgba(46,36,31,.08) !important;
+}
+
+/* 左邊文字 */
+#reserveModal .reservePeopleLabel,
+.kioskCanvas #reserveModal .reservePeopleLabel{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+  color: #2E241F !important;
+}
+
+/* 右邊 - 0 + */
+#reserveModal .reservePeopleControl,
+.kioskCanvas #reserveModal .reservePeopleControl{
+  display: grid !important;
+  grid-template-columns: 58px 52px 58px !important;
+  gap: 12px !important;
+  align-items: center !important;
+  justify-content: end !important;
+}
+
+/* 中間數字 */
+#reserveModal .reservePeopleControl span,
+.kioskCanvas #reserveModal .reservePeopleControl span{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  color: #2E241F !important;
+  text-align: center !important;
+}
+
+/* 加減按鈕縮小一點 */
+#reserveModal .reserveRoundBtn,
+.kioskCanvas #reserveModal .reserveRoundBtn{
+  width: 58px !important;
+  height: 50px !important;
+  min-width: 58px !important;
+  min-height: 50px !important;
+
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: #E17426 !important;
+  border: 0 !important;
+  box-shadow: 0 5px 12px rgba(46,36,31,.10) !important;
+
+  font-size: 1.6rem !important;
+  font-weight: 900 !important;
+  padding: 0 !important;
+}
+
+/* 整個頁面往上收 */
+#reserveModal .reservePeopleStage,
+.kioskCanvas #reserveModal .reservePeopleStage{
+  min-height: 330px !important;
+  justify-content: flex-start !important;
+  padding-top: 24px !important;
+}
+
+/* 底部下一步不要離太遠 */
+#reserveModal .reserveStageFooter.single.column,
+.kioskCanvas #reserveModal .reserveStageFooter.single.column{
+  min-height: 70px !important;
+  margin-top: 18px !important;
+  justify-content: flex-start !important;
+}
+
+/* 下一步按鈕 */
+#reserveModal .reserveMainBtn,
+.kioskCanvas #reserveModal .reserveMainBtn{
+  width: 190px !important;
+  min-width: 190px !important;
+  height: 64px !important;
+  border-radius: 16px !important;
+
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+
+  font-size: 1.8rem !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.22) !important;
+}
+
+/* ===== 預約人數頁：排版收緊，不要太鬆散 ===== */
+
+/* 整個人數區塊縮窄一點 */
+#reserveModal .reservePeopleOnly,
+.kioskCanvas #reserveModal .reservePeopleOnly{
+  max-width: 520px !important;
+  width: 520px !important;
+  margin: 0 auto !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 三列高度縮小 */
+#reserveModal .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow{
+  min-height: 78px !important;
+  height: 78px !important;
+  padding: 10px 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 220px !important;
+  align-items: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 列與列之間保留細線，但不要太空 */
+#reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow + .reservePeopleOnlyRow{
+  border-top: 1px solid rgba(46,36,31,.08) !important;
+}
+
+/* 左邊文字 */
+#reserveModal .reservePeopleLabel,
+.kioskCanvas #reserveModal .reservePeopleLabel{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+  color: #2E241F !important;
+}
+
+/* 右邊 - 0 + */
+#reserveModal .reservePeopleControl,
+.kioskCanvas #reserveModal .reservePeopleControl{
+  display: grid !important;
+  grid-template-columns: 58px 52px 58px !important;
+  gap: 14px !important;
+  align-items: center !important;
+  justify-content: end !important;
+}
+
+/* 中間數字 */
+#reserveModal .reservePeopleControl span,
+.kioskCanvas #reserveModal .reservePeopleControl span{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  color: #2E241F !important;
+  text-align: center !important;
+}
+
+/* 加減按鈕縮小一點 */
+#reserveModal .reserveRoundBtn,
+.kioskCanvas #reserveModal .reserveRoundBtn{
+  width: 58px !important;
+  height: 50px !important;
+  min-width: 58px !important;
+  min-height: 50px !important;
+
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: #E17426 !important;
+  border: 0 !important;
+  box-shadow: 0 5px 12px rgba(46,36,31,.10) !important;
+
+  font-size: 1.6rem !important;
+  font-weight: 900 !important;
+  padding: 0 !important;
+}
+
+/* 整個頁面往上收 */
+#reserveModal .reservePeopleStage,
+.kioskCanvas #reserveModal .reservePeopleStage{
+  min-height: 330px !important;
+  justify-content: flex-start !important;
+  padding-top: 24px !important;
+}
+
+/* 底部下一步不要離太遠 */
+#reserveModal .reserveStageFooter.single.column,
+.kioskCanvas #reserveModal .reserveStageFooter.single.column{
+  min-height: 70px !important;
+  margin-top: 18px !important;
+  justify-content: flex-start !important;
+}
+
+/* 下一步按鈕 */
+#reserveModal .reserveMainBtn,
+.kioskCanvas #reserveModal .reserveMainBtn{
+  width: 190px !important;
+  min-width: 190px !important;
+  height: 64px !important;
+  border-radius: 16px !important;
+
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+
+  font-size: 1.8rem !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.22) !important;
+}
+/* ===== 預約時間按鈕：時間字放大 ===== */
+
+#reserveModal .timeItem,
+.kioskCanvas #reserveModal .timeItem,
+#reserveModal .timeTodayGrid .timeItem,
+.kioskCanvas #reserveModal .timeTodayGrid .timeItem{
+  height: 64px !important;
+  min-height: 64px !important;
+
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+
+  border-radius: 16px !important;
+  background: #fff !important;
+  color: #2E241F !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  box-shadow: 0 5px 12px rgba(46,36,31,.08) !important;
+}
+
+/* 選到的時間 */
+#reserveModal .timeItem.active,
+.kioskCanvas #reserveModal .timeItem.active{
+  background: #FF7A1A !important;
+  color: #fff !important;
+}
+
+/* 時間格距離稍微收一點 */
+#reserveModal .timeTodayGrid,
+.kioskCanvas #reserveModal .timeTodayGrid,
+#reserveModal #futureTimeGrid,
+.kioskCanvas #reserveModal #futureTimeGrid{
+  gap: 14px 16px !important;
+}
+
+/* ===== 預約人數頁：整體放大版 ===== */
+
+/* 整個人數區塊放大 */
+#reserveModal .reservePeopleOnly,
+.kioskCanvas #reserveModal .reservePeopleOnly{
+  width: 400px !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
+/* 每一列變高一點 */
+#reserveModal .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow{
+  min-height: 100px !important;
+  height: 100px !important;
+  padding: 18px 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 300px !important;
+  align-items: center !important;
+}
+
+/* 左邊：大人 / 兒童 / 兒童椅 */
+#reserveModal .reservePeopleLabel,
+.kioskCanvas #reserveModal .reservePeopleLabel{
+  font-size: 2.25rem !important;
+  font-weight: 900 !important;
+  color: #2E241F !important;
+}
+
+/* 右邊控制區：- 0 + */
+#reserveModal .reservePeopleControl,
+.kioskCanvas #reserveModal .reservePeopleControl{
+  display: grid !important;
+  grid-template-columns: 76px 70px 76px !important;
+  gap: 18px !important;
+  align-items: center !important;
+  justify-content: end !important;
+}
+
+/* 中間數字 */
+#reserveModal .reservePeopleControl span,
+.kioskCanvas #reserveModal .reservePeopleControl span{
+  font-size: 2.2rem !important;
+  font-weight: 900 !important;
+  color: #2E241F !important;
+  text-align: center !important;
+}
+
+/* 加減按鈕放大 */
+#reserveModal .reserveRoundBtn,
+.kioskCanvas #reserveModal .reserveRoundBtn{
+  width: 76px !important;
+  height: 68px !important;
+  min-width: 76px !important;
+  min-height: 68px !important;
+
+  border-radius: 18px !important;
+  font-size: 2.3rem !important;
+  font-weight: 900 !important;
+
+  background: #fff !important;
+  color: #E17426 !important;
+  border: 0 !important;
+  box-shadow: 0 8px 18px rgba(46,36,31,.10) !important;
+  padding: 0 !important;
+}
+
+/* 整頁不要太靠上 */
+#reserveModal .reservePeopleStage,
+.kioskCanvas #reserveModal .reservePeopleStage{
+  min-height: 385px !important;
+  justify-content: flex-start !important;
+  padding-top: 28px !important;
+}
+
+/* 下一步按鈕跟上面距離 */
+#reserveModal .reserveStageFooter.single.column,
+.kioskCanvas #reserveModal .reserveStageFooter.single.column{
+  margin-top: 24px !important;
+}
+
+/* ===== 修正：預約人數頁下一步被擠不見 ===== */
+
+/* 預約人數頁整體高度收回來 */
+#reserveModal .reservePeopleStage,
+.kioskCanvas #reserveModal .reservePeopleStage{
+  min-height: 360px !important;
+  height: 360px !important;
+  padding-top: 16px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+
+/* 人數區塊不要太高 */
+#reserveModal .reservePeopleOnly,
+.kioskCanvas #reserveModal .reservePeopleOnly{
+  width: 610px !important;
+  max-width: 610px !important;
+  margin: 0 auto !important;
+}
+
+/* 每一列稍微縮回來 */
+#reserveModal .reservePeopleOnlyRow,
+.kioskCanvas #reserveModal .reservePeopleOnlyRow{
+  height: 86px !important;
+  min-height: 86px !important;
+  padding: 10px 0 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr 280px !important;
+  align-items: center !important;
+}
+
+/* 文字維持大，但不要過高 */
+#reserveModal .reservePeopleLabel,
+.kioskCanvas #reserveModal .reservePeopleLabel{
+  font-size: 2rem !important;
+}
+
+/* 右邊 - 0 + */
+#reserveModal .reservePeopleControl,
+.kioskCanvas #reserveModal .reservePeopleControl{
+  grid-template-columns: 68px 60px 68px !important;
+  gap: 16px !important;
+}
+
+/* 中間數字 */
+#reserveModal .reservePeopleControl span,
+.kioskCanvas #reserveModal .reservePeopleControl span{
+  font-size: 2rem !important;
+}
+
+/* 加減按鈕 */
+#reserveModal .reserveRoundBtn,
+.kioskCanvas #reserveModal .reserveRoundBtn{
+  width: 68px !important;
+  height: 58px !important;
+  min-width: 68px !important;
+  min-height: 58px !important;
+  font-size: 2rem !important;
+}
+
+/* 下一步區塊固定出現 */
+#reserveModal .reserveStageFooter.single.column,
+.kioskCanvas #reserveModal .reserveStageFooter.single.column{
+  min-height: 72px !important;
+  height: 72px !important;
+  margin-top: 10px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+/* 下一步按鈕 */
+#reserveModal .reserveMainBtn,
+.kioskCanvas #reserveModal .reserveMainBtn{
+  width: 190px !important;
+  min-width: 190px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+
+  border-radius: 16px !important;
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.22) !important;
+}
+
+/* ===== 預約人數頁：下一步往上移 ===== */
+
+/* 下一步區塊往上 */
+#reserveModal .reserveStageFooter.single.column,
+.kioskCanvas #reserveModal .reserveStageFooter.single.column{
+  margin-top: -6px !important;
+  min-height: 60px !important;
+  height: 60px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+/* 下一步按鈕本身 */
+#reserveModal #todayPeopleNextBtn,
+#reserveModal #futurePeopleNextBtn,
+.kioskCanvas #reserveModal #todayPeopleNextBtn,
+.kioskCanvas #reserveModal #futurePeopleNextBtn{
+  margin-top: 0 !important;
+  transform: translateY(-10px) !important;
+
+  width: 190px !important;
+  min-width: 190px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+}
+
+/* ===== 預約電話輸入頁：鍵盤放大 ===== */
+
+/* 電話輸入頁左右排版 */
+#reserveModal #reserveStepPhone .reservePhoneStage,
+.kioskCanvas #reserveModal #reserveStepPhone .reservePhoneStage{
+  display: grid !important;
+  grid-template-columns: 1fr 560px !important;
+  gap: 34px !important;
+  align-items: start !important;
+}
+
+/* 鍵盤整體放大 */
+#reserveModal #reserveStepPhone .waitKeypad,
+.kioskCanvas #reserveModal #reserveStepPhone .waitKeypad,
+#reserveModal #reserveKeypad,
+.kioskCanvas #reserveModal #reserveKeypad{
+  width: 560px !important;
+  max-width: 560px !important;
+
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px !important;
+}
+
+/* 每顆數字鍵放大 */
+#reserveModal #reserveStepPhone .keyBtn,
+.kioskCanvas #reserveModal #reserveStepPhone .keyBtn,
+#reserveModal #reserveKeypad .keyBtn,
+.kioskCanvas #reserveModal #reserveKeypad .keyBtn{
+  height: 78px !important;
+  min-height: 78px !important;
+
+  border-radius: 18px !important;
+  border: 0 !important;
+
+  background: #fff !important;
+  color: #2E241F !important;
+
+  font-size: 1.85rem !important;
+  font-weight: 900 !important;
+
+  box-shadow: 0 6px 14px rgba(46,36,31,.12) !important;
+  padding: 0 !important;
+}
+
+/* 刪除鍵 */
+#reserveModal #reserveStepPhone .keyBtn.keyFn,
+.kioskCanvas #reserveModal #reserveStepPhone .keyBtn.keyFn{
+  background: #F6C29D !important;
+  color: #2E241F !important;
+}
+
+/* 完成鍵 */
+#reserveModal #reserveStepPhone .keyBtn.keyOk,
+.kioskCanvas #reserveModal #reserveStepPhone .keyBtn.keyOk,
+#reserveModal #reserveToConfirmBtn,
+.kioskCanvas #reserveModal #reserveToConfirmBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(255,122,26,.24) !important;
+
+  font-size: 2rem !important;
+}
+
+/* 左邊輸入框也稍微放大 */
+#reserveModal #reserveStepPhone .waitPhoneInput,
+.kioskCanvas #reserveModal #reserveStepPhone .waitPhoneInput{
+  height: 76px !important;
+  font-size: 2rem !important;
+  border-radius: 16px !important;
+}
+
+/* 左邊說明文字放大一點 */
+#reserveModal #reserveStepPhone .waitTip,
+.kioskCanvas #reserveModal #reserveStepPhone .waitTip{
+  font-size: 1.2rem !important;
+  line-height: 1.7 !important;
+}
+
+#reserveModal #reserveStepPhone .waitInputLabel,
+.kioskCanvas #reserveModal #reserveStepPhone .waitInputLabel{
+  font-size: 1.25rem !important;
+}
+
+/* ===== 候位：人數卡片、鍵盤、完成按鈕統一 ===== */
+
+/* 上方三個：大人 / 小孩 / 兒童座椅，改成跟圖二一樣的藍 */
+#waitModal #waitStepB .peopleCard,
+.kioskCanvas #waitModal #waitStepB .peopleCard{
+  background: #BFE9EC !important;
+  border: 0 !important;
+  color: #0A4152 !important;
+  box-shadow: 0 10px 24px rgba(10,65,82,.10) !important;
+  border-radius: 16px !important;
+}
+
+/* 人數卡片標題 */
+#waitModal #waitStepB .peopleTitle,
+.kioskCanvas #waitModal #waitStepB .peopleTitle{
+  color: #0A4152 !important;
+  font-weight: 900 !important;
+}
+
+/* 人數數字 */
+#waitModal #waitStepB .peopleCount,
+.kioskCanvas #waitModal #waitStepB .peopleCount{
+  color: #2E241F !important;
+  font-weight: 900 !important;
+}
+
+/* 上方三個卡片裡的 + / - */
+#waitModal #waitStepB .miniBtn,
+.kioskCanvas #waitModal #waitStepB .miniBtn{
+  background: #fff !important;
+  color: #E17426 !important;
+  border: 0 !important;
+  box-shadow: 0 5px 12px rgba(46,36,31,.12) !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+}
+
+/* 手機輸入框 */
+#waitModal #waitStepB .waitPhoneInput,
+.kioskCanvas #waitModal #waitStepB .waitPhoneInput{
+  background: #fff !important;
+  border: 0 !important;
+  color: #2E241F !important;
+  box-shadow: inset 0 0 0 1px rgba(46,36,31,.12) !important;
+  border-radius: 14px !important;
+}
+
+/* 候位電話鍵盤整體 */
+#waitModal #waitStepB .waitKeypad,
+.kioskCanvas #waitModal #waitStepB .waitKeypad{
+  gap: 12px !important;
+}
+
+/* 鍵盤數字鍵：乾淨白底 */
+#waitModal #waitStepB .keyBtn,
+.kioskCanvas #waitModal #waitStepB .keyBtn{
+  background: #fff !important;
+  color: #2E241F !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+
+  height: 66px !important;
+  min-height: 66px !important;
+
+  font-size: 1.55rem !important;
+  font-weight: 900 !important;
+
+  box-shadow: 0 6px 14px rgba(46,36,31,.12) !important;
+  padding: 0 !important;
+}
+
+/* 刪除鍵 */
+#waitModal #waitStepB .keyBtn.keyFn,
+.kioskCanvas #waitModal #waitStepB .keyBtn.keyFn{
+  background: #F6C29D !important;
+  color: #2E241F !important;
+}
+
+/* 完成鍵：跟加入候位同色 */
+#waitModal #waitStepB .keyBtn.keyOk,
+.kioskCanvas #waitModal #waitStepB .keyBtn.keyOk{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 8px 18px rgba(255,122,26,.24) !important;
+
+  font-size: 1.65rem !important;
+  font-weight: 900 !important;
+}
+
+/* 加入候位按鈕也統一確認是同色 */
+#waitModal #openJoinBtn,
+.kioskCanvas #waitModal #openJoinBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 22px rgba(255,122,26,.22) !important;
+}
+
+/* ===== 外帶取餐：取消按鈕填滿藍色 ===== */
+
+#pickupModal #pickupCancelBtn,
+.kioskCanvas #pickupModal #pickupCancelBtn{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+
+  border: 0 !important;
+  box-shadow: 0 6px 14px rgba(10,65,82,.12) !important;
+
+  border-radius: 14px !important;
+  font-weight: 900 !important;
+}
+
+/* hover / active 不要變回白底 */
+#pickupModal #pickupCancelBtn:hover,
+#pickupModal #pickupCancelBtn:focus,
+#pickupModal #pickupCancelBtn:active,
+.kioskCanvas #pickupModal #pickupCancelBtn:hover,
+.kioskCanvas #pickupModal #pickupCancelBtn:focus,
+.kioskCanvas #pickupModal #pickupCancelBtn:active{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+  border: 0 !important;
+  box-shadow: 0 6px 14px rgba(10,65,82,.12) !important;
+}
+/* ===== 外帶取餐：鍵盤不要有外框，只保留按鍵 ===== */
+
+#pickupModal .waitKeypad,
+.kioskCanvas #pickupModal .waitKeypad,
+#pickupModal #pickupKeypad,
+.kioskCanvas #pickupModal #pickupKeypad{
+  background: transparent !important;
+  background-color: transparent !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+
+  padding: 0 !important;
+  border-radius: 0 !important;
+
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 18px !important;
+}
+
+/* 數字鍵保持乾淨 */
+#pickupModal #pickupKeypad .keyBtn,
+.kioskCanvas #pickupModal #pickupKeypad .keyBtn{
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 6px 14px rgba(46,36,31,.10) !important;
+  border-radius: 18px !important;
+
+  color: #111 !important;
+  font-weight: 900 !important;
+}
+
+/* 刪除鍵 */
+#pickupModal #pickupKeypad .keyBtn.keyFn,
+.kioskCanvas #pickupModal #pickupKeypad .keyBtn.keyFn{
+  background: #F6C29D !important;
+  color: #111 !important;
+  border: 0 !important;
+  box-shadow: 0 6px 14px rgba(46,36,31,.10) !important;
+}
+
+/* 空白鍵也不要外框 */
+#pickupModal #pickupKeypad .keyBtn[data-k="noop"],
+.kioskCanvas #pickupModal #pickupKeypad .keyBtn[data-k="noop"]{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ===== 外帶頁 / 訂單明細：返回按鈕統一淺藍色 ===== */
+
+/* 圖一：外帶頁右下角返回 */
+#takeawayBackBtn,
+.kioskCanvas #takeawayBackBtn{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+
+  font-weight: 900 !important;
+}
+
+/* 圖二：訂單明細彈窗返回 */
+#sumBackBtn,
+.kioskCanvas #sumBackBtn{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+
+  font-weight: 900 !important;
+}
+
+/* hover / active 不要變回白底或灰色 */
+#takeawayBackBtn:hover,
+#takeawayBackBtn:focus,
+#takeawayBackBtn:active,
+#sumBackBtn:hover,
+#sumBackBtn:focus,
+#sumBackBtn:active,
+.kioskCanvas #takeawayBackBtn:hover,
+.kioskCanvas #takeawayBackBtn:focus,
+.kioskCanvas #takeawayBackBtn:active,
+.kioskCanvas #sumBackBtn:hover,
+.kioskCanvas #sumBackBtn:focus,
+.kioskCanvas #sumBackBtn:active{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ===== 訂單明細：返回、編輯訂單按鈕圓角統一 ===== */
+
+#sumBackBtn,
+#sumPrimaryBtn,
+.kioskCanvas #sumBackBtn,
+.kioskCanvas #sumPrimaryBtn{
+  width: 100px !important;
+  min-width: 100px !important;
+  height: 50% !important;
+  min-height: 50px !important;
+
+  border-radius: 16px !important;
+  padding: 0 !important;
+
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 返回：淺藍 */
+#sumBackBtn,
+.kioskCanvas #sumBackBtn{
+  background: #A9E1E6 !important;
+  color: #2E241F !important;
+}
+
+/* 編輯訂單：橘色 */
+#sumPrimaryBtn,
+.kioskCanvas #sumPrimaryBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+}
+
+/* hover / active 不要變形 */
+#sumBackBtn:hover,
+#sumBackBtn:focus,
+#sumBackBtn:active,
+#sumPrimaryBtn:hover,
+#sumPrimaryBtn:focus,
+#sumPrimaryBtn:active{
+  border-radius: 16px !important;
+  box-shadow: none !important;
+}
+
+/* ===== 餐點彈窗：返回按鈕改淺藍色 ===== */
+
+#orderModal .modal-footer .btn-outline-secondary,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+
+  width: 110px !important;
+  min-width: 110px !important;
+  height: 52px !important;
+  min-height: 52px !important;
+
+  padding: 0 !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* hover / active 不要變回白底 */
+#orderModal .modal-footer .btn-outline-secondary:hover,
+#orderModal .modal-footer .btn-outline-secondary:focus,
+#orderModal .modal-footer .btn-outline-secondary:active,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary:hover,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary:focus,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary:active{
+  background: #A9E1E6 !important;
+  background-color: #A9E1E6 !important;
+  color: #2E241F !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* ===== 餐點彈窗：返回、確認按鈕統一小尺寸 ===== */
+
+#orderModal .modal-footer .btn-outline-secondary,
+#orderModal #confirmAddBtn,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary,
+.kioskCanvas #orderModal #confirmAddBtn{
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+
+  border-radius: 14px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+  line-height: 40px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 返回：淺藍 */
+#orderModal .modal-footer .btn-outline-secondary,
+.kioskCanvas #orderModal .modal-footer .btn-outline-secondary{
+  background: #A9E1E6 !important;
+  color: #2E241F !important;
+}
+
+/* 確認：橘色 */
+#orderModal #confirmAddBtn,
+.kioskCanvas #orderModal #confirmAddBtn{
+  background: #FF7A1A !important;
+  color: #fff !important;
+}
+
+/* footer 按鈕間距 */
+#orderModal .modal-footer,
+.kioskCanvas #orderModal .modal-footer{
+  gap: 12px !important;
+}
+
+/* ===== 首頁左下 logo 往下移 ===== */
+
+.kioskCanvas .mainContent > aside img,
+.kioskCanvas aside img{
+  transform: translateY(88px) !important;
+}
+
+/* ===== 現在叫號彈窗：左側分類色塊加深 ===== */
+
+#callModal .callGroupTitle,
+#callModal .callLabel,
+#callModal .callTypeBox,
+#callModal .callRowLabel,
+.kioskCanvas #callModal .callGroupTitle,
+.kioskCanvas #callModal .callLabel,
+.kioskCanvas #callModal .callTypeBox,
+.kioskCanvas #callModal .callRowLabel{
+  background: #87C9CC !important;
+  color: #0A4152 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 如果實際是這種結構，也一起覆蓋 */
+#callModal .callBoardLabel,
+#callModal .callCategoryLabel,
+#callModal .callSectionLabel,
+.kioskCanvas #callModal .callBoardLabel,
+.kioskCanvas #callModal .callCategoryLabel,
+.kioskCanvas #callModal .callSectionLabel{
+  background: #A9E1E6 !important;
+  color: #0A4152 !important;
+  border: 0 !important;
+}
+
+/* 讓字更清楚 */
+#callModal .callGroupTitle,
+#callModal .callLabel,
+#callModal .callTypeBox,
+#callModal .callRowLabel,
+#callModal .callBoardLabel,
+#callModal .callCategoryLabel,
+#callModal .callSectionLabel{
+  font-weight: 900 !important;
+}
+
+/* ===== 現在叫號：等候入場號碼中等大小 ===== */
+
+#callModal #callSoonList,
+.kioskCanvas #callModal #callSoonList{
+  display: grid !important;
+  grid-template-columns: repeat(3, 125px) !important;
+  justify-content: start !important;
+  justify-items: center !important;
+  align-items: center !important;
+  column-gap: 58px !important;
+  row-gap: 20px !important;
+
+  font-size: 1.9rem !important;
+  font-weight: 900 !important;
+}
+
+#callModal #callSoonList span,
+.kioskCanvas #callModal #callSoonList span,
+#callModal #callPickupList span,
+.kioskCanvas #callModal #callPickupList span{
+  width: 125px !important;
+  min-width: 125px !important;
+  height: 62px !important;
+
+  font-size: 1.9rem !important;
+  font-weight: 900 !important;
+  color: #2E241F !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  line-height: 1 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* 目前叫號 P001 */
+#callModal #callPickupList span.isNowPickup,
+.kioskCanvas #callModal #callPickupList span.isNowPickup{
+  width: 130px !important;
+  min-width: 130px !important;
+  height: 64px !important;
+
+  font-size: 1.9rem !important;
+  font-weight: 900 !important;
+
+  background: #FF7A1A !important;
+  color: #fff !important;
+  border-radius: 16px !important;
+}
+
+/* ===== 把原本「現在叫號」改成 logo 上方對話框 ===== */
+
+/* 先關掉前面做的假對話框 */
+.kioskCanvas .clockingLogoWrap::before,
+.kioskCanvas .clockingLogoWrap::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* 左側區塊作為定位基準 */
+.kioskCanvas .mainContent > aside{
+  position: relative !important;
+}
+
+/* 原本現在叫號卡片：改成對話框，移到 logo 上方 */
+.kioskCanvas #openCallModal.callWrap{
+  position: absolute !important;
+
+  left: 36px !important;
+  bottom: 150px !important;
+
+  width: 190px !important;
+  height: 92px !important;
+  min-height: 92px !important;
+
+  margin: 0 !important;
+  padding: 12px 14px !important;
+
+  background: #fff !important;
+  color: #2E241F !important;
+
+  border: 3px solid #2E241F !important;
+  border-radius: 16px !important;
+
+  box-shadow: 0 8px 18px rgba(46,36,31,.16) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  z-index: 20 !important;
+  cursor: pointer !important;
+}
+
+/* 對話框尾巴 */
+.kioskCanvas #openCallModal.callWrap::after{
+  content: "";
+  position: absolute;
+
+  left: 20px;
+  bottom: -28px;
+
+  width: 42px;
+  height: 28px;
+
+  background: #fff !important;
+  border-left: 3px solid #2E241F !important;
+  border-bottom: 3px solid #2E241F !important;
+
+  transform: skewX(-38deg) rotate(-8deg);
+  z-index: -1;
+}
+
+/* 對話框內：現在叫號文字 */
+.kioskCanvas #openCallModal .callLeftTitle{
+  width: 100% !important;
+
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+
+  text-align: center !important;
+  color: #2E241F !important;
+
+  margin: 0 0 6px 0 !important;
+  padding: 0 !important;
+}
+
+/* 對話框內：號碼 */
+.kioskCanvas #openCallModal #callMiniNums{
+  width: 100% !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 0001 號碼樣式 */
+.kioskCanvas #openCallModal #callMiniNums .callMiniNo{
+  font-size: 1.6rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  color: #2E241F !important;
+
+  min-width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* logo 位置稍微往下，避免跟對話框太近 */
+.kioskCanvas .clockingLogoWrap{
+  position: absolute !important;
+  left: 46px !important;
+  bottom: 36px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* logo 大小 */
+.kioskCanvas .clockingLogoImg{
+  width: 82px !important;
+}
+
+.kioskCanvas #openCallModal.callWrap::before,
+.kioskCanvas #openCallModal.callWrap::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* 現在叫號變成透明圖片對話框 */
+.kioskCanvas #openCallModal.callWrap{
+  position: absolute !important;
+  left: 62px !important;
+  bottom: 250px !important;
+
+  width: 190px !important;
+  height: 135px !important;
+  min-height: 135px !important;
+
+  margin: 0 !important;
+  padding: 34px 22px 36px 22px !important;
+
+  background-image: url("../images/call-bubble1.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  z-index: 20 !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+}
+
+/* 現在叫號文字 */
+.kioskCanvas #openCallModal .callLeftTitle{
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  color: #2E241F !important;
+
+  margin: 0 0 5px 0 !important;
+  padding: 0 !important;
+}
+
+.kioskCanvas #openCallModal #callMiniNums{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.kioskCanvas #openCallModal #callMiniNums .callMiniNo{
+  font-size: 1.55rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  color: #2E241F !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+/* ===== 現在叫號：對話框在 logo 右上角，logo 固定左下 ===== */
+
+/* 左側橘色區塊作為定位基準 */
+.kioskCanvas .mainContent > aside{
+  position: relative !important;
+}
+
+/* 先清掉之前所有假尾巴 / 假背景 */
+.kioskCanvas #openCallModal.callWrap::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* logo 固定在左下角，不要再被擠下去 */
+.kioskCanvas .clockingLogoWrap{
+  position: absolute !important;
+  left: 54px !important;
+  bottom: 34px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  z-index: 18 !important;
+}
+
+.kioskCanvas .clockingLogoImg{
+  width: 82px !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* 原本現在叫號功能卡片：移到 logo 右上角 */
+.kioskCanvas #openCallModal.callWrap{
+  position: absolute !important;
+
+  /* 這兩個決定對話框位置 */
+  left: 116px !important;
+  bottom: 118px !important;
+
+  width: 190px !important;
+  height: 125px !important;
+  min-height: 125px !important;
+
+  margin: 0 !important;
+  padding: 34px 24px 34px 24px !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  z-index: 20 !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+}
+
+/* 用你的 JPG 當對話框圖，但把白底用 multiply 融掉 */
+.kioskCanvas #openCallModal.callWrap::before{
+  content: "" !important;
+  display: block !important;
+
+  position: absolute !important;
+  inset: 0 !important;
+
+  background-image: url("../images/call-bubble-removebg-preview.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+
+  mix-blend-mode: multiply !important;
+
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* 對話框內文字在圖片上面 */
+.kioskCanvas #openCallModal .callLeftTitle,
+.kioskCanvas #openCallModal #callMiniNums{
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* 現在叫號文字 */
+.kioskCanvas #openCallModal .callLeftTitle{
+  width: 100% !important;
+
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  color: #2E241F !important;
+
+  margin: 0 0 4px 0 !important;
+  padding: 0 !important;
+}
+
+/* 0001 */
+.kioskCanvas #openCallModal #callMiniNums{
+  width: 100% !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.kioskCanvas #openCallModal #callMiniNums .callMiniNo{
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  color: #2E241F !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  min-width: auto !important;
+}
+
+/* logo 固定左下，但往上留空間 */
+.kioskCanvas .clockingLogoWrap{
+  position: absolute !important;
+  left: 10px !important;
+  bottom: 100px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  z-index: 18 !important;
+}
+
+.kioskCanvas .clockingLogoImg{
+  width: 105px !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* 對話框放在 logo 右上角，跟 logo 有一點空隙 */
+.kioskCanvas #openCallModal.callWrap{
+  left: 70px !important;
+  bottom: 40px !important;
+
+  width: 340px !important;
+  height: 340px !important;
+  min-height: 340px !important;
+
+  padding: 30px 20px 28px !important;
+}
+/* ===== 現在叫號對話框文字：統一成主要文字色 ===== */
+
+.kioskCanvas #openCallModal .callLeftTitle,
+.kioskCanvas #openCallModal #callMiniNums,
+.kioskCanvas #openCallModal #callMiniNums .callMiniNo,
+.kioskCanvas #openCallModal p,
+.kioskCanvas #openCallModal span{
+  color: #2E241F !important;
+  -webkit-text-fill-color: #2E241F !important;
+}
+
+/* ===== logo 長按打卡：整個區域可點 ===== */
+
+.kioskCanvas .clockingLogoWrap{
+  pointer-events: auto !important;
+  z-index: 9999 !important;
+}
+
+.kioskCanvas .clockingLogoBtn,
+.kioskCanvas .clockingLogoImg{
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+/* ===== 現在叫號：每次叫下一號紅色放大 2 秒 ===== */
+
+.kioskCanvas #openCallModal.is-calling-flash .callLeftTitle,
+.kioskCanvas #openCallModal.is-calling-flash #callMiniNums,
+.kioskCanvas #openCallModal.is-calling-flash #callMiniNums .callMiniNo,
+.kioskCanvas #openCallModal.is-calling-flash p,
+.kioskCanvas #openCallModal.is-calling-flash span{
+  color: #D71920 !important;
+  -webkit-text-fill-color: #D71920 !important;
+  transform: scale(1.18) !important;
+  transition: transform .18s ease, color .18s ease !important;
+}
+
+/* 讓放大時不要被切掉 */
+.kioskCanvas #openCallModal.is-calling-flash{
+  overflow: visible !important;
+}
+
+/* 如果現在叫號彈窗打開，標題也變紅放大 */
+#callModal .modal-title.is-calling-flash-text{
+  color: #D71920 !important;
+  -webkit-text-fill-color: #D71920 !important;
+  transform: scale(1.15) !important;
+  transform-origin: left center !important;
+  transition: transform .18s ease, color .18s ease !important;
+}
+
+/* 如果彈窗裡剛好有被叫到的號碼，也紅色放大 */
+#callModal .is-calling-flash-number{
+  color: #D71920 !important;
+  -webkit-text-fill-color: #D71920 !important;
+  transform: scale(1.2) !important;
+  transition: transform .18s ease, color .18s ease !important;
+}
+
+/* ===== 員工打卡：臉部拍照 ===== */
+.clockPhotoStage{
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 18px 8px;
+}
+
+.clockPhotoTitle{
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #222;
+  text-align: center;
+}
+
+#clockPhotoName{
+  color: #ec5b3c;
+}
+
+.clockPhotoHint{
+  min-height: 28px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #666;
+  text-align: center;
+}
+
+.clockCameraBox{
+  width: 520px;
+  max-width: 100%;
+  height: 300px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #222;
+  position: relative;
+  border: 4px solid #f0e5dc;
+}
+
+.clockCameraVideo,
+.clockPhotoPreview{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clockPhotoPreview{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.clockPhotoBtns{
+  width: 520px;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.clockPhotoBtn{
+  height: 58px;
+  border: 0 !important;
+  border-radius: 16px !important;
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+.clockRetakeBtn{
+  background: #d9d9d9 !important;
+  color: #333 !important;
+}
+
+.clockCaptureBtn{
+  background: #9ac8c6 !important;
+  color: #111 !important;
+}
+
+.clockPhotoConfirmBtn{
+  background: #ec5b3c !important;
+  color: #fff !important;
+}
+
+.clockPhotoConfirmBtn:disabled{
+  opacity: .45;
+}
+
+/* ===== 外送取餐：報到系統 ===== */
+
+.deliveryInlineDoneBtn{
+  min-width: 118px !important;
+  height: 68px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: #9fd3cf !important;
+  color: #111 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+.deliveryInlineDoneBtn:hover,
+.deliveryInlineDoneBtn:focus,
+.deliveryInlineDoneBtn:active{
+  background: #9fd3cf !important;
+  color: #111 !important;
+  box-shadow: none !important;
+}
+
+.deliveryHiddenCamera{
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.deliveryLoadingMask,
+.deliveryConsentMask,
+.deliveryThanksMask,
+.deliveryStatusMask{
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(255, 250, 245, .96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  border-radius: 0 0 36px 36px;
+}
+
+.deliveryLoadingCard,
+.deliveryConsentCard,
+.deliveryThanksCard,
+.deliveryStatusCard{
+  width: min(680px, 92%);
+  background: #fffaf5;
+  border-radius: 30px;
+  box-shadow: 0 18px 48px rgba(0,0,0,.16);
+  border: 1px solid #ead8c8;
+  padding: 34px 38px;
+  text-align: center;
+}
+
+.deliveryLoadingFace{
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  margin-bottom: 18px;
+  animation: deliverySpin 1.2s linear infinite;
+}
+
+@keyframes deliverySpin{
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+.deliveryLoadingText{
+  font-size: 2rem;
+  font-weight: 900;
+  color: #2b2422;
+  margin-bottom: 10px;
+}
+
+.deliveryLoadingSub{
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #7a6d66;
+  line-height: 1.7;
+}
+
+.deliveryConsentTitle{
+  font-size: 2rem;
+  font-weight: 900;
+  color: #2b2422;
+  margin-bottom: 18px;
+}
+
+.deliveryConsentText{
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #4d4542;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.deliveryConsentBtns{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.deliveryConsentNoBtn,
+.deliveryConsentYesBtn,
+.deliveryStatusOkBtn{
+  height: 64px;
+  border: 0 !important;
+  border-radius: 18px !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+.deliveryConsentNoBtn{
+  background: #e7eceb !important;
+  color: #111 !important;
+}
+
+.deliveryConsentYesBtn,
+.deliveryStatusOkBtn{
+  background: #9fd3cf !important;
+  color: #111 !important;
+}
+
+.deliveryThanksCard{
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #2b2422;
+  padding: 56px 38px;
+}
+
+.deliveryStatusOrderNo{
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0a4152;
+  margin-bottom: 18px;
+}
+
+.deliveryStatusText{
+  min-height: 72px;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #2b2422;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.deliveryStatusOkBtn{
+  width: 180px;
+}
+/* ===== 外送訂單報到：同一彈窗整合版 ===== */
+
+#deliverySearchModal .modal-dialog{
+  width: 760px !important;
+  max-width: 92% !important;
+}
+
+#deliverySearchModal .modal-content{
+  min-height: 500px !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+}
+
+#deliverySearchModal .modal-header{
+  padding: 24px 34px !important;
+}
+
+#deliverySearchModal .modal-title{
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+}
+
+#deliverySearchModal .deliverySearchBody{
+  min-height: 410px !important;
+  padding: 28px 48px 34px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* 遮罩鋪在同一個彈窗內容內，不要像另一個小彈窗 */
+#deliverySearchModal .deliveryLoadingMask,
+#deliverySearchModal .deliveryConsentMask,
+#deliverySearchModal .deliveryThanksMask,
+#deliverySearchModal .deliveryStatusMask{
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 50 !important;
+  background: #fffaf5 !important;
+  border-radius: 0 !important;
+  padding: 34px 56px !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 移除內層卡片感：不要邊框、不要陰影、不要再一層圓角 */
+#deliverySearchModal .deliveryLoadingCard,
+#deliverySearchModal .deliveryConsentCard,
+#deliverySearchModal .deliveryThanksCard,
+#deliverySearchModal .deliveryStatusCard{
+  width: 100% !important;
+  max-width: 620px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+/* loading 圖不要太大，畫面比較不壓迫 */
+#deliverySearchModal .deliveryLoadingFace{
+  width: 96px !important;
+  height: 96px !important;
+  margin-bottom: 22px !important;
+}
+
+#deliverySearchModal .deliveryLoadingText{
+  font-size: 2.1rem !important;
+  font-weight: 900 !important;
+  color: #2b2422 !important;
+  margin-bottom: 12px !important;
+}
+
+#deliverySearchModal .deliveryLoadingSub{
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #6f625d !important;
+  line-height: 1.7 !important;
+}
+
+/* 同意說明頁：寬一點、文字不要擠 */
+#deliverySearchModal .deliveryConsentTitle{
+  font-size: 2.25rem !important;
+  font-weight: 900 !important;
+  color: #2b2422 !important;
+  margin-bottom: 24px !important;
+}
+
+#deliverySearchModal .deliveryConsentText{
+  max-width: 560px !important;
+  margin: 0 auto !important;
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+  color: #4d4542 !important;
+  line-height: 2 !important;
+  text-align: left !important;
+}
+
+/* 按鈕不要太貼 */
+#deliverySearchModal .deliveryConsentBtns{
+  max-width: 500px !important;
+  margin: 34px auto 0 !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 22px !important;
+}
+
+#deliverySearchModal .deliveryConsentNoBtn,
+#deliverySearchModal .deliveryConsentYesBtn,
+#deliverySearchModal .deliveryStatusOkBtn{
+  height: 68px !important;
+  border-radius: 18px !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+}
+
+/* 訂單狀態也跟同一彈窗融合 */
+#deliverySearchModal .deliveryStatusOrderNo{
+  font-size: 3.4rem !important;
+  font-weight: 900 !important;
+  color: #0a4152 !important;
+  margin-bottom: 20px !important;
+}
+
+#deliverySearchModal .deliveryStatusText{
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  line-height: 1.6 !important;
+  margin-bottom: 34px !important;
+}
+
+/* 謝謝您的選擇 */
+#deliverySearchModal .deliveryThanksCard{
+  font-size: 2.5rem !important;
+  font-weight: 900 !important;
+  color: #2b2422 !important;
+}
+
+/* 原本輸入畫面也放大一點 */
+#deliverySearchModal .deliveryInputLabel{
+  font-size: 1.45rem !important;
+  margin-bottom: 16px !important;
+}
+
+#deliverySearchModal .deliveryOrderInput{
+  width: 240px !important;
+  height: 58px !important;
+  font-size: 1.35rem !important;
+  border-radius: 12px !important;
+  border: 2px solid #ddd !important;
+}
+
+#deliverySearchModal .deliveryInlineDoneBtn{
+  min-width: 120px !important;
+  height: 58px !important;
+  border-radius: 14px !important;
+  font-size: 1.3rem !important;
+}
+
+#deliverySearchModal .deliveryNinePad{
+  max-width: 450px !important;
+  gap: 14px !important;
+}
+
+#deliverySearchModal .nineKey,
+#deliverySearchModal .deliveryNinePad .numBtn{
+  height: 76px !important;
+  border-radius: 16px !important;
+}
+/* ===== 修正：外送報到遮罩 d-none 必須真的隱藏 ===== */
+#deliverySearchModal .deliveryLoadingMask.d-none,
+#deliverySearchModal .deliveryConsentMask.d-none,
+#deliverySearchModal .deliveryThanksMask.d-none,
+#deliverySearchModal .deliveryStatusMask.d-none{
+  display: none !important;
+}
+
+/* 只有沒有 d-none 的遮罩才顯示 */
+#deliverySearchModal .deliveryLoadingMask:not(.d-none),
+#deliverySearchModal .deliveryConsentMask:not(.d-none),
+#deliverySearchModal .deliveryThanksMask:not(.d-none),
+#deliverySearchModal .deliveryStatusMask:not(.d-none){
+  display: flex !important;
+}
+/* ===== 外送報到：打勾動畫 ===== */
+#deliverySearchModal .deliveryThanksCard{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 18px !important;
+}
+
+.deliveryCheckAnim{
+  width: 96px;
+  height: 96px;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.deliveryCheckCircle{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 6px solid #9fd3cf;
+  transform: scale(0);
+  animation: deliveryCirclePop .45s ease-out forwards;
+}
+
+.deliveryCheckMark{
+  position: absolute;
+  left: 29px;
+  top: 43px;
+  width: 38px;
+  height: 20px;
+  border-left: 7px solid #2f8f89;
+  border-bottom: 7px solid #2f8f89;
+  transform: rotate(-45deg) scale(0);
+  transform-origin: center;
+  animation: deliveryCheckShow .35s ease-out .35s forwards;
+}
+
+.deliveryThanksTitle{
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #2b2422;
+  line-height: 1.4;
+}
+
+.deliveryThanksSub{
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #6f625d;
+}
+
+@keyframes deliveryCirclePop{
+  0%{
+    transform: scale(0);
+    opacity: 0;
+  }
+  70%{
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100%{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes deliveryCheckShow{
+  0%{
+    transform: rotate(-45deg) scale(0);
+    opacity: 0;
+  }
+  70%{
+    transform: rotate(-45deg) scale(1.15);
+    opacity: 1;
+  }
+  100%{
+    transform: rotate(-45deg) scale(1);
+    opacity: 1;
+  }
+}
+/* ===== 外送報到：放大查詢中旋轉圖 ===== */
+#deliverySearchModal .deliveryLoadingFace{
+  width: 180px !important;
+  height: 180px !important;
+  margin-bottom: 28px !important;
+}
+
+/* 外送報到：取餐影像紀錄說明標題改系統紅色 */
+#deliverySearchModal .deliveryConsentTitle{
+  color: #ec5b3c !important;
+}
+/* ===== 首頁左側功能區文字放大 ===== */
+
+/* 候位 / 預約 */
+.kioskCanvas .waitBox div,
+.kioskCanvas .reserveBox div{
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 外送取餐 / 內用菜單 */
+.kioskCanvas .pickupUber,
+.kioskCanvas .pickupIndoor{
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  height: 76px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 現在叫號 */
+.kioskCanvas #openCallModal .callLeftTitle{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+}
+
+/* 現在叫號號碼 */
+.kioskCanvas #callMiniNums .callMiniNo{
+  font-size: 2.3rem !important;
+  font-weight: 900 !important;
+}
+/* ===== 主畫面：統一圓弧角 ===== */
+:root{
+  --home-radius: 22px;
+}
+
+/* 左側按鈕：候位 / 預約 / 外送取餐 / 內用菜單 */
+.kioskCanvas .waitBox div,
+.kioskCanvas .reserveBox div,
+.kioskCanvas .pickupUber,
+.kioskCanvas .pickupIndoor{
+  border-radius: var(--home-radius) !important;
+}
+
+
+
+/* 現在叫號框 */
+.kioskCanvas #openCallModal,
+.kioskCanvas .callWrap{
+  border-radius: var(--home-radius) !important;
+}
+
+/* ===== 外帶餐點：去背圖片統一顯示大小 ===== */
+#menuGrid .menuCard{
+  width: 100% !important;
+  height: 175px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  overflow: visible !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#menuGrid .menuCard img{
+  width: 255px !important;
+  height: 175px !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  display: block !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+/* ===== 外帶餐點彈窗：文字排版優化 ===== */
+
+#orderModal .modal-dialog{
+  max-width: 920px !important;
+}
+
+#orderModal .modal-content{
+  border-radius: 28px !important;
+  overflow: hidden !important;
+  background: #fffaf5 !important;
+}
+
+#orderModal .modal-header{
+  padding: 20px 26px !important;
+  border-bottom: 1px solid #ead8c8 !important;
+}
+
+#orderModalTitle{
+  font-size: 1.65rem !important;
+  font-weight: 900 !important;
+  color: #2b2422 !important;
+}
+
+/* 主內容：左圖右文 */
+#orderModal .modal-body{
+  display: grid !important;
+  grid-template-columns: 46% 54% !important;
+  grid-template-rows: 1fr auto !important;
+  gap: 18px 28px !important;
+  padding: 24px 30px 18px !important;
+  align-items: start !important;
+}
+
+/* 圖片 */
+#orderModalImg{
+  grid-column: 1 !important;
+  grid-row: 1 / span 2 !important;
+
+  width: 100% !important;
+  height: 300px !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: transparent !important;
+  border-radius: 18px !important;
+}
+
+/* 說明文字區 */
+#orderModalDesc{
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+
+  text-align: left !important;
+  margin-top: 0 !important;
+  padding: 8px 4px 0 !important;
+  color: #2b2422 !important;
+}
+
+.orderDescMain{
+  font-size: 1.18rem !important;
+  font-weight: 800 !important;
+  line-height: 1.9 !important;
+  letter-spacing: .5px !important;
+}
+
+.orderDescOrigin{
+  margin-top: 22px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid #ead8c8 !important;
+
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  line-height: 1.75 !important;
+  color: #5f5550 !important;
+}
+
+/* 份數區：放右下 */
+#orderModal .modal-body > div:last-child{
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  margin-top: 0 !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #ead8c8 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 18px !important;
+}
+
+/* 份數文字 */
+#orderModal .modal-body > div:last-child > div:first-child{
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  color: #2b2422 !important;
+}
+
+/* - + 按鈕 */
+#qtyMinus,
+#qtyPlus{
+  width: 64px !important;
+  height: 54px !important;
+  border-radius: 16px !important;
+  border: 0 !important;
+  background: #fff !important;
+  color: #111 !important;
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.08) !important;
+}
+
+#qtyText{
+  min-width: 42px !important;
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: #111 !important;
+  text-align: center !important;
+}
+
+/* 底部按鈕 */
+#orderModal .modal-footer{
+  padding: 18px 24px !important;
+  border-top: 1px solid #ead8c8 !important;
+  background: #fffaf5 !important;
+  gap: 14px !important;
+}
+
+#orderModal .modal-footer .btn{
+  width: 120px !important;
+  height: 56px !important;
+  border-radius: 16px !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  border: 0 !important;
+}
+
+#orderModal .modal-footer .btn-outline-secondary{
+  background: #9fd3cf !important;
+  color: #111 !important;
+}
+
+#orderModal .modal-footer .btn-danger{
+  background: #ff741f !important;
+  color: #fff !important;
+}
+/* ===== 外帶餐點彈窗：圖片與說明版型統一 ===== */
+:root{
+  --order-modal-radius: 18px;
+}
+
+/* 彈窗大小統一 */
+#orderModal .modal-dialog{
+  max-width: 880px !important;
+}
+
+#orderModal .modal-body{
+  display: grid !important;
+  grid-template-columns: 46% 54% !important;
+  grid-template-rows: 300px 86px !important;
+  gap: 18px 28px !important;
+  padding: 24px 30px 18px !important;
+  align-items: start !important;
+}
+
+/* 左側圖片固定同一個尺寸 */
+#orderModalImg{
+  grid-column: 1 !important;
+  grid-row: 1 / span 2 !important;
+
+  width: 100% !important;
+  height: 300px !important;
+
+  object-fit: cover !important;
+  object-position: center center !important;
+
+  border-radius: var(--order-modal-radius) !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* 右側說明區固定高度 */
+#orderModalDesc{
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+
+  height: 300px !important;
+  min-height: 300px !important;
+  max-height: 300px !important;
+
+  border-radius: var(--order-modal-radius) !important;
+  padding: 22px 24px !important;
+  background: rgba(255,255,255,.42) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+
+  overflow: hidden !important;
+}
+
+/* 主要說明文字 */
+.orderDescMain{
+  font-size: 1.08rem !important;
+  font-weight: 850 !important;
+  line-height: 1.9 !important;
+  color: #2b2422 !important;
+}
+
+/* 產地資訊固定在下方，沒有也不影響版面 */
+.orderDescOrigin{
+  margin-top: 18px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #ead8c8 !important;
+
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  line-height: 1.7 !important;
+  color: #5f5550 !important;
+
+  border-radius: var(--order-modal-radius) !important;
+}
+
+/* 份數區固定在右下 */
+#orderModal .modal-body > div:last-child{
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  height: 86px !important;
+  margin-top: 0 !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #ead8c8 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 18px !important;
+}
+
+.orderDescOrigin{
+  border-radius: 0 !important;
+  border-top: 1px solid #ead8c8 !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/* ===== 外帶餐點：列表與彈窗圖片弧角統一 ===== */
+:root{
+  --food-img-radius: 20px;
+}
+
+#menuGrid .menuCard,
+#menuGrid .menuCard img,
+#orderModalImg{
+  border-radius: var(--food-img-radius) !important;
+  overflow: hidden !important;
+}
+/* ===== 外帶餐點：圖片圓角統一修正版 ===== */
+:root{
+  --food-img-radius: 16px;
+}
+
+/* 外面菜單列表圖片外框 */
+#menuGrid .menuCard{
+  width: 100% !important;
+  height: 180px !important;
+  border-radius: var(--food-img-radius) !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 外面菜單列表圖片本身 */
+#menuGrid .menuCard img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+/* 彈窗內圖片 */
+#orderModalImg{
+  width: 100% !important;
+  height: 280px !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+
+  border-radius: var(--food-img-radius) !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+

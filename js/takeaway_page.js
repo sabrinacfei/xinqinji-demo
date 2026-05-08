@@ -64,6 +64,15 @@ function renderCats() {
     });
   });
 }
+function fixMenuImgPath(path) {
+  const img = String(path || "");
+
+  if (img.includes("Marinated_Pork_Neck.png")) {
+    return "images/Marinated_Pork_Neck1.jpg";
+  }
+
+  return img;
+}
 
 // ===== 右側餐點 =====
 function renderMenu() {
@@ -72,15 +81,19 @@ function renderMenu() {
 
   const list = state.items.filter(m => m.cat === state.cat);
 
-  grid.innerHTML = list.map(item => `
-    <div class="col-4">
-      <div class="menuCard" data-id="${item.id}">
-        <img src="${item.img}" alt="${item.name}">
+  grid.innerHTML = list.map(item => {
+    const imgPath = fixMenuImgPath(item.img);
+
+    return `
+      <div class="col-4">
+        <div class="menuCard" data-id="${item.id}">
+          <img src="${imgPath}" alt="${item.name}">
+        </div>
+        <h2 class="mealName">${item.name}</h2>
+        <div class="mealPrice">$${item.price}</div>
       </div>
-      <h2 class="mealName">${item.name}</h2>
-      <div class="mealPrice">$${item.price}</div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 
   $all(".menuCard").forEach(card => {
     card.addEventListener("click", () => {
@@ -96,8 +109,17 @@ let modalState = { item:null, qty:1 };
 function openOrderModal(item){
   modalState = { item, qty:1 };
   $("#orderModalTitle").textContent = `${item.name}  $${item.price}`;
-  $("#orderModalImg").src = item.img;
-  $("#orderModalDesc").textContent = item.desc || "";
+  $("#orderModalImg").src = fixMenuImgPath(item.img);
+  const descText = item.desc || "";
+  const parts = descText.split("|");
+
+  const mainDesc = (parts[0] || "").trim();
+  const originDesc = parts[1] ? `|${parts[1].trim()}` : "";
+
+  $("#orderModalDesc").innerHTML = `
+    <div class="orderDescMain">${mainDesc.replace(/\n/g, "<br>")}</div>
+    ${originDesc ? `<div class="orderDescOrigin">${originDesc}</div>` : ""}
+  `;
   $("#qtyText").textContent = "1";
   window.bootstrap.Modal.getOrCreateInstance(document.getElementById("orderModal")).show();
 }
@@ -229,21 +251,51 @@ async function finalizeCheckout(phone) {
   try {
     const cart = loadCart();
 
+    const amount = calcTotal(cart);
+
+    if (!cart.length) {
+      showTakeawayEmptyHint("目前沒有點餐內容，請先加入購物車。");
+      return;
+    }
+
     const result = await apiCreatePickupOrder(phone, cart);
+
+    const paymentPayload = {
+      orderNo: result.pickupNo,
+      phone: phone,
+      amount: amount,
+      items: cart.map(x => ({
+        id: x.id,
+        name: x.name,
+        price: x.price,
+        qty: x.qty
+      }))
+    };
+
+    const res = await fetch("http://127.0.0.1:5000/api/create-payment-link", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(paymentPayload)
+    });
+
+    const data = await res.json();
+
+    if (!data.success || !data.paymentUrl) {
+      console.error("payment link failed:", data);
+      alert("取得付款連結失敗，請稍後再試");
+      return;
+    }
 
     localStorage.removeItem(CART_KEY);
     updateCartBadge();
 
-    $("#pickupNumberText").textContent = result.pickupNo;
-    $("#pickupMetaText").textContent = `手機：${phone}`;
-    showPickupStep("B");
+    location.href = data.paymentUrl;
 
-    setTimeout(() => {
-      location.href = "index.html";
-    }, 10000);
   } catch (err) {
     console.error("finalizeCheckout failed:", err);
-    alert("取號失敗，請稍後再試");
+    alert("結帳失敗，請稍後再試");
   }
 }
 
@@ -330,8 +382,6 @@ async function initMenu() {
     }
   }
 }
-
-
 document.addEventListener("DOMContentLoaded", async () => {
   await initMenu();
   bindOrderModal();
@@ -339,5 +389,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindCheckoutAndCart();
   bindPickupFlow();
   updateCartBadge();
+
+  const params = new URLSearchParams(location.search);
+
+  if (params.get("promoCheckout") === "1") {
+    setTimeout(() => {
+      openCheckoutSummary("checkout");
+    }, 300);
+  }
+
+  // 付款成功回來後，顯示取餐號碼
+  if (params.get("payment") === "success") {
+    const pickupNo = params.get("pickupNo") || "P000";
+
+    setTimeout(() => {
+      $("#pickupNumberText").textContent = pickupNo;
+      $("#pickupMetaText").textContent = "付款完成，請依取餐號碼至櫃檯或取餐區取餐。";
+
+      showPickupStep("B");
+
+      window.bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("pickupModal")
+      ).show();
+
+      // 清掉網址參數，避免重新整理一直跳彈窗
+      history.replaceState(null, "", "takeaway.html");
+    }, 400);
+  }
 });
+
+
 

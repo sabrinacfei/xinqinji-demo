@@ -44,7 +44,7 @@ function normalizeLookupInput(value) {
 
 async function apiGetMenu() {
   if (!mockCache.menu) {
-    mockCache.menu = await readJson("./mock/menu.json");
+    mockCache.menu = await readJson("./mock/menu.json?v=" + Date.now());
   }
   return mockCache.menu;
 }
@@ -146,32 +146,103 @@ async function apiCreateWaiting(item) {
 }
 
 async function apiCallNextWaiting() {
-  const data = await apiGetWaitlist();
+  // 不用 apiGetWaitlist，直接讀 localStorage，避免 mockCache 卡住
+  const saved = localStorage.getItem(MOCK_WAITLIST_KEY);
 
-  const queue = Array.isArray(data.queue) ? [...data.queue] : [];
-  const callSoon = Array.isArray(data.callSoon) ? [...data.callSoon] : [];
-  const callReady = Array.isArray(data.callReady) ? [...data.callReady] : [];
+  let data = saved
+    ? JSON.parse(saved)
+    : {
+        queue: [],
+        callReady: [],
+        callSoon: []
+      };
 
+  const queue = Array.isArray(data.queue) ? data.queue : [];
+  let callReady = Array.isArray(data.callReady) ? [...data.callReady] : [];
+  let callSoon = Array.isArray(data.callSoon) ? [...data.callSoon] : [];
+
+  console.log("叫號前：", {
+    callReady: [...callReady],
+    callSoon: [...callSoon],
+    queue: queue.map(x => ({
+      number: x.number,
+      status: x.status
+    }))
+  });
+
+  // 如果 callSoon 壞掉或空掉，就從 queue 補回來
+  if (callSoon.length === 0) {
+    callSoon = queue
+      .filter(x => x.status === "waiting")
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      .map(x => x.number);
+  }
+
+  // 沒有下一號就不動
+  if (callSoon.length === 0) {
+    console.log("沒有下一號，不叫號");
+
+    data.callReady = callReady;
+    data.callSoon = callSoon;
+    data.queue = queue;
+
+    mockCache.waitlist = data;
+    localStorage.setItem(MOCK_WAITLIST_KEY, JSON.stringify(data));
+
+    return {
+      calledNumber: null,
+      nextReady: null,
+      callReady,
+      callSoon
+    };
+  }
+
+  // 目前叫號變成已叫過
   const calledNumber = callReady.shift() || null;
-  const nextSoon = callSoon.shift() || null;
 
   if (calledNumber) {
-    const calledRow = queue.find((x) => x.number === calledNumber);
+    const calledRow = queue.find(x => x.number === calledNumber);
     if (calledRow) calledRow.status = "called";
   }
 
-  if (nextSoon) {
-    callReady.push(nextSoon);
-    const nextRow = queue.find((x) => x.number === nextSoon);
-    if (nextRow) nextRow.status = "ready";
-  }
+  // 下一號變成現在叫號
+  const nextReady = callSoon.shift();
 
-  const nextData = { ...data, queue, callSoon, callReady };
-  await saveWaitlistState(nextData);
+  const nextRow = queue.find(x => x.number === nextReady);
+  if (nextRow) nextRow.status = "ready";
+
+  callReady = [nextReady];
+
+  // 重新整理 callSoon
+  callSoon = queue
+    .filter(x => x.status === "waiting")
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    .map(x => x.number);
+
+  data = {
+    ...data,
+    queue,
+    callReady,
+    callSoon
+  };
+
+  mockCache.waitlist = data;
+  localStorage.setItem(MOCK_WAITLIST_KEY, JSON.stringify(data));
+
+  console.log("叫號後：", {
+    calledNumber,
+    nextReady,
+    callReady,
+    callSoon,
+    queue: queue.map(x => ({
+      number: x.number,
+      status: x.status
+    }))
+  });
 
   return {
     calledNumber,
-    nextReady: nextSoon,
+    nextReady,
     callReady,
     callSoon
   };

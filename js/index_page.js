@@ -60,6 +60,44 @@ async function renderNowCallingMini() {
     box.innerHTML = `<div class="callMiniNo">—</div>`;
   }
 }
+let callingFlashTimer = null;
+let autoCallingBusy = false;
+
+function triggerNowCallingFlash(nextNumber = "") {
+  const mini = document.getElementById("openCallModal");
+  const modalTitle = document.querySelector("#callModal .modal-title");
+
+  mini?.classList.add("is-calling-flash");
+  modalTitle?.classList.add("is-calling-flash-text");
+
+  // 如果現在叫號彈窗有打開，也讓剛叫到的號碼變紅放大
+  if (nextNumber) {
+    document.querySelectorAll("#callModal #callSoonList span, #callModal #callPickupList span").forEach((el) => {
+      if (el.textContent.trim() === nextNumber) {
+        el.classList.add("is-calling-flash-number");
+      }
+    });
+  }
+
+  clearTimeout(callingFlashTimer);
+
+  callingFlashTimer = setTimeout(() => {
+    mini?.classList.remove("is-calling-flash");
+    modalTitle?.classList.remove("is-calling-flash-text");
+
+    document.querySelectorAll(".is-calling-flash-number").forEach((el) => {
+      el.classList.remove("is-calling-flash-number");
+    });
+  }, 1500);
+}
+function forceUpdateNowCallingMini(number) {
+  const box = document.getElementById("callMiniNums");
+  if (!box) return;
+
+  box.innerHTML = number
+    ? `<div class="callMiniNo">${number}</div>`
+    : `<div class="callMiniNo">—</div>`;
+}
 
 async function renderCallModal() {
   const soonBox = document.getElementById("callSoonList");
@@ -408,8 +446,190 @@ function bindWaitingKiosk() {
 }
 
 // ===== 外送取餐 =====
+function hideAllDeliveryMasks() {
+  document.getElementById("deliveryLoadingMask")?.classList.add("d-none");
+  document.getElementById("deliveryConsentMask")?.classList.add("d-none");
+  document.getElementById("deliveryThanksMask")?.classList.add("d-none");
+  document.getElementById("deliveryStatusMask")?.classList.add("d-none");
+}
+
+function saveDeliveryPhotoToLocal(key, photoItem) {
+  try {
+    const saved = localStorage.getItem(key);
+    const data = saved ? JSON.parse(saved) : { photos: [] };
+
+    data.photos = Array.isArray(data.photos) ? data.photos : [];
+    data.photos.unshift(photoItem);
+
+    // localStorage 容量有限，先保留最近 80 張
+    data.photos = data.photos.slice(0, 80);
+
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (err) {
+    console.error("saveDeliveryPhotoToLocal failed:", err);
+  }
+}
+
+function stopDeliveryCamera() {
+  if (deliveryCameraStream) {
+    deliveryCameraStream.getTracks().forEach(track => track.stop());
+    deliveryCameraStream = null;
+  }
+
+  const video = document.getElementById("deliveryCameraVideo");
+  if (video) {
+    video.srcObject = null;
+  }
+}
+
+async function startDeliveryCamera() {
+  const video = document.getElementById("deliveryCameraVideo");
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.warn("此瀏覽器不支援相機");
+    return false;
+  }
+
+  try {
+    stopDeliveryCamera();
+
+    deliveryCameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      },
+      audio: false
+    });
+
+    if (video) {
+      video.srcObject = deliveryCameraStream;
+      await video.play();
+    }
+
+    return true;
+  } catch (err) {
+    console.error("startDeliveryCamera failed:", err);
+    return false;
+  }
+}
+
+function captureDeliveryPhoto() {
+  const video = document.getElementById("deliveryCameraVideo");
+  const canvas = document.getElementById("deliveryCameraCanvas");
+
+  if (!video || !canvas || !video.videoWidth || !video.videoHeight) {
+    return "";
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.82);
+}
+
+function buildDeliveryPhotoItem(choice) {
+  return {
+    id: deliveryPendingPhotoId,
+    orderCode: deliveryPendingCode,
+    choice: choice,
+    photo: deliveryPendingPhoto,
+    createdAt: new Date().toISOString()
+  };
+}
+
+function getDeliveryStatusText(code, found) {
+  if (!found) {
+    return "查詢不到訂單，請詢問櫃檯。";
+  }
+
+  if (found.status === "已完成") {
+    return "訂單已完成，請至外送櫃拿取。";
+  }
+
+  return "訂單需再等候 5 分鐘，請耐心等候，謝謝您！";
+}
+
+function showDeliveryStatusPopup() {
+  const orderNoEl = document.getElementById("deliveryStatusOrderNo");
+  const textEl = document.getElementById("deliveryStatusText");
+
+  if (orderNoEl) orderNoEl.textContent = deliveryPendingCode || "—";
+  if (textEl) textEl.textContent = getDeliveryStatusText(deliveryPendingCode, deliveryPendingFoundOrder);
+
+  hideAllDeliveryMasks();
+  document.getElementById("deliveryStatusMask")?.classList.remove("d-none");
+}
+
+function finishDeliveryConsent(choice) {
+  if (deliveryPendingPhoto) {
+    const photoItem = buildDeliveryPhotoItem(choice);
+
+    if (choice === "agree") {
+      // 同意：櫃檯可調取
+      saveDeliveryPhotoToLocal(DELIVERY_FRONT_PHOTOS_KEY, photoItem);
+    } else {
+      // 不同意：不顯示在前台，只保留給管理者稽核
+      saveDeliveryPhotoToLocal(DELIVERY_MANAGER_PHOTOS_KEY, photoItem);
+    }
+  }
+
+  hideAllDeliveryMasks();
+  document.getElementById("deliveryThanksMask")?.classList.remove("d-none");
+
+  setTimeout(() => {
+    showDeliveryStatusPopup();
+  }, 5000);
+}
+
+async function runDeliveryCheckFlow(code) {
+  deliveryPendingCode = code;
+  deliveryPendingPhoto = "";
+  deliveryPendingPhotoId = `${code}_${Date.now()}`;
+  deliveryPendingFoundOrder = null;
+
+  hideAllDeliveryMasks();
+  document.getElementById("deliveryLoadingMask")?.classList.remove("d-none");
+
+  const cameraReady = await startDeliveryCamera();
+
+  try {
+    deliveryPendingFoundOrder = await apiFindDeliveryOrder(code);
+  } catch (err) {
+    console.error("apiFindDeliveryOrder failed:", err);
+    deliveryPendingFoundOrder = null;
+  }
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  if (cameraReady) {
+    deliveryPendingPhoto = captureDeliveryPhoto();
+  }
+
+  stopDeliveryCamera();
+
+  hideAllDeliveryMasks();
+
+  if (deliveryPendingPhoto) {
+    document.getElementById("deliveryConsentMask")?.classList.remove("d-none");
+  } else {
+    showDeliveryStatusPopup();
+  }
+}
 let deliveryBound = false;
 let deliveryT9Bound = false;
+
+let deliveryCameraStream = null;
+let deliveryPendingPhoto = "";
+let deliveryPendingPhotoId = "";
+let deliveryPendingCode = "";
+let deliveryPendingFoundOrder = null;
+
+const DELIVERY_FRONT_PHOTOS_KEY = "mock_delivery_front_photos";
+const DELIVERY_MANAGER_PHOTOS_KEY = "mock_delivery_manager_photos";
 
 async function renderDeliveryPickupModal() {
   try {
@@ -461,26 +681,16 @@ function showDeliverySearchResult(text) {
 function bindDeliveryKiosk() {
   if (deliveryBound) return;
   deliveryBound = true;
-  document.getElementById("openDeliverySearchBtn")?.addEventListener("click", () => {
-    const deliveryModalEl = document.getElementById("deliveryModal");
-    const searchModalEl = document.getElementById("deliverySearchModal");
 
-    bootstrap.Modal.getOrCreateInstance(deliveryModalEl).hide();
-    bootstrap.Modal.getOrCreateInstance(searchModalEl).show();
-  });
   document.getElementById("deliverySearchCloseBtn")?.addEventListener("click", () => {
-    const deliveryModalEl = document.getElementById("deliveryModal");
-    const searchModalEl = document.getElementById("deliverySearchModal");
+    stopDeliveryCamera();
+    hideAllDeliveryMasks();
+    hideDeliverySearchResult();
 
-    bootstrap.Modal.getOrCreateInstance(searchModalEl).hide();
-    bootstrap.Modal.getOrCreateInstance(deliveryModalEl).show();
-  });
-  document.getElementById("deliverySearchModal")?.addEventListener("hidden.bs.modal", () => {
-    const deliveryModalEl = document.getElementById("deliveryModal");
-    const stillOpen = document.body.classList.contains("modal-open");
-    if (!stillOpen) {
-      bootstrap.Modal.getOrCreateInstance(deliveryModalEl).show();
-    }
+    const input = document.getElementById("deliveryOrderInput");
+    if (input) input.value = "";
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("deliverySearchModal")).hide();
   });
 
   document.getElementById("confirmDeliverySearchBtn")?.addEventListener("click", async () => {
@@ -491,23 +701,46 @@ function bindDeliveryKiosk() {
       return;
     }
 
-    try {
-      const found = await apiFindDeliveryOrder(code);
-      if (!found) {
-        showDeliverySearchResult(`${code}－查無此訂單`);
-        return;
-      }
-      showDeliverySearchResult(`${found.code}－${found.status}`);
-    } catch (err) {
-      console.error("delivery search failed:", err);
-      showDeliverySearchResult("查詢失敗，請稍後再試");
-    }
+    hideDeliverySearchResult();
+    await runDeliveryCheckFlow(code);
+  });
+
+  document.getElementById("deliveryConsentYesBtn")?.addEventListener("click", () => {
+    finishDeliveryConsent("agree");
+  });
+
+  document.getElementById("deliveryConsentNoBtn")?.addEventListener("click", () => {
+    finishDeliveryConsent("reject");
+  });
+
+  document.getElementById("deliveryStatusOkBtn")?.addEventListener("click", () => {
+    hideAllDeliveryMasks();
+    hideDeliverySearchResult();
+
+    const input = document.getElementById("deliveryOrderInput");
+    if (input) input.value = "";
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("deliverySearchModal")).hide();
+  });
+
+  document.getElementById("deliverySearchModal")?.addEventListener("hidden.bs.modal", () => {
+    stopDeliveryCamera();
+    hideAllDeliveryMasks();
+    hideDeliverySearchResult();
+
+    const input = document.getElementById("deliveryOrderInput");
+    if (input) input.value = "";
   });
 }
 
 async function openDeliveryModal() {
-  await renderDeliveryPickupModal();
-  bootstrap.Modal.getOrCreateInstance(document.getElementById("deliveryModal")).show();
+  const input = document.getElementById("deliveryOrderInput");
+  if (input) input.value = "";
+
+  hideDeliverySearchResult();
+  hideAllDeliveryMasks();
+
+  bootstrap.Modal.getOrCreateInstance(document.getElementById("deliverySearchModal")).show();
 }
 
 function normalizeOrderCode(code) {
@@ -719,7 +952,17 @@ function bindDeliveryT9Keyboard() {
 
 let clockingBound = false;
 let clockAutoCloseTimer = null;
-let clockingState = { empId: "", name: "" };
+let clockingState = {
+  empId: "",
+  name: "",
+  facePhoto: "",
+  facePhotoId: ""
+};
+
+let clockCameraStream = null;
+let clockAutoPhotoTimer = null;
+
+const CLOCK_FACE_PHOTOS_KEY = "mock_clock_face_photos_state";
 
 function getTodayKey() {
   const d = new Date();
@@ -744,6 +987,185 @@ function formatDuration(fromISO, toISO) {
   if (m === 0) return `${h} 小時`;
   return `${h} 小時 ${m} 分`;
 }
+function loadClockFacePhotos() {
+  try {
+    const saved = localStorage.getItem(CLOCK_FACE_PHOTOS_KEY);
+    return saved ? JSON.parse(saved) : { photos: [] };
+  } catch (err) {
+    console.error("loadClockFacePhotos failed:", err);
+    return { photos: [] };
+  }
+}
+
+function saveClockFacePhoto(photoItem) {
+  const data = loadClockFacePhotos();
+
+  data.photos = Array.isArray(data.photos) ? data.photos : [];
+  data.photos.unshift(photoItem);
+
+  // localStorage 容量有限，先保留最近 80 張
+  data.photos = data.photos.slice(0, 80);
+
+  localStorage.setItem(CLOCK_FACE_PHOTOS_KEY, JSON.stringify(data));
+}
+
+function stopClockCamera() {
+  clearTimeout(clockAutoPhotoTimer);
+  clockAutoPhotoTimer = null;
+
+  if (clockCameraStream) {
+    clockCameraStream.getTracks().forEach(track => track.stop());
+    clockCameraStream = null;
+  }
+
+  const video = document.getElementById("clockCameraVideo");
+  if (video) {
+    video.srcObject = null;
+  }
+}
+
+async function startClockCamera() {
+
+  const video = document.getElementById("clockCameraVideo");
+  const hint = document.getElementById("clockPhotoHint");
+  const captureBtn = document.getElementById("clockCaptureBtn");
+  const confirmBtn = document.getElementById("clockPhotoConfirmBtn");
+  const preview = document.getElementById("clockPhotoPreview");
+
+  clockingState.facePhoto = "";
+  clockingState.facePhotoId = "";
+
+  if (preview) {
+    preview.src = "";
+    preview.classList.add("d-none");
+  }
+
+  if (confirmBtn) confirmBtn.disabled = true;
+  if (captureBtn) captureBtn.disabled = false;
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (hint) {
+      hint.textContent = "目前瀏覽器或網址不支援開啟鏡頭，請使用 localhost 或 HTTPS。";
+      hint.classList.remove("d-none");
+    }
+    return;
+  }
+
+  try {
+    stopClockCamera();
+
+    clockCameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      },
+      audio: false
+    });
+
+    if (video) {
+      video.srcObject = clockCameraStream;
+      await video.play();
+    }
+
+    if (hint) {
+      hint.textContent = "請看向鏡頭，系統即將自動拍照...";
+      hint.classList.remove("d-none");
+    }
+
+    clearTimeout(clockAutoPhotoTimer);
+    clockAutoPhotoTimer = setTimeout(() => {
+      captureClockFacePhoto(true);
+    }, 1200);
+  } catch (err) {
+    console.error("startClockCamera failed:", err);
+
+    if (hint) {
+      hint.textContent = "無法開啟鏡頭，請確認瀏覽器已允許相機權限。";
+      hint.classList.remove("d-none");
+    }
+  }
+}
+
+function openClockPhotoStep() {
+  const nameEl = document.getElementById("clockPhotoName");
+  if (nameEl) nameEl.textContent = clockingState.name;
+
+  showClockStep("clockStepPhoto");
+  startClockCamera();
+}
+
+function captureClockFacePhoto(autoNext = false) {
+  const video = document.getElementById("clockCameraVideo");
+  const canvas = document.getElementById("clockCameraCanvas");
+  const preview = document.getElementById("clockPhotoPreview");
+  const hint = document.getElementById("clockPhotoHint");
+  const confirmBtn = document.getElementById("clockPhotoConfirmBtn");
+
+  if (!video || !canvas || !video.videoWidth || !video.videoHeight) {
+    if (hint) {
+      hint.textContent = "鏡頭還沒準備好，請稍等一下再拍。";
+      hint.classList.remove("d-none");
+    }
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+  const photoId = `${clockingState.empId}_${Date.now()}`;
+
+  clockingState.facePhoto = dataUrl;
+  clockingState.facePhotoId = photoId;
+
+  saveClockFacePhoto({
+    id: photoId,
+    empId: clockingState.empId,
+    name: clockingState.name,
+    photo: dataUrl,
+    createdAt: new Date().toISOString()
+  });
+
+  if (preview) {
+    preview.src = dataUrl;
+    preview.classList.remove("d-none");
+  }
+
+  if (confirmBtn) {
+    confirmBtn.disabled = false;
+  }
+
+  if (hint) {
+    hint.textContent = autoNext ? "已完成拍照，正在進入打卡選擇..." : "為維護員工權益，照片已暫存在本機。";
+    hint.classList.remove("d-none");
+  }
+
+  if (autoNext) {
+    setTimeout(() => {
+      confirmClockFacePhoto();
+    }, 700);
+  }
+}
+
+function confirmClockFacePhoto() {
+  if (!clockingState.facePhoto) {
+    const hint = document.getElementById("clockPhotoHint");
+
+    if (hint) {
+      hint.textContent = "請先拍照，再繼續打卡。";
+      hint.classList.remove("d-none");
+    }
+
+    return;
+  }
+
+  stopClockCamera();
+  showClockStep("clockStepC");
+}
 
 async function loadClockLogs() {
   return await apiGetClockLogs();
@@ -754,7 +1176,7 @@ async function saveClockLogs(data) {
 }
 
 function showClockStep(idToShow) {
-  ["clockStepA", "clockStepB", "clockStepC", "clockStepD"].forEach((id) => {
+  ["clockStepA", "clockStepPhoto", "clockStepC", "clockStepRating", "clockStepD"].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.classList.toggle("d-none", id !== idToShow);
@@ -762,7 +1184,12 @@ function showClockStep(idToShow) {
 }
 
 function resetClockingModal() {
-  clockingState = { empId: "", name: "" };
+  clockingState = {
+    empId: "",
+    name: "",
+    facePhoto: "",
+    facePhotoId: ""
+  };
 
   const input = document.getElementById("clockEmpId");
   if (input) input.value = "";
@@ -773,6 +1200,8 @@ function resetClockingModal() {
   document.getElementById("clockFinishSub").textContent = "";
   document.getElementById("clockFinishMeta").textContent = "";
   clearTimeout(clockAutoCloseTimer);
+
+  stopClockCamera();
 
   showClockStep("clockStepA");
 }
@@ -808,8 +1237,9 @@ async function goClockConfirm() {
     document.getElementById("clockConfirmEmpId").textContent = emp.id;
     document.getElementById("clockConfirmName").textContent = emp.name;
     document.getElementById("clockHelloName").textContent = emp.name;
+    document.getElementById("clockRatingName").textContent = emp.name;
 
-    showClockStep("clockStepB");
+    openClockPhotoStep();
   } catch (err) {
     console.error("goClockConfirm failed:", err);
     if (hintEl) {
@@ -827,6 +1257,10 @@ async function getTodayEmployeeLogs(empId) {
   return dayLogs[empId] || [];
 }
 async function submitClockIn() {
+  if (!clockingState.facePhoto) {
+    openClockPhotoStep();
+    return;
+  }
   const now = new Date();
   const todayKey = getTodayKey();
   const data = await loadClockLogs();
@@ -853,7 +1287,9 @@ async function submitClockIn() {
     type: "in",
     at: now.toISOString(),
     name: clockingState.name,
-    empId: clockingState.empId
+    empId: clockingState.empId,
+    facePhotoId: clockingState.facePhotoId,
+    facePhoto: clockingState.facePhoto
   });
 
   dayLogs[clockingState.empId] = empLogs;
@@ -871,7 +1307,11 @@ async function submitClockIn() {
   }, 5000);
 }
 
-async function submitClockOut() {
+async function submitClockOut(rating = "") {
+  if (!clockingState.facePhoto) {
+    openClockPhotoStep();
+    return;
+  }
   const now = new Date();
   const todayKey = getTodayKey();
   const data = await loadClockLogs();
@@ -911,7 +1351,10 @@ async function submitClockOut() {
     type: "out",
     at: now.toISOString(),
     name: clockingState.name,
-    empId: clockingState.empId
+    empId: clockingState.empId,
+    rating: rating,
+    facePhotoId: clockingState.facePhotoId,
+    facePhoto: clockingState.facePhoto
   });
 
   dayLogs[clockingState.empId] = empLogs;
@@ -919,12 +1362,19 @@ async function submitClockOut() {
 
   await saveClockLogs(data);
 
+  const ratingTextMap = {
+    good: "今天狀態：很好 🙂",
+    normal: "今天狀態：普通 😐",
+    bad: "今天狀態：不太好 ☹️"
+  };
+
   document.getElementById("clockFinishTitle").textContent = clockingState.name;
   document.getElementById("clockFinishSub").textContent = "辛苦了～好好休息！";
   document.getElementById("clockFinishMeta").textContent =
-    `今天 ${formatClockTime(new Date(lastIn.at))} 打卡～${formatClockTime(now)} 離開\n共 ${formatDuration(lastIn.at, now)}`;
+    `今天 ${formatClockTime(new Date(lastIn.at))} 打卡～${formatClockTime(now)} 離開\n共 ${formatDuration(lastIn.at, now)}\n${ratingTextMap[rating] || ""}`;
 
   showClockStep("clockStepD");
+
   clockAutoCloseTimer = setTimeout(() => {
     bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).hide();
   }, 5000);
@@ -982,7 +1432,27 @@ function bindClockingKiosk() {
   });
 
   document.getElementById("clockInBtn")?.addEventListener("click", submitClockIn);
-  document.getElementById("clockOutBtn")?.addEventListener("click", submitClockOut);
+
+  document.getElementById("clockOutBtn")?.addEventListener("click", async () => {
+    const logs = await getTodayEmployeeLogs(clockingState.empId);
+    const lastIn = logs.find(row => row.type === "in");
+    const lastOut = logs.find(row => row.type === "out");
+
+    if (!lastIn || lastOut) {
+      submitClockOut();
+      return;
+    }
+
+    document.getElementById("clockRatingName").textContent = clockingState.name;
+    showClockStep("clockStepRating");
+  });
+
+  document.querySelectorAll(".clockRatingBtn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const rating = btn.dataset.rating;
+      submitClockOut(rating);
+    });
+  });
 
   document.getElementById("clockKeypad")?.addEventListener("click", (e) => {
     const btn = e.target.closest("button");
@@ -1006,8 +1476,21 @@ function bindClockingKiosk() {
 
   document.getElementById("clockingModal")?.addEventListener("hidden.bs.modal", () => {
     clearTimeout(clockAutoCloseTimer);
+    stopClockCamera();
     resetClockingModal();
   });
+
+  document.getElementById("clockConfirmBtn")?.addEventListener("click", openClockPhotoStep);
+
+  document.getElementById("clockCaptureBtn")?.addEventListener("click", captureClockFacePhoto);
+
+  document.getElementById("clockRetakeBtn")?.addEventListener("click", () => {
+    clockingState.facePhoto = "";
+    clockingState.facePhotoId = "";
+    startClockCamera();
+  });
+
+  document.getElementById("clockPhotoConfirmBtn")?.addEventListener("click", confirmClockFacePhoto);
 }
 
 // ===== 啟動 =====
@@ -1028,27 +1511,44 @@ document.addEventListener("DOMContentLoaded", () => {
   renderDeliveryPickupModal();
   renderIndoorWaitingCount();
 
-  setInterval(() => {
-    renderNowCallingMini();
-    renderCallModal();
+  setInterval(async () => {
+    console.log("每 10 秒自動叫下一號");
+
+    const result = await callNextNumber();
+
+    console.log("自動叫號結果：", result);
+
     renderTakeawayWait();
     renderDeliveryPickupModal();
-    renderIndoorWaitingCount();
-  }, 5000);
+  }, 10000);
 
 });
 
-
-
-  // 叫下一號
+// 叫下一號
 async function callNextNumber() {
   try {
     const result = await apiCallNextWaiting();
 
-    renderNowCallingMini();
-    renderCallModal();
-    renderIndoorWaitingCount();
-    updateOverviewFromQueue();
+    console.log("callNextNumber result:", result);
+
+    if (result && result.nextReady) {
+      const box = document.getElementById("callMiniNums");
+
+      if (box) {
+        box.innerHTML = `<div class="callMiniNo">${result.nextReady}</div>`;
+      }
+
+      renderCallModal();
+      renderIndoorWaitingCount();
+      updateOverviewFromQueue();
+
+      triggerNowCallingFlash(result.nextReady);
+    } else {
+      renderNowCallingMini();
+      renderCallModal();
+      renderIndoorWaitingCount();
+      updateOverviewFromQueue();
+    }
 
     return result;
   } catch (err) {
@@ -1948,3 +2448,172 @@ function clearQueryStatusHint() {
   if (!el) return;
   el.textContent = "";
 }
+
+/* ===== 首頁 banner2：套餐輪播，可直接進外帶結帳 ===== */
+
+const HOME_PROMOS = [
+  {
+    id: "promo_chicken_bento",
+    title: "今日主推",
+    name: "雞肉便當套餐",
+    desc: "主餐＋配菜＋飲品",
+    price: 120,
+    img: "images/promo-chicken.png"
+  },
+  {
+    id: "promo_new_bento",
+    title: "新品上市",
+    name: "新品雙拼套餐",
+    desc: "新品限定組合",
+    price: 150,
+    img: "images/promo_new_bento.png"
+  },
+  {
+    id: "promo_lunch_set",
+    title: "午餐優惠",
+    name: "經典午餐套餐",
+    desc: "人氣主餐＋小菜",
+    price: 99,
+    img: "images/romo_lunch_set.png"
+  },
+  {
+    id: "promo_family_set",
+    title: "多人分享",
+    name: "家庭分享套餐",
+    desc: "適合 2~3 人一起吃",
+    price: 299,
+    img: "images/promo_family_set.png"
+  }
+];
+
+let promoIndex = 0;
+let promoTimer = null;
+let promoStartX = 0;
+
+function renderPromoCarousel() {
+  const track = document.getElementById("promoTrack");
+  const dots = document.getElementById("promoDots");
+  if (!track || !dots) return;
+
+  track.innerHTML = HOME_PROMOS.map((item, index) => `
+    <div class="promoSlide ${index === promoIndex ? "active" : ""}" data-index="${index}">
+      <div class="promoText">
+        <div class="promoTag">${item.title}</div>
+        <div class="promoName">${item.name}</div>
+        <div class="promoDesc">${item.desc}</div>
+        <div class="promoPrice">$${item.price}</div>
+        <div class="promoHint">點選直接加入結帳</div>
+      </div>
+
+      <div class="promoImgBox">
+        <img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">
+      </div>
+    </div>
+  `).join("");
+
+  dots.innerHTML = HOME_PROMOS.map((_, index) => `
+    <button type="button" class="promoDot ${index === promoIndex ? "active" : ""}" data-index="${index}"></button>
+  `).join("");
+
+  document.querySelectorAll(".promoSlide").forEach((slide) => {
+    slide.addEventListener("click", () => {
+      const index = Number(slide.dataset.index);
+      goPromoCheckout(HOME_PROMOS[index]);
+    });
+  });
+
+  document.querySelectorAll(".promoDot").forEach((dot) => {
+    dot.addEventListener("click", (e) => {
+      e.stopPropagation();
+      promoIndex = Number(dot.dataset.index);
+      renderPromoCarousel();
+      restartPromoTimer();
+    });
+  });
+}
+
+function nextPromo() {
+  promoIndex = (promoIndex + 1) % HOME_PROMOS.length;
+  renderPromoCarousel();
+}
+
+function prevPromo() {
+  promoIndex = (promoIndex - 1 + HOME_PROMOS.length) % HOME_PROMOS.length;
+  renderPromoCarousel();
+}
+
+function restartPromoTimer() {
+  clearInterval(promoTimer);
+  promoTimer = setInterval(nextPromo, 5000);
+}
+
+function goPromoCheckout(item) {
+  const CART_KEY = "sq_takeaway_cart";
+
+  let cart = [];
+  try {
+    cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+  } catch {
+    cart = [];
+  }
+
+  const found = cart.find((x) => x.id === item.id);
+
+  if (found) {
+    found.qty = Number(found.qty || 0) + 1;
+  } else {
+    cart.push({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      qty: 1
+    });
+  }
+
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+
+  location.href = "takeaway.html?promoCheckout=1";
+}
+
+function bindPromoCarousel() {
+  const carousel = document.getElementById("promoCarousel");
+  if (!carousel) return;
+
+  renderPromoCarousel();
+  restartPromoTimer();
+
+  document.getElementById("promoNextBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    nextPromo();
+    restartPromoTimer();
+  });
+
+  document.getElementById("promoPrevBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    prevPromo();
+    restartPromoTimer();
+  });
+
+  carousel.addEventListener("pointerdown", (e) => {
+    promoStartX = e.clientX;
+  });
+
+  carousel.addEventListener("pointerup", (e) => {
+    const diff = e.clientX - promoStartX;
+
+    if (Math.abs(diff) < 40) return;
+
+    if (diff < 0) {
+      nextPromo();
+    } else {
+      prevPromo();
+    }
+
+    restartPromoTimer();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindPromoCarousel();
+});
+
