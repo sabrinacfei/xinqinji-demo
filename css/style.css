@@ -9359,4 +9359,237 @@ html body .kioskCanvas .catList .catBtn.active{
   overflow: hidden !important;
   display: block !important;
 }
+/* ===== 管理查詢面板 ===== */
+.clockAdminStage {
+  padding: 0 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
+.clockAdminHeader {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.clockAdminTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.clockAdminSub {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+.clockAdminFilter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.clockAdminSelect,
+.clockAdminDateInput {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 10px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  outline: none;
+}
+
+.clockAdminSearchBtn {
+  padding: 8px 18px;
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.clockAdminSearchBtn:hover {
+  background: #a93226;
+}
+
+.clockAdminList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+/* 每一筆紀錄卡片 */
+.adminRecord {
+  border: 1.5px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.adminRecordHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+}
+
+.adminRecordHeader:hover {
+  background: #fafafa;
+}
+
+.adminRecordLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.adminRecordName {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #222;
+}
+
+.adminRecordDate {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.adminRecordRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adminRecordHours {
+  font-size: 0.9rem;
+  color: #c0392b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adminRecordTimes {
+  font-size: 0.82rem;
+  color: #555;
+  white-space: nowrap;
+}
+
+.adminRecordArrow {
+  font-size: 0.85rem;
+  color: #aaa;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.adminRecord.is-open .adminRecordArrow {
+  transform: rotate(180deg);
+}
+
+/* 展開內容 */
+.adminRecordDetail {
+  display: none;
+  border-top: 1px solid #f0f0f0;
+  padding: 12px 14px;
+  background: #fafafa;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.adminRecord.is-open .adminRecordDetail {
+  display: flex;
+}
+
+.adminPhotoRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.adminPhotoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.adminPhotoLabel {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.adminPhotoImg {
+  width: 90px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #eee;
+  background: #eee;
+}
+
+.adminPhotoImgEmpty {
+  width: 90px;
+  height: 68px;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #bbb;
+}
+
+.adminDetailStats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.adminDetailStat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.adminDetailStatLabel {
+  font-size: 0.72rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.adminDetailStatValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.adminNoData {
+  text-align: center;
+  color: #bbb;
+  padding: 32px 0;
+  font-size: 0.95rem;
+}
+/* ===== 彈窗打開時，logo 退到彈窗後面 ===== */
+/* body.modal-open 是 Bootstrap 彈窗打開時自動加的 class */
+body.modal-open .kioskCanvas .clockingLogoWrap {
+  z-index: 1 !important;
+}

@@ -1203,7 +1203,203 @@ function resetClockingModal() {
 
   stopClockCamera();
 
+  document.getElementById("clockStepAdmin")?.classList.add("d-none");
+
   showClockStep("clockStepA");
+}
+
+// ===== 管理查詢面板 =====
+
+function showClockStepAdmin() {
+  ["clockStepA", "clockStepPhoto", "clockStepB", "clockStepC",
+   "clockStepRating", "clockStepD", "clockStepAdmin"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle("d-none", id !== "clockStepAdmin");
+  });
+}
+
+async function openClockAdmin() {
+  showClockStepAdmin();
+
+  // 填充員工下拉
+  try {
+    const empData = await apiGetEmployees();
+    const sel = document.getElementById("adminEmpFilter");
+    if (sel) {
+      sel.innerHTML = '<option value="">全部員工</option>';
+      (empData.employees || []).forEach((emp) => {
+        const opt = document.createElement("option");
+        opt.value = emp.id;
+        opt.textContent = `${emp.name}（${emp.id}）`;
+        sel.appendChild(opt);
+      });
+    }
+  } catch (err) {
+    console.error("openClockAdmin load employees failed:", err);
+  }
+
+  // 預設日期為今天
+  const dateInput = document.getElementById("adminDateFilter");
+  if (dateInput && !dateInput.value) {
+    dateInput.value = getTodayKey();
+  }
+
+  await renderAdminRecords();
+
+  // 綁定查詢按鈕（只綁一次）
+  const searchBtn = document.getElementById("adminSearchBtn");
+  if (searchBtn && !searchBtn._adminBound) {
+    searchBtn._adminBound = true;
+    searchBtn.addEventListener("click", renderAdminRecords);
+  }
+}
+
+async function renderAdminRecords() {
+  const list = document.getElementById("adminRecordList");
+  if (!list) return;
+
+  list.innerHTML = '<div class="adminNoData">載入中...</div>';
+
+  try {
+    const empId = document.getElementById("adminEmpFilter")?.value || "";
+    const dateVal = document.getElementById("adminDateFilter")?.value || "";
+
+    const clockData = await apiGetClockLogs();
+    const logsByDate = clockData.logsByDate || {};
+
+    // 收集所有符合條件的 (date, empId) 組合
+    const records = [];
+
+    Object.entries(logsByDate).forEach(([date, dayLogs]) => {
+      if (dateVal && date !== dateVal) return;
+
+      Object.entries(dayLogs).forEach(([eid, logs]) => {
+        if (empId && eid !== empId) return;
+
+        const inLog  = (logs || []).find(r => r.type === "in");
+        const outLog = (logs || []).find(r => r.type === "out");
+
+        if (!inLog && !outLog) return;
+
+        const name = inLog?.name || outLog?.name || eid;
+        const inAt  = inLog?.at  || null;
+        const outAt = outLog?.at || null;
+
+        let hoursText = "—";
+        let hoursNum  = null;
+        if (inAt && outAt) {
+          const diffMs = Math.max(0, new Date(outAt) - new Date(inAt));
+          const mins = Math.round(diffMs / 60000);
+          const h = Math.floor(mins / 60);
+          const m = mins % 60;
+          hoursNum  = diffMs / 3600000;
+          hoursText = m === 0 ? `${h}h` : `${h}h ${m}m`;
+        }
+
+        records.push({
+          date,
+          empId: eid,
+          name,
+          inAt,
+          outAt,
+          hoursText,
+          hoursNum,
+          inPhoto:  inLog?.facePhoto  || "",
+          outPhoto: outLog?.facePhoto || "",
+          rating:   outLog?.rating    || "",
+        });
+      });
+    });
+
+    // 依日期倒序
+    records.sort((a, b) => b.date.localeCompare(a.date) || a.empId.localeCompare(b.empId));
+
+    if (records.length === 0) {
+      list.innerHTML = '<div class="adminNoData">查無出勤紀錄</div>';
+      return;
+    }
+
+    list.innerHTML = records.map((r, idx) => {
+      const inTime  = r.inAt  ? formatClockTime(new Date(r.inAt))  : "—";
+      const outTime = r.outAt ? formatClockTime(new Date(r.outAt)) : "—";
+
+      const inPhotoHtml = r.inPhoto
+        ? `<img class="adminPhotoImg" src="${r.inPhoto}" alt="上班照">`
+        : `<div class="adminPhotoImgEmpty">無照片</div>`;
+
+      const outPhotoHtml = r.outPhoto
+        ? `<img class="adminPhotoImg" src="${r.outPhoto}" alt="下班照">`
+        : `<div class="adminPhotoImgEmpty">無照片</div>`;
+
+      const overtime = r.hoursNum !== null && r.hoursNum > 8;
+
+      return `
+        <div class="adminRecord" data-idx="${idx}">
+          <div class="adminRecordHeader">
+            <div class="adminRecordLeft">
+              <div class="adminRecordName">${r.name} <span style="font-size:0.78rem;color:#aaa;font-weight:400;">#${r.empId}</span></div>
+              <div class="adminRecordDate">${r.date}</div>
+            </div>
+            <div class="adminRecordRight">
+              <div class="adminRecordTimes">🟢${inTime} ／ 🔴${outTime}</div>
+              <div class="adminRecordHours" style="${overtime ? 'color:#e67e22;' : ''}">${r.hoursText}${overtime ? ' ⚡' : ''}</div>
+              <div class="adminRecordArrow">▼</div>
+            </div>
+          </div>
+          <div class="adminRecordDetail">
+            <div class="adminPhotoRow">
+              <div class="adminPhotoItem">
+                <div class="adminPhotoLabel">上班打卡照</div>
+                ${inPhotoHtml}
+              </div>
+              <div class="adminPhotoItem">
+                <div class="adminPhotoLabel">下班打卡照</div>
+                ${outPhotoHtml}
+              </div>
+            </div>
+            <div class="adminDetailStats">
+              <div class="adminDetailStat">
+                <div class="adminDetailStatLabel">上班時間</div>
+                <div class="adminDetailStatValue">${inTime}</div>
+              </div>
+              <div class="adminDetailStat">
+                <div class="adminDetailStatLabel">下班時間</div>
+                <div class="adminDetailStatValue">${outTime}</div>
+              </div>
+              <div class="adminDetailStat">
+                <div class="adminDetailStatLabel">工時</div>
+                <div class="adminDetailStatValue">${r.hoursText}</div>
+              </div>
+              ${r.hoursNum !== null ? `
+              <div class="adminDetailStat">
+                <div class="adminDetailStatLabel">加班</div>
+                <div class="adminDetailStatValue">${overtime ? (r.hoursNum - 8).toFixed(1) + 'h' : '無'}</div>
+              </div>` : ''}
+              <div class="adminDetailStat">
+                <div class="adminDetailStatLabel">感受</div>
+                <div class="adminDetailStatValue">${
+                  r.rating === 'good'   ? '🙂 很好' :
+                  r.rating === 'normal' ? '😐 普通' :
+                  r.rating === 'bad'    ? '☹️ 不太好' : '—'
+                }</div>
+              </div>
+            </div>
+      `;
+    }).join("");
+
+    // 下拉展開邏輯
+    list.querySelectorAll(".adminRecordHeader").forEach((header) => {
+      header.addEventListener("click", () => {
+        const card = header.closest(".adminRecord");
+        card.classList.toggle("is-open");
+      });
+    });
+
+  } catch (err) {
+    console.error("renderAdminRecords failed:", err);
+    list.innerHTML = '<div class="adminNoData">載入失敗，請稍後再試</div>';
+  }
 }
 
 function openClockingModal() {
@@ -1465,7 +1661,11 @@ function bindClockingKiosk() {
     if (k === "back") {
       input.value = input.value.slice(0, -1);
     } else if (k === "ok") {
-      goClockConfirm();
+      if ((input.value || "").trim() === "8888") {
+        openClockAdmin();
+      } else {
+        goClockConfirm();
+      }
       return;
     } else {
       input.value = (input.value + k).slice(0, 4);

@@ -822,6 +822,28 @@
                   <div class="clockFinishMeta" id="clockFinishMeta"></div>
                   <div class="finishHint">5 秒後將自動關閉此畫面</div>
                 </div>
+                <!-- 管理查詢面板 (輸入8888進入) -->
+                <div id="clockStepAdmin" class="d-none">
+                  <div class="clockAdminStage">
+                    <div class="clockAdminHeader">
+                      <div class="clockAdminTitle">📋 出勤紀錄查詢</div>
+                      <div class="clockAdminSub">管理者專用</div>
+                    </div>
+
+                    <!-- 篩選列 -->
+                    <div class="clockAdminFilter">
+                      <select id="adminEmpFilter" class="clockAdminSelect">
+                        <option value="">全部員工</option>
+                      </select>
+                      <input type="date" id="adminDateFilter" class="clockAdminDateInput">
+                      <button type="button" class="clockAdminSearchBtn" id="adminSearchBtn">查詢</button>
+                    </div>
+
+                    <!-- 紀錄列表 -->
+                    <div id="adminRecordList" class="clockAdminList"></div>
+                  </div>
+                </div>
+
                 <!-- 下班評分 -->
                 <div id="clockStepRating" class="d-none">
                   <div class="clockRatingStage">
