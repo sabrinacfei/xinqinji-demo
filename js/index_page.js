@@ -38,7 +38,6 @@ function bindNav() {
   $(".orderingBox")?.addEventListener("click", goTakeaway);
   $(".orderingBox div")?.addEventListener("click", goTakeaway);
   $(".waitBox")?.addEventListener("click", openWaitModal);
-  $(".pickupUber")?.addEventListener("click", openDeliveryModal);
 
   $(".reserveBox")?.addEventListener("click", openReserveModal);
 }
@@ -1701,14 +1700,11 @@ document.addEventListener("DOMContentLoaded", () => {
   bindQueryStatusKiosk();
   bindClockingKiosk();
   bindWaitingKiosk();
-  bindDeliveryKiosk();
   bindReserveKiosk();
-  bindDeliveryT9Keyboard();
 
   renderNowCallingMini();
   renderCallModal();
   renderTakeawayWait();
-  renderDeliveryPickupModal();
   renderIndoorWaitingCount();
 
   setInterval(async () => {
@@ -1719,7 +1715,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("自動叫號結果：", result);
 
     renderTakeawayWait();
-    renderDeliveryPickupModal();
   }, 10000);
 
 });
@@ -2816,4 +2811,3 @@ function bindPromoCarousel() {
 document.addEventListener("DOMContentLoaded", () => {
   bindPromoCarousel();
 });
-

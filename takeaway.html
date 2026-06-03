@@ -10,7 +10,7 @@
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <script src="js/bootstrap.bundle.min.js"></script>
 
-  <link rel="stylesheet" href="css/style.css?v=1234">
+  <link rel="stylesheet" href="css/style.css?v=20260603">
 
   <style>
     #categoryTree{
@@ -186,6 +186,89 @@
               <div class="finishMeta" style="margin-top:6px;">若需修改請按「編輯」</div>
             </div>
 
+            <!-- Step D：選擇付款方式 -->
+            <div id="pickupStepD" class="d-none paymentStep">
+              <div class="paymentStepTitle">選擇付款方式</div>
+              <div class="paymentStepSub" id="paymentStepSub">請選擇本次外帶訂單的付款方式</div>
+
+              <div class="paymentMethodGrid">
+                <button type="button" class="paymentMethodCard linePayCard" data-payment-method="online">
+                  <span class="paymentMethodIcon">LINE</span>
+                  <span class="paymentMethodTitle">線上支付</span>
+                  <span class="paymentMethodDesc">掃 LINE Pay QR code 付款</span>
+                </button>
+
+                <button type="button" class="paymentMethodCard counterPayCard" data-payment-method="counter">
+                  <span class="paymentMethodIcon">QR</span>
+                  <span class="paymentMethodTitle">臨櫃付款</span>
+                  <span class="paymentMethodDesc">產生 QR code 給櫃檯掃描</span>
+                </button>
+
+                <button type="button" class="paymentMethodCard creditPayCard" data-payment-method="credit">
+                  <span class="paymentMethodIcon">CARD</span>
+                  <span class="paymentMethodTitle">信用卡支付</span>
+                  <span class="paymentMethodDesc">藍新金流信用卡付款</span>
+                </button>
+              </div>
+
+              <div id="paymentHint" class="waitErr d-none"></div>
+            </div>
+
+            <!-- Step G：LINE Pay QR code -->
+            <div id="pickupStepG" class="d-none linePayQrStep">
+              <div class="linePayQrPanel">
+                <div class="linePayQrLeft">
+                  <div class="paymentStepTitle">LINE Pay QR code</div>
+                  <div class="linePayQrHint">請使用手機 LINE Pay 掃描付款，完成後按「付款完成」。</div>
+                  <div class="linePayQrBox">
+                    <img id="linePayQrImg" class="linePayQrImg" src="" alt="LINE Pay QR code">
+                    <div id="linePayQrLoading" class="linePayQrLoading">正在產生 QR code...</div>
+                  </div>
+                </div>
+                <div class="linePayQrRight">
+                  <div class="linePayOrderNo" id="linePayOrderNo">P000</div>
+                  <div class="linePayAmount" id="linePayAmount">$0</div>
+                  <div class="linePayItemList" id="linePayItemList"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step E：臨櫃付款 QR code -->
+            <div id="pickupStepE" class="d-none counterPayStep">
+              <div class="counterQrPanel">
+                <div class="counterQrLeft">
+                  <div class="paymentStepTitle">臨櫃付款 QR code</div>
+                  <div class="counterQrHint">請將此畫面交由櫃檯掃描確認訂單。</div>
+                  <img id="counterQrImg" class="counterQrImg" src="images/qrcode.png" alt="臨櫃付款 QR code">
+                </div>
+                <div class="counterQrRight">
+                  <div class="counterOrderNo" id="counterOrderNo">P000</div>
+                  <div class="counterAmount" id="counterAmount">$0</div>
+                  <div class="counterItemList" id="counterItemList"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step F：信用卡支付 -->
+            <div id="pickupStepF" class="d-none cardPayStep">
+              <div class="cardPayLayout">
+                <div class="cardPayLeft">
+                  <div class="paymentStepTitle">藍新信用卡支付</div>
+                  <div class="cardPayAmount" id="cardPayAmount">$0</div>
+                  <div class="cardReaderNotice">
+                    <div class="cardReaderTitle">請於右側感應區付款</div>
+                    <div class="cardReaderSub">請依照機台右側刷卡 / 感應設備完成付款</div>
+                  </div>
+                </div>
+
+                <div class="cardPayForm cardGatewayPanel">
+                  <div class="cardGatewayTitle">或前往藍新輸入卡號付款</div>
+                  <div class="cardGatewayText">若不使用右側感應區，請按下方按鈕開啟藍新金流付款頁輸入卡號。</div>
+                  <div id="cardPayHint" class="waitErr d-none"></div>
+                </div>
+              </div>
+            </div>
+
             <!-- Step B：顯示取餐號碼 -->
             <div id="pickupStepB" class="d-none waitFinish">
               <div class="finishTitle">您的取餐號碼為</div>
@@ -206,7 +289,30 @@
             <!-- C：編輯 + 確定結帳 -->
             <div id="pickupFooterC" class="d-none" style="width:100%;display:flex;justify-content:flex-end;gap:12px;">
               <button type="button" class="waitGhostBtn" id="pickupEditBtn">編輯</button>
-              <button type="button" class="waitPrimaryBtn" id="pickupFinalBtn">確定結帳</button>
+              <button type="button" class="waitPrimaryBtn" id="pickupFinalBtn">前往付款</button>
+            </div>
+
+            <!-- D：付款方式 -->
+            <div id="pickupFooterD" class="d-none" style="width:100%;display:flex;justify-content:flex-end;gap:12px;">
+              <button type="button" class="waitGhostBtn" id="paymentBackPhoneBtn">返回電話</button>
+              <button type="button" class="waitGhostBtn" data-bs-dismiss="modal">取消</button>
+            </div>
+
+            <!-- E：臨櫃付款完成 -->
+            <div id="pickupFooterE" class="d-none" style="width:100%;display:flex;justify-content:flex-end;gap:12px;">
+              <button type="button" class="waitPrimaryBtn" id="counterDoneBtn">完成</button>
+            </div>
+
+            <!-- G：LINE Pay QR code -->
+            <div id="pickupFooterG" class="d-none" style="width:100%;display:flex;justify-content:flex-end;gap:12px;">
+              <button type="button" class="waitGhostBtn" id="linePayBackPaymentBtn">返回付款方式</button>
+              <button type="button" class="waitPrimaryBtn" id="linePayDoneBtn">付款完成</button>
+            </div>
+
+            <!-- F：信用卡支付 -->
+            <div id="pickupFooterF" class="d-none" style="width:100%;display:flex;justify-content:flex-end;gap:12px;">
+              <button type="button" class="waitGhostBtn" id="cardBackPaymentBtn">返回付款方式</button>
+              <button type="button" class="waitPrimaryBtn" id="cardSubmitBtn">前往藍新輸入卡號</button>
             </div>
 
             <!-- B：取號後才出現關閉 -->
@@ -255,7 +361,9 @@
   </div>
  
 
-  <script src="js/mockApi.js?V=1234"></script>
-  <script type="module" src="js/takeaway_page.js?V=1234"></script>
+  <script src="js/mockApi.js?V=20260603"></script>
+  <script src="js/takeaway_page.js?V=20260603"></script>
+  <script src="js/idle_timer.js?v=20260603"></script>
+  <button class="homeFloatBtn" onclick="location.href='index.html'">🏠</button>
 </body>
 </html>

@@ -14,6 +14,67 @@ const mockCache = {
   clockLogs: null
 };
 
+const FALLBACK_MENU = {
+  categories: [
+    { key: "signature", title: "招牌" },
+    { key: "chicken", title: "雞" },
+    { key: "pork", title: "豬" },
+    { key: "lurou", title: "滷肉" },
+    { key: "other", title: "綜合/雙拼" },
+    { key: "Egg", title: "人氣便當加安心鴨蛋" }
+  ],
+  items: [
+    {
+      id: "B01",
+      name: "特級招牌便當",
+      price: 170,
+      cat: "signature",
+      img: "images/Signature_Bento.png",
+      desc: "集合了鬍鬚張饕客必點經典美食--唐山排骨、招牌粹魯和雞肉絲，讓您一次就能品嘗到。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B02",
+      name: "香酥雞腿便當",
+      price: 130,
+      cat: "chicken",
+      img: "images/drumstick-removebg-preview.png",
+      desc: "如需現炸，請耐心等候20分鐘。採用台灣雞腿，外皮酥脆，肉嫩多汁。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B05",
+      name: "御品豬腳便當",
+      price: 130,
+      cat: "pork",
+      img: "images/pork_trotter.avif-removebg-preview.png",
+      desc: "鬍鬚張靈魂獨家粹魯慢火熬煮，膠質豐富，是饕客首選。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B06",
+      name: "魯肉飯便當",
+      price: 80,
+      cat: "lurou",
+      img: "images/lurou.png",
+      desc: "小火慢熬6小時以上，香而不膩，入口即化，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B08",
+      name: "綜合豬腳滷肉便當",
+      price: 125,
+      cat: "other",
+      img: "images/image-removebg-preview.png",
+      desc: "嚴選豬腳搭配經典魯肉飯，肉香濃郁、口感豐富。|豬肉產地：台灣"
+    },
+    {
+      id: "B14",
+      name: "雞肉飯便當＋安心鴨蛋",
+      price: 105,
+      cat: "Egg",
+      img: "images/G_duck_egg-removebg-preview.png",
+      desc: "雞肉絲搭配魯製新鮮鴨蛋，蛋香濃郁、蛋黃飽滿。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    }
+  ]
+};
+
 async function readJson(path) {
   const res = await fetch(path);
   if (!res.ok) {
@@ -44,7 +105,12 @@ function normalizeLookupInput(value) {
 
 async function apiGetMenu() {
   if (!mockCache.menu) {
-    mockCache.menu = await readJson("./mock/menu.json?v=" + Date.now());
+    try {
+      mockCache.menu = await readJson("./mock/menu.json?v=" + Date.now());
+    } catch (err) {
+      console.error("apiGetMenu failed, using fallback menu:", err);
+      mockCache.menu = FALLBACK_MENU;
+    }
   }
   return mockCache.menu;
 }
