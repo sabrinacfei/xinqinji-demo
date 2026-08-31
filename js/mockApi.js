@@ -41,6 +41,22 @@ const FALLBACK_MENU = {
       desc: "如需現炸，請耐心等候20分鐘。採用台灣雞腿，外皮酥脆，肉嫩多汁。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
     },
     {
+      id: "B03",
+      name: "紅糟豆乳腿排便當",
+      price: 110,
+      cat: "chicken",
+      img: "images/Soy＿Milk＿Chicken.avif",
+      desc: "附醬微辣。特選無骨雞腿排以天然發酵紅糟和豆乳醃漬入味，外酥內嫩，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B04",
+      name: "蹄膀便當(大)",
+      price: 145,
+      cat: "pork",
+      img: "images/Pork＿Knuckle.avif",
+      desc: "家傳特殊滷汁配方文火精燉，肉汁豐厚，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
       id: "B05",
       name: "御品豬腳便當",
       price: 130,
@@ -57,6 +73,14 @@ const FALLBACK_MENU = {
       desc: "小火慢熬6小時以上，香而不膩，入口即化，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
     },
     {
+      id: "B07",
+      name: "石板鹹豬肉便當",
+      price: 110,
+      cat: "pork",
+      img: "images/Salted_Pork.png",
+      desc: "嚴選鹹香入味的豬肉，以石板煎製帶出迷人香氣，搭配熱騰騰白飯與當日現炒配菜。"
+    },
+    {
       id: "B08",
       name: "綜合豬腳滷肉便當",
       price: 125,
@@ -65,12 +89,100 @@ const FALLBACK_MENU = {
       desc: "嚴選豬腳搭配經典魯肉飯，肉香濃郁、口感豐富。|豬肉產地：台灣"
     },
     {
+      id: "B09",
+      name: "綜合豬腳雞肉便當",
+      price: 125,
+      cat: "other",
+      img: "images/image-removebg-preview.png",
+      desc: "精選入味豬腳與鮮嫩雞肉雙重搭配，口感豐富，搭配香Q白飯與當日現炒配菜。"
+    },
+    {
+      id: "B10",
+      name: "唐山排骨便當",
+      price: 119,
+      cat: "pork",
+      img: "images/Tangshan_Pork.jpg",
+      desc: "香酥可口的唐山排骨，搭配白飯與季節配菜，外酥內嫩、香氣十足。"
+    },
+    {
+      id: "B11",
+      name: "胭脂梅花肉香腸雙拼便當",
+      price: 115,
+      cat: "other",
+      img: "images/image-removebg-preview.png",
+      desc: "鮮嫩梅花肉搭配香腸雙拼，肉香濃郁、鹹香下飯，配上白飯與季節配菜。"
+    },
+    {
+      id: "B12",
+      name: "蒜泥白肉便當",
+      price: 105,
+      cat: "pork",
+      img: "images/menu01.jpg",
+      desc: "精選雪花豬肉片，淋上特調蒜泥醬，入口蒜香四溢，多汁鮮美，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B13",
+      name: "雞魯飯便當",
+      price: 105,
+      cat: "lurou",
+      img: "images/chichen_lurou.avif",
+      desc: "香而不膩粹魯肉，加上鮮嫩雞肉絲，雙重口感，一次滿足，配上當日現炒青菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
       id: "B14",
       name: "雞肉飯便當＋安心鴨蛋",
       price: 105,
       cat: "Egg",
       img: "images/G_duck_egg-removebg-preview.png",
       desc: "雞肉絲搭配魯製新鮮鴨蛋，蛋香濃郁、蛋黃飽滿。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B15",
+      name: "滷肉飯便當＋安心鴨蛋",
+      price: 100,
+      cat: "Egg",
+      img: "images/lurou_egg.png",
+      desc: "粹魯肉搭配魯製新鮮鴨蛋，蛋香濃郁、蛋黃飽滿，搭配當日現炒配副菜。|豬肉產地：台灣"
+    },
+    {
+      id: "B16",
+      name: "胭脂梅花肉便當",
+      price: 100,
+      cat: "pork",
+      img: "images/Marinated_Pork_Neck1.jpg",
+      desc: "胭脂梅花肉搭配白飯與季節配菜，呈現香嫩飽滿的台式便當風味。"
+    },
+    {
+      id: "B17",
+      name: "雞肉飯便當",
+      price: 85,
+      cat: "chicken",
+      img: "images/chicken_rice.avif",
+      desc: "嚴選雞胸肉製作成雞肉絲，淋上香濃特調醬汁，搭配當日現炒配副菜。|豬原料產地：台灣、巴拉圭、加拿大、法國、荷蘭"
+    },
+    {
+      id: "B18",
+      name: "香腸雞肉便當",
+      price: 85,
+      cat: "other",
+      img: "images/chicken_sausage.png",
+      desc: "招牌雞肉飯搭配蒜味香腸，配上當日現炒青菜，鹹香下飯。|豬肉產地：台灣"
+    },
+    {
+      id: "B19",
+      name: "唐山排骨便當＋安心鴨蛋",
+      price: 139,
+      cat: "Egg",
+      img: "images/Tangshan_Pork_egg.png",
+      desc: "唐山排骨搭配魯製新鮮鴨蛋，蛋香濃郁、蛋黃飽滿，搭配當日現炒配副菜。|豬肉產地：台灣"
+    },
+    {
+      id: "B20",
+      name: "香腸魯肉飯便當",
+      price: 139,
+      cat: "other",
+      img: "images/sausage_lurou.png",
+      desc: "招牌魯肉飯搭配蒜味香腸，配上當日現炒青菜，鹹香下飯。|豬肉產地：台灣"
     }
   ]
 };

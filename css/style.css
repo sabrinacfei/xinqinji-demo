@@ -9987,3 +9987,1248 @@ body.modal-open .kioskCanvas .clockingLogoWrap {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
+
+/* =========================================================
+   Fixed kiosk screen sizes
+   Landscape: 21.4 x 13.5 cm = 1070 x 675 logical px.
+   Portrait: 13.5 x 21.4 cm = 675 x 1070 logical px.
+   Only these two locked dimensions are supported.
+========================================================= */
+:root{
+  --kiosk-landscape-width-px: 1070px;
+  --kiosk-landscape-height-px: 675px;
+  --kiosk-portrait-width-px: 675px;
+  --kiosk-portrait-height-px: 1070px;
+}
+
+html[data-screen-orientation="landscape"]{
+  --kiosk-screen-width-px: var(--kiosk-landscape-width-px);
+  --kiosk-screen-height-px: var(--kiosk-landscape-height-px);
+}
+
+html[data-screen-orientation="portrait"]{
+  --kiosk-screen-width-px: var(--kiosk-portrait-width-px);
+  --kiosk-screen-height-px: var(--kiosk-portrait-height-px);
+}
+
+.kioskStage{
+  --sx: calc(100vw / var(--kiosk-screen-width-px)) !important;
+  --sy: calc(100vh / var(--kiosk-screen-height-px)) !important;
+  --s: min(var(--sx), var(--sy)) !important;
+}
+
+.kioskCanvas,
+.kioskCanvas .mainContainer,
+.kioskCanvas .posContainer,
+.kioskCanvas .mainHeight{
+  width: var(--kiosk-screen-width-px) !important;
+  min-width: var(--kiosk-screen-width-px) !important;
+  max-width: var(--kiosk-screen-width-px) !important;
+  height: var(--kiosk-screen-height-px) !important;
+  min-height: var(--kiosk-screen-height-px) !important;
+  max-height: var(--kiosk-screen-height-px) !important;
+}
+
+.clockingKiosk{
+  position: relative !important;
+}
+
+.clockingSettingsTrigger{
+  position: absolute !important;
+  left: 24px !important;
+  bottom: 22px !important;
+  z-index: 120 !important;
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  min-height: 52px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(255,250,245,.96) !important;
+  color: var(--brand-midnight) !important;
+  box-shadow: 0 8px 20px rgba(46,36,31,.16) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.clockingSettingsTrigger span{
+  display: block !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  transform: translateY(-1px);
+}
+
+.clockingSettingsTrigger:active{
+  transform: scale(.94) !important;
+}
+
+.orientationGuide{
+  position: absolute !important;
+  left: 92px !important;
+  bottom: 80px !important;
+  z-index: 119 !important;
+  max-width: 320px !important;
+  padding: 14px 18px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  border: 2px solid var(--brand-line) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  color: var(--brand-text) !important;
+  box-shadow: 0 10px 24px rgba(46,36,31,.16) !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  line-height: 1.45 !important;
+  text-align: left !important;
+  pointer-events: none !important;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .65s ease, transform .65s ease;
+}
+
+.orientationGuide[hidden]{
+  display: none !important;
+}
+
+.orientationGuide.is-fading{
+  opacity: 0 !important;
+  transform: translateY(8px) !important;
+}
+
+.orientationGuide::after{
+  content: "";
+  position: absolute;
+  left: 15px;
+  bottom: -11px;
+  width: 19px;
+  height: 19px;
+  border-right: 2px solid var(--brand-line);
+  border-bottom: 2px solid var(--brand-line);
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.orientationGuideIcon{
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.screenSettingsDialog{
+  width: 520px !important;
+  max-width: calc(100% - 48px) !important;
+}
+
+.screenSettingsKiosk{
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}
+
+.screenSettingsHeader{
+  padding: 20px 24px !important;
+  background: var(--brand-bg) !important;
+  border-bottom: 2px solid var(--brand-line) !important;
+}
+
+.screenSettingsHeader .modal-title{
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  color: var(--brand-text) !important;
+}
+
+.screenSettingsBody{
+  padding: 24px !important;
+  background: #fff !important;
+}
+
+.screenSettingLabel{
+  color: var(--brand-muted) !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+  margin-bottom: 12px !important;
+}
+
+.orientationOptions{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 14px !important;
+}
+
+.orientationOption{
+  min-height: 150px !important;
+  padding: 18px 14px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: rgba(164,192,193,.18) !important;
+  color: var(--brand-text) !important;
+  box-shadow: inset 0 0 0 2px rgba(164,192,193,.36) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+
+.orientationOption.active{
+  background: var(--brand-orange) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 26px rgba(244,123,32,.24) !important;
+}
+
+.orientationIcon{
+  display: block !important;
+  border: 4px solid currentColor !important;
+  border-radius: 9px !important;
+  position: relative !important;
+}
+
+.orientationIcon::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(-50%);
+}
+
+.orientationIconLandscape{
+  width: 78px !important;
+  height: 52px !important;
+}
+
+.orientationIconPortrait{
+  width: 52px !important;
+  height: 78px !important;
+}
+
+.orientationName{
+  font-size: 1.25rem !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.orientationSize,
+.screenOrientationCurrent{
+  font-size: .95rem !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+
+.screenOrientationCurrent{
+  min-height: 28px !important;
+  color: var(--brand-midnight) !important;
+  text-align: center !important;
+  margin-top: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .mainContent{
+  width: 675px !important;
+  height: 1070px !important;
+  min-height: 1070px !important;
+  max-height: 1070px !important;
+  margin: 0 !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .mainContent > aside{
+  width: 675px !important;
+  height: 342px !important;
+  min-height: 342px !important;
+  max-height: 342px !important;
+  flex: 0 0 342px !important;
+  padding: 22px 24px !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  grid-template-rows: 72px 72px 1fr !important;
+  gap: 18px 20px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* 直版首頁導覽：三個功能鍵同列，左下保留 Logo 與現在叫號框。 */
+html[data-screen-orientation="portrait"] .kioskCanvas .mainContent > aside{
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: 72px 1fr !important;
+  gap: 18px 14px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .throneWrap{
+  display: contents !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .waitBox{
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .reserveBox{
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .throneWrap{
+  grid-column: 1 / -1 !important;
+  display: contents !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 20px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .waitBox,
+html[data-screen-orientation="portrait"] .kioskCanvas .reserveBox{
+  width: auto !important;
+  padding: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .waitBox div,
+html[data-screen-orientation="portrait"] .kioskCanvas .reserveBox div{
+  height: 72px !important;
+  min-height: 72px !important;
+  font-size: 1.45rem !important;
+  border-radius: 22px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .pickupIndoor{
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  width: auto !important;
+  justify-self: stretch !important;
+  height: 72px !important;
+  min-height: 72px !important;
+  margin: 0 !important;
+  font-size: 1.45rem !important;
+  border-radius: 22px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoWrap{
+  left: 26px !important;
+  bottom: 26px !important;
+  z-index: 40 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoImg{
+  width: 92px !important;
+  transform: none !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoBtn{
+  position: relative !important;
+  z-index: 41 !important;
+  pointer-events: auto !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal.callWrap{
+  left: 110px !important;
+  right: auto !important;
+  bottom: 8px !important;
+  width: 260px !important;
+  height: 170px !important;
+  min-height: 170px !important;
+  padding: 42px 24px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 20 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal .callLeftTitle,
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal #callMiniNums{
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  text-align: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal .callLeftTitle{
+  font-size: 1.55rem !important;
+  letter-spacing: 1px !important;
+  line-height: 1.15 !important;
+  margin-bottom: 6px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal #callMiniNums{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal #callMiniNums .callMiniNo{
+  width: auto !important;
+  min-width: auto !important;
+  font-size: 2.6rem !important;
+  line-height: 1 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .mainContent > article.articleContainer{
+  width: 675px !important;
+  height: 728px !important;
+  min-height: 728px !important;
+  max-height: 728px !important;
+  flex: 0 0 728px !important;
+  padding: 20px 22px 88px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: var(--brand-bg) !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningContent{
+  width: 100% !important;
+  margin: 0 0 16px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningContent .row{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningWrap,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox{
+  width: auto !important;
+  flex: none !important;
+  padding: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningBox,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox > div{
+  height: 82px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .takeawayTitle,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningTitle{
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 8px 0 36px !important;
+  background-size: 22px !important;
+  background-position: 12px center !important;
+  font-size: 1rem !important;
+  text-align: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .timeWait{
+  height: 30px !important;
+  padding: 2px 6px 0 !important;
+  font-size: .85rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .timeWait span{
+  font-size: 2rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .waitTitle{
+  font-size: .78rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox > div{
+  padding: 46px 8px 0 !important;
+  background-size: 42px !important;
+  background-position: center 5px !important;
+  font-size: 1rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea{
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  gap: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .homeAdBanner{
+  width: 100% !important;
+  height: 112px !important;
+  flex: 0 0 112px !important;
+  border-radius: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoCarousel{
+  width: 100% !important;
+  height: 220px !important;
+  flex: 0 0 220px !important;
+  border-radius: 20px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoSlide{
+  grid-template-columns: 1fr 150px !important;
+  padding: 16px 42px 20px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoName{
+  font-size: 1.35rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoDesc{
+  font-size: .8rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoPrice{
+  font-size: 1.15rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoImgBox{
+  width: 145px !important;
+  height: 150px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoImgBox > img{
+  max-width: 145px !important;
+  max-height: 145px !important;
+  height: auto !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoPrev{
+  left: 8px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .homeBannerArea .promoNext{
+  right: 8px !important;
+}
+
+html[data-screen-orientation="portrait"] .clockingSettingsTrigger{
+  left: 24px !important;
+  bottom: 22px !important;
+}
+
+html[data-screen-orientation="portrait"] .screenSettingsDialog{
+  width: 520px !important;
+}
+
+/* ===== 彈窗互動層：遮罩只負責變暗，不能壓住彈窗按鈕 ===== */
+body.modal-open .kioskStage{
+  position: relative !important;
+  z-index: 1051 !important;
+}
+
+body.modal-open .kioskStage .kioskCanvas::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(0, 0, 0, .48);
+  pointer-events: auto;
+}
+
+body.modal-open .kioskStage .modal.show{
+  z-index: 1055 !important;
+  pointer-events: auto !important;
+}
+
+body.modal-open .kioskStage .modal.show .modal-dialog{
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+}
+
+#screenSettingsModal{
+  z-index: 1065 !important;
+}
+
+/* ===== 直版彈窗：內容直向排列，橫版沿用原本版型 ===== */
+html[data-screen-orientation="portrait"] .kioskCanvas .modal-dialog{
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .modal-content{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  max-height: calc(100% - 36px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .modal-content > .modal-body{
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-screen-orientation="portrait"] #callModal .callRows{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] #callModal .callRow{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
+html[data-screen-orientation="portrait"] #callModal .callTag{
+  width: 100% !important;
+  min-height: 64px !important;
+  padding: 0 14px !important;
+  font-size: 1.35rem !important;
+}
+
+html[data-screen-orientation="portrait"] #callModal #callSoonList,
+html[data-screen-orientation="portrait"] #callModal #callPickupList{
+  width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  column-gap: 10px !important;
+  row-gap: 10px !important;
+  justify-content: stretch !important;
+}
+
+html[data-screen-orientation="portrait"] #callModal #callSoonList span,
+html[data-screen-orientation="portrait"] #callModal #callPickupList span{
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 60px !important;
+  font-size: 1.65rem !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitCards,
+html[data-screen-orientation="portrait"] #waitModal .peopleCards{
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitCard{
+  min-height: 96px !important;
+  padding: 14px 18px !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitFormRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitFormRow > div{
+  width: 100% !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitKeypad{
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html[data-screen-orientation="portrait"] #waitModal .waitPrimaryBtn{
+  width: min(300px, 100%) !important;
+  margin: 18px auto 0 !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .modal-content{
+  height: auto !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveBody{
+  padding: 0 22px 24px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveEntryWrap{
+  min-height: 0 !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  padding: 20px 0 !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveEntryDivider{
+  width: 76% !important;
+  height: 2px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveEntryBtn{
+  width: min(600px, 100%) !important;
+  height: 96px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveEntryTop{
+  font-size: 1.8rem !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reservePeopleStage{
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 18px 0 12px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reservePeopleOnly{
+  width: 100% !important;
+  max-width: 640px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reservePeopleOnlyRow{
+  width: 100% !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .futureDateTimeStage{
+  grid-template-columns: 1fr !important;
+  gap: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .futureDateCol{
+  padding-top: 12px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .timeTodayGrid,
+html[data-screen-orientation="portrait"] #reserveModal #futureTimeGrid{
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reservePhoneStage{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal #reserveKeypad{
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .reserveConfirmBottom{
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+html[data-screen-orientation="portrait"] #clockingModal .modal-body{
+  padding-bottom: 112px !important;
+}
+
+html[data-screen-orientation="portrait"] #clockingModal .clockInputRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] #clockingModal .clockInputRow > div{
+  width: 100% !important;
+}
+
+html[data-screen-orientation="portrait"] #clockingModal #clockKeypad{
+  width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputLayout{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryKeypad{
+  width: 100% !important;
+}
+
+html[data-screen-orientation="portrait"] #pickupModal .waitFormRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+html[data-screen-orientation="portrait"] #pickupModal .waitFormRow > div{
+  width: 100% !important;
+}
+
+html[data-screen-orientation="portrait"] #pickupModal #pickupKeypad{
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html[data-screen-orientation="portrait"] #pickupModal .paymentMethodGrid,
+html[data-screen-orientation="portrait"] #pickupModal .linePayQrPanel,
+html[data-screen-orientation="portrait"] #pickupModal .counterQrPanel,
+html[data-screen-orientation="portrait"] #pickupModal .cardPayLayout{
+  grid-template-columns: 1fr !important;
+}
+
+/* 直版 Logo 低位固定，現在叫號對話框沿用原本位置。 */
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoWrap{
+  left: 18px !important;
+  bottom: 18px !important;
+  z-index: 18 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoImg{
+  width: 80px !important;
+}
+
+/* ===== 直版外帶頁：分類在上、餐點在下 ===== */
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas .mainContainer.posContainer{
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  padding: 18px 22px 96px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas .mainContainer.posContainer > .row{
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .categorySide{
+  width: 100% !important;
+  max-width: none !important;
+  flex: 0 0 210px !important;
+  padding: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #categoryTree{
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #categoryTree > div{
+  min-height: 48px !important;
+  justify-content: center !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .menuList{
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow-y: auto !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #menuGrid{
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #menuGrid > .col-4{
+  width: auto !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #menuGrid .menuCard{
+  height: 155px !important;
+  margin-bottom: 8px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #orderModal .modal-body{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  padding: 20px 22px 18px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #orderModalImg{
+  height: 230px !important;
+  flex: 0 0 230px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway #orderModalDesc,
+html[data-screen-orientation="portrait"] .page-takeaway #orderModal .modal-body > div:last-child{
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  flex: none !important;
+}
+
+/* ===== 直版內用頁：控制列在上、菜單圖在下 ===== */
+html[data-screen-orientation="portrait"] .page-indoor .kioskCanvas .indooorPage{
+  height: 1070px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  padding: 18px 22px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-indoor .kioskCanvas .indooorPage .menuViewport{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+/* ===== 直版首頁卡片：保留方形視覺，三格並排 ===== */
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningContent{
+  width: 100% !important;
+  height: 202px !important;
+  min-height: 202px !important;
+  max-height: 202px !important;
+  flex: 0 0 202px !important;
+  margin: 0 0 14px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningContent .row{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: 202px !important;
+  margin: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningWrap,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox{
+  width: auto !important;
+  min-width: 0 !important;
+  height: 202px !important;
+  min-height: 202px !important;
+  max-height: 202px !important;
+  padding: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningBox,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox > div{
+  width: 100% !important;
+  height: 202px !important;
+  min-height: 202px !important;
+  max-height: 202px !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .takeawayTitle,
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .diningTitle{
+  height: 44px !important;
+  line-height: 44px !important;
+  padding: 0 6px !important;
+  background-size: 22px !important;
+  background-position: 10px center !important;
+  text-align: center !important;
+  font-size: 1.15rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .timeWait{
+  height: 82px !important;
+  padding: 8px 4px 0 !important;
+  font-size: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .timeWait span{
+  font-size: 3rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .waitTitle{
+  font-size: .95rem !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .articleContainer .orderingBox > div{
+  padding: 112px 6px 12px !important;
+  background-size: 58px !important;
+  background-position: center 34px !important;
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+/* 直版首頁現在叫號：往左並放大，但不改橫版位置。 */
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal.callWrap{
+  left: 24px !important;
+  bottom: 2px !important;
+  width: 360px !important;
+  height: 230px !important;
+  min-height: 230px !important;
+  padding: 54px 28px 42px !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal .callLeftTitle{
+  font-size: 1.85rem !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal #callMiniNums .callMiniNo{
+  font-size: 3.2rem !important;
+}
+
+/* ===== 彈窗留白與點擊區：直版縮小，橫版只縮小員工打卡彈窗 ===== */
+html[data-screen-orientation="portrait"] .kioskCanvas #callModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #waitModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #reserveModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #queryStatusInputModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #queryStatusResultModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #deliveryModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #deliverySearchModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #orderModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #pickupModal .modal-dialog,
+html[data-screen-orientation="portrait"] .kioskCanvas #clockingModal .modal-dialog,
+html[data-screen-orientation="landscape"] .kioskCanvas #clockingModal .modal-dialog{
+  width: calc(100% - 64px) !important;
+  max-width: calc(100% - 64px) !important;
+  height: calc(100% - 64px) !important;
+  max-height: calc(100% - 64px) !important;
+  margin: 32px auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .modal-content,
+html[data-screen-orientation="landscape"] .kioskCanvas #clockingModal .modal-content{
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .modal-content > .modal-body,
+html[data-screen-orientation="landscape"] .kioskCanvas #clockingModal .modal-body{
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* 直版未來預約：讓整個內容區捲動，日期、時段與下一步都可操作。 */
+html[data-screen-orientation="portrait"] #reserveModal .modal-content{
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal .modal-body.reserveBody{
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  flex: 1 1 auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime{
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureDateTimeStage{
+  height: auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  align-items: center !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureDateCol,
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureTimeCol{
+  height: auto !important;
+  min-height: 0 !important;
+  width: min(440px, 100%) !important;
+  align-self: center !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureDateCol{
+  min-height: 370px !important;
+  padding-top: 10px !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureDateCol .flatpickr-calendar{
+  transform: scale(1.15) !important;
+  transform-origin: top center !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .futureTimeCol{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime #futureTimeGrid{
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveStepFutureDateTime .reserveTimeFooter{
+  flex: 0 0 auto !important;
+  margin-top: 16px !important;
+}
+
+/* 直版點餐頁：全部便當兩欄呈現，餐點區超出時由頁面內捲動。 */
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas #menuGrid .menuCard{
+  height: 128px !important;
+  min-height: 128px !important;
+  max-height: 128px !important;
+  margin-bottom: 4px !important;
+  border-radius: 14px !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas #menuGrid .menuCard img{
+  width: 100% !important;
+  height: 100% !important;
+  padding: 8px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas #menuGrid > .col-4 .mealName{
+  min-height: 2.45em !important;
+  margin: 0 !important;
+  font-size: .9rem !important;
+  line-height: 1.22 !important;
+  text-align: center !important;
+}
+
+html[data-screen-orientation="portrait"] .page-takeaway .kioskCanvas #menuGrid > .col-4 .mealPrice{
+  margin: 2px 0 10px !important;
+  font-size: 1rem !important;
+  line-height: 1.1 !important;
+}
+
+/* 直版 Logo 與現在叫號框：分開定位，確保 Logo 長按可進入打卡。 */
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoWrap{
+  left: 18px !important;
+  bottom: 18px !important;
+  z-index: 40 !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoBtn{
+  position: relative !important;
+  z-index: 41 !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas .clockingLogoImg{
+  width: 105px !important;
+  height: auto !important;
+}
+
+html[data-screen-orientation="portrait"] .kioskCanvas #openCallModal.callWrap{
+  left: 42px !important;
+  z-index: 20 !important;
+}
+
+/* 直版預約手機頁：上下排列，避免提示文字被壓窄、鍵盤超出彈窗。 */
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone{
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone .reservePhoneStage{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  gap: 18px !important;
+  padding: 18px 0 24px !important;
+  box-sizing: border-box !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone .reservePhoneStage > div:first-child,
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone .reservePhoneStage > div:last-child{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone .reservePhoneStage .waitTip{
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.5 !important;
+}
+
+html[data-screen-orientation="portrait"] #reserveModal #reserveStepPhone #reserveKeypad{
+  width: 100% !important;
+  max-width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+/* 直版查詢狀態：讓輸入區與鍵盤完整佔滿可用寬度，避免按鍵被擠成窄欄。 */
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputBody{
+  width: 100% !important;
+  min-width: 0 !important;
+  max-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputLayout{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 18px !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputLeft,
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputRight{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  align-self: stretch !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryInputRow,
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryStatusInputBox{
+  min-width: 0 !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryKeypad{
+  display: grid !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+html[data-screen-orientation="portrait"] #queryStatusInputModal .queryKeypad button{
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 72px !important;
+}

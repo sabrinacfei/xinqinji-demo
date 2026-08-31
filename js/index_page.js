@@ -951,6 +951,8 @@ function bindDeliveryT9Keyboard() {
 
 let clockingBound = false;
 let clockAutoCloseTimer = null;
+let orientationGuideTimer = null;
+let orientationGuideFadeTimer = null;
 let clockingState = {
   empId: "",
   name: "",
@@ -1180,6 +1182,38 @@ function showClockStep(idToShow) {
     if (!el) return;
     el.classList.toggle("d-none", id !== idToShow);
   });
+
+  if (idToShow !== "clockStepA") hideOrientationGuide();
+}
+
+function hideOrientationGuide() {
+  clearTimeout(orientationGuideTimer);
+  clearTimeout(orientationGuideFadeTimer);
+
+  const guide = document.querySelector(".orientationGuide");
+  if (!guide) return;
+
+  guide.classList.remove("is-fading");
+  guide.setAttribute("hidden", "");
+}
+
+function showOrientationGuide() {
+  clearTimeout(orientationGuideTimer);
+  clearTimeout(orientationGuideFadeTimer);
+
+  const guide = document.querySelector(".orientationGuide");
+  if (!guide) return;
+
+  guide.removeAttribute("hidden");
+  guide.classList.remove("is-fading");
+
+  orientationGuideTimer = setTimeout(() => {
+    guide.classList.add("is-fading");
+    orientationGuideFadeTimer = setTimeout(() => {
+      guide.setAttribute("hidden", "");
+      guide.classList.remove("is-fading");
+    }, 650);
+  }, 5000);
 }
 
 function resetClockingModal() {
@@ -1205,6 +1239,7 @@ function resetClockingModal() {
   document.getElementById("clockStepAdmin")?.classList.add("d-none");
 
   showClockStep("clockStepA");
+  hideOrientationGuide();
 }
 
 // ===== 管理查詢面板 =====
@@ -1216,6 +1251,8 @@ function showClockStepAdmin() {
     if (!el) return;
     el.classList.toggle("d-none", id !== "clockStepAdmin");
   });
+
+  hideOrientationGuide();
 }
 
 async function openClockAdmin() {
@@ -1403,6 +1440,7 @@ async function renderAdminRecords() {
 
 function openClockingModal() {
   resetClockingModal();
+  showOrientationGuide();
   bootstrap.Modal.getOrCreateInstance(document.getElementById("clockingModal")).show();
 }
 
@@ -1692,8 +1730,81 @@ function bindClockingKiosk() {
   document.getElementById("clockPhotoConfirmBtn")?.addEventListener("click", confirmClockFacePhoto);
 }
 
+// ===== 螢幕方向設定 =====
+const KIOSK_ORIENTATION_KEY = "sq_kiosk_screen_orientation";
+const KIOSK_ORIENTATION_SIZES = Object.freeze({
+  landscape: Object.freeze({ widthCm: "21.4", heightCm: "13.5" }),
+  portrait: Object.freeze({ widthCm: "13.5", heightCm: "21.4" })
+});
+
+function getSavedScreenOrientation() {
+  try {
+    return localStorage.getItem(KIOSK_ORIENTATION_KEY) === "portrait" ? "portrait" : "landscape";
+  } catch (err) {
+    return "landscape";
+  }
+}
+
+function getRequestedScreenOrientation() {
+  try {
+    const mode = new URLSearchParams(window.location.search).get("orientation");
+    return mode === "portrait" || mode === "landscape" ? mode : "";
+  } catch (err) {
+    return "";
+  }
+}
+
+function getScreenOrientationText(mode) {
+  const orientation = mode === "portrait" ? "portrait" : "landscape";
+  const size = KIOSK_ORIENTATION_SIZES[orientation];
+  const label = orientation === "portrait" ? "直版" : "橫版";
+  return `${label} ${size.widthCm} × ${size.heightCm} cm`;
+}
+
+function applyScreenOrientation(mode) {
+  const nextMode = mode === "portrait" ? "portrait" : "landscape";
+
+  document.documentElement.dataset.screenOrientation = nextMode;
+  document.body.dataset.screenOrientation = nextMode;
+
+  document.querySelector(".kioskStage")?.setAttribute("data-screen-orientation", nextMode);
+  document.querySelector(".kioskCanvas")?.setAttribute("data-screen-orientation", nextMode);
+
+  document.querySelectorAll("[data-screen-option]").forEach((btn) => {
+    const isActive = btn.dataset.screenOption === nextMode;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
+
+  const current = document.getElementById("screenOrientationCurrent");
+  if (current) current.textContent = getScreenOrientationText(nextMode);
+}
+
+function saveScreenOrientation(mode) {
+  const nextMode = mode === "portrait" ? "portrait" : "landscape";
+
+  try {
+    localStorage.setItem(KIOSK_ORIENTATION_KEY, nextMode);
+  } catch (err) {
+    console.warn("saveScreenOrientation failed:", err);
+  }
+
+  applyScreenOrientation(nextMode);
+}
+
+function bindScreenSettings() {
+  applyScreenOrientation(getRequestedScreenOrientation() || getSavedScreenOrientation());
+
+  document.querySelectorAll("[data-screen-option]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveScreenOrientation(btn.dataset.screenOption);
+    });
+  });
+}
+
 // ===== 啟動 =====
 document.addEventListener("DOMContentLoaded", () => {
+  bindScreenSettings();
   updateOverviewFromQueue();
 
   bindNav();
@@ -2556,11 +2667,16 @@ function bindQueryStatusKiosk() {
     const callModalEl = document.getElementById("callModal");
     const inputModalEl = document.getElementById("queryStatusInputModal");
 
-    bootstrap.Modal.getOrCreateInstance(callModalEl).hide();
-
-    setTimeout(() => {
+    const showInputModal = () => {
       bootstrap.Modal.getOrCreateInstance(inputModalEl).show();
-    }, 200);
+    };
+
+    if (callModalEl?.classList.contains("show")) {
+      callModalEl.addEventListener("hidden.bs.modal", showInputModal, { once: true });
+      bootstrap.Modal.getOrCreateInstance(callModalEl).hide();
+    } else {
+      showInputModal();
+    }
   });
 
   document.querySelectorAll(".queryKeypad button[data-k]").forEach((btn) => {
@@ -2606,24 +2722,31 @@ function bindQueryStatusKiosk() {
       document.getElementById("queryStatusResultModal")
     );
 
+    const showResultModal = () => {
+      resultModal.show();
+    };
+
+    const switchToResultModal = () => {
+      const inputModalEl = document.getElementById("queryStatusInputModal");
+
+      if (inputModalEl?.classList.contains("show")) {
+        inputModalEl.addEventListener("hidden.bs.modal", showResultModal, { once: true });
+        inputModal.hide();
+      } else {
+        showResultModal();
+      }
+    };
+
     try {
       const result = await apiLookupStatus(value);
       showQueryStatusResult(buildQueryStatusHtml(result));
 
-      inputModal.hide();
-
-      setTimeout(() => {
-        resultModal.show();
-      }, 180);
+      switchToResultModal();
     } catch (err) {
       console.error("query status failed:", err);
       showQueryStatusResult(`<div class="queryResultStatus">查詢失敗，請稍後再試</div>`);
 
-      inputModal.hide();
-
-      setTimeout(() => {
-        resultModal.show();
-      }, 180);
+      switchToResultModal();
     }
   });
   document.getElementById("queryStatusResultModal")?.addEventListener("hidden.bs.modal", () => {

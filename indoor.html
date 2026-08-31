@@ -6,9 +6,23 @@
   <title>內用菜單 - 薪勤機</title>
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var requestedMode = params.get("orientation");
+        var mode = requestedMode === "portrait" || requestedMode === "landscape"
+          ? requestedMode
+          : localStorage.getItem("sq_kiosk_screen_orientation");
+        document.documentElement.dataset.screenOrientation = mode === "portrait" ? "portrait" : "landscape";
+      } catch (err) {
+        document.documentElement.dataset.screenOrientation = "landscape";
+      }
+    }());
+  </script>
   <link href="css/style.css?v=2" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body class="page-indoor">
   <div class="kioskStage">
     <div class="kioskCanvas">
       <div class="mainContainer posContainer container indooorPage">

@@ -11,6 +11,10 @@ function hideTakeawayEmptyHint(){
   $("#takeawayEmptyHint")?.classList.add("d-none");
 }
 
+function isPortraitTakeaway(){
+  return document.documentElement.dataset.screenOrientation === "portrait";
+}
+
 let state = {
   cat: "",
   categories: [],
@@ -61,7 +65,11 @@ function renderCats() {
   const host = $("#categoryTree");
   if (!host) return;
 
-  host.innerHTML = state.categories.map(c => `
+  const categories = isPortraitTakeaway()
+    ? [{ key: "all", title: "全部" }, ...state.categories.filter(c => c.key !== "all")]
+    : state.categories;
+
+  host.innerHTML = categories.map(c => `
     <div class="${state.cat === c.key ? "active" : ""}" data-cat="${c.key}">
       ${c.title}
     </div>
@@ -90,7 +98,9 @@ function renderMenu() {
   const grid = $("#menuGrid");
   if (!grid) return;
 
-  const list = state.items.filter(m => m.cat === state.cat);
+  const list = state.cat === "all"
+    ? state.items
+    : state.items.filter(m => m.cat === state.cat);
 
   grid.innerHTML = list.map(item => {
     const imgPath = fixMenuImgPath(item.img);
@@ -786,7 +796,7 @@ async function initMenu() {
 
     state.categories = data.categories || [];
     state.items = data.items || [];
-    state.cat = state.categories[0]?.key || "";
+    state.cat = isPortraitTakeaway() ? "all" : (state.categories[0]?.key || "");
 
     renderCats();
     renderMenu();

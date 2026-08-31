@@ -9,6 +9,20 @@
   <!-- Bootstrap -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <script src="js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var requestedMode = params.get("orientation");
+        var mode = requestedMode === "portrait" || requestedMode === "landscape"
+          ? requestedMode
+          : localStorage.getItem("sq_kiosk_screen_orientation");
+        document.documentElement.dataset.screenOrientation = mode === "portrait" ? "portrait" : "landscape";
+      } catch (err) {
+        document.documentElement.dataset.screenOrientation = "landscape";
+      }
+    }());
+  </script>
 
   <link rel="stylesheet" href="css/style.css?v=20260603">
 
@@ -61,7 +75,7 @@
   </style>
 </head>
 
-<body>
+<body class="page-takeaway">
   <div class="kioskStage">
     <div class="kioskCanvas">
       <div class="mainContainer posContainer container">
